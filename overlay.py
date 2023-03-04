@@ -79,7 +79,7 @@ class Entity():
     def getWeapon(self, module): #need to pass game_module in module
         getWeaponAddress = pm.r_int(self.mem, self.addr + Offset.m_hActiveWeapon) & 0xFFF
         getWeaponAddressHandle = pm.r_int(self.mem, module + Offset.dwEntityList + (getWeaponAddress - 1) * 0x10)
-        return pm.r_int(self.mem, getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
+        return pm.r_int16(self.mem, getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
 
 bombIndexAddr = []
 playersInfoAddr = []
@@ -161,7 +161,7 @@ def newOverlay():
         csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
         csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
         
-        Desert_Eagle= pm.load_texture("assets/images/deagle.png")
+        Desert_Eagle= pm.load_texture("assets/images/desert_eagle.png")
         Dual_Berettas = pm.load_texture("assets/images/elite.png")
         Five_SeveN= pm.load_texture("assets/images/fiveseven.png")
         p2000 = pm.load_texture("assets/images/p2000.png")
@@ -330,11 +330,24 @@ def newOverlay():
                             color = Colors.white,
                         )
             
+            if localPlayer.health > 0 and localPlayer.get_lifestate == 0:
+                if localPlayer.getWeapon(csgo_client) in _scoping_rifles:
+                    if not localPlayer.is_scoped:
+                        pm.draw_circle(
+                            centerX = screen_center_x,
+                            centerY = screen_center_y,
+                            radius = 3,
+                            color = Colors.red,
+                        ) 
+            
             spectatorsArr = []
             for ents in entAddr:
                 if ents > 0:
                     try:
                         entity = Entity(ents, csgo_proc, csgo_client)
+                        
+                        # if ents != localPlayerAddr:
+                        #     print(entity.getWeapon(csgo_client))
                         
                         if localPlayer.health > 0:
                             
@@ -342,20 +355,20 @@ def newOverlay():
                                 observed_target_handle = pm.r_int(csgo_proc, ents + Offset.m_hObserverTarget) & 0xFFF
                                 spectated = pm.r_int(csgo_proc, csgo_client + Offset.dwEntityList + (observed_target_handle - 1) * 0x10)
                                                             
-                            if spectated == localPlayerAddr:
-                                spectatorsArr.append(entity.name)
-                                
-                                pm.draw_font(
-                                fontId = 0,
-                                text= 'Spectators: \n' + '\n'.join(spectatorsArr),
-                                posX=500,
-                                posY=150,
-                                fontSize=25,
-                                spacing = 2.0,
-                                tint = Colors.purple,
-                                )
-                            else:
-                                spectatorsArr.clear()
+                                if spectated == localPlayerAddr:
+                                    spectatorsArr.append(entity.name)
+                                    
+                                    pm.draw_font(
+                                    fontId = 0,
+                                    text= 'Spectators: \n' + '\n'.join(spectatorsArr),
+                                    posX=500,
+                                    posY=150,
+                                    fontSize=25,
+                                    spacing = 2.0,
+                                    tint = Colors.purple,
+                                    )
+                                else:
+                                    spectatorsArr.clear()
                                 
                         else:
                             spectatorsArr.clear()
@@ -473,21 +486,12 @@ def newOverlay():
                         if DEBUG_MODE:
                             print("3", err)
                         pass
-            # if localPlayer.health > 0 and localPlayer.get_lifestate == 0:
-            #     if localPlayer.getWeapon(csgo_client) in _scoping_rifles:
-            #         if not localPlayer.is_scoped:
-            #             pm.draw_circle(
-            #                 centerX = screen_center_x,
-            #                 centerY = screen_center_y,
-            #                 radius = 3,
-            #                 color = Colors.red,
-            #             ) 
         pm.end_drawing()
 
 def main():
     threading.Thread(target=processInfo.checkGameFocus, name='checkGameFocus', daemon=True).start()
     threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
-    threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
+    # threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
     threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
     newOverlay() #start after all processes
     
