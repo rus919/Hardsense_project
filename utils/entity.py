@@ -1,7 +1,7 @@
 from engine.process import *
 from utils.offsets import *
 
-class Entity():
+class Entity2():
     def __init__(self, entityAddr):
         self.w2s = None
         self.entityObj = entityAddr
@@ -20,6 +20,10 @@ class Entity():
 
     def getTeam(self):
         return pm.r_int(Process.csgo, self.entityObj + Offset.m_iTeamNum)
+    
+    def getState():
+        engine_ptr = pm.r_int(Process.csgo, Process.csgo_engine + Offset.dwClientState)
+        return pm.r_int(Process.csgo, engine_ptr + Offset.dwClientState_State)
     
     # def position(self):
     #     return pm.r_vec3(Process.csgo, self.entityObj + Offset.m_vecOrigin)

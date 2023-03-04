@@ -5,13 +5,19 @@ import ctypes
 from ctypes import *
 
 from utils.offsets import *
+
+from engine.process import *
 from engine.gamedata import *
+
+from utils.entity import *
 
 import threading
 import time
 
 from tools.config import *
 from tools.triggerbot import *
+from tools.bombinfo import *
+from tools.playersinfo import *
 
 ntdll = windll.ntdll
 k32 = windll.kernel32
@@ -81,79 +87,8 @@ class Entity():
         getWeaponAddressHandle = pm.r_int(self.mem, module + Offset.dwEntityList + (getWeaponAddress - 1) * 0x10)
         return pm.r_int16(self.mem, getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
 
-bombIndexAddr = []
-playersInfoAddr = []
+# bombIndexAddr = []
 _scoping_rifles = [9, 40, 38, 11]
-
-def getBombInfo():
-    try:
-        csgo_proc = pm.open_process(processName="csgo.exe")
-        csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
-        csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
-        
-        engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
-        get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
-    except Exception as err:
-        if DEBUG_MODE:
-            print(err)
-        exit()
-    while pm.overlay_loop():
-        try:
-            if get_state == 6:
-                GameRulesProxy = pm.r_int(csgo_proc, csgo_client + Offset.dwGameRulesProxy)
-                bombPlanted = pm.r_int(csgo_proc, GameRulesProxy + Offset.m_bBombPlanted)
-                
-                if bombPlanted == 1:
-                    bombIndexAddr.clear()
-                    for i in range(350, 550):
-                        entity = pm.r_int(csgo_proc, csgo_client + Offset.dwEntityList + i * 0x10)
-                        
-                        if entity != 0:
-                            client_networkable = pm.r_int(csgo_proc, entity + 0x8)
-                            dwGetClientClassFn = pm.r_int(csgo_proc, client_networkable + 0x8)
-                            entity_client_class = pm.r_int(csgo_proc, dwGetClientClassFn+ 0x1)
-                            class_id = pm.r_int(csgo_proc, entity_client_class + 0x14)
-                            if class_id == 129:
-                                if [entity] not in bombIndexAddr:
-                                    bombIndexAddr.append(entity)
-                else:
-                    bombIndexAddr.clear()
-        except Exception as err:
-            print(err)
-            pass
-        time.sleep(1.00)
-        
-def getPlayerInfo():
-    try:
-        csgo_proc = pm.open_process(processName="csgo.exe")
-        csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
-        csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
-        
-        engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
-        get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
-    except Exception as err:
-        if DEBUG_MODE:
-            print(err)
-        exit()
-    while pm.overlay_loop():
-        try:
-            if get_state == 6:
-                playersInfoAddr.clear()
-                for i in range(1, 32):
-                    entity = pm.r_int(csgo_proc, csgo_client + Offset.dwEntityList + i * 0x10)
-                    player_resources = pm.r_int(csgo_proc, csgo_client + Offset.dwPlayerResource)
-                    if entity != 0:                        
-                        entityCompRank = pm.r_int(csgo_proc, player_resources + Offset.m_iCompetitiveRanking + (i+1) * 4)
-                        entityCompWins = pm.r_int(csgo_proc, player_resources + Offset.m_iCompetitiveWins + (i+1) * 4)
-                        if [i, entity ,entityCompRank ,entityCompWins] not in playersInfoAddr:
-                            playersInfoAddr.append([i, entity, entityCompRank, entityCompWins])
-                else:
-                    bombIndexAddr.clear()
-        except Exception as err:
-            print(err)
-            pass
-        print(playersInfoAddr)
-        time.sleep(15.00)
 
 def newOverlay():
     try:
@@ -236,7 +171,7 @@ def newOverlay():
         pm.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = Colors.purple)
         pm.draw_fps(50, 50)
         
-        if get_state == 6:         
+        if get_state == 6:
             try:
                 localPlayerAddr = pm.r_int(csgo_proc, csgo_client + Offset.dwLocalPlayer)
                 localPlayer = Entity(localPlayerAddr, csgo_proc, csgo_client)
@@ -250,7 +185,7 @@ def newOverlay():
                 if DEBUG_MODE:
                     print("2", err)
                 pass         
-            
+                        
             for bombindex in bombIndexAddr:
                 try:
                     entity = Entity(bombindex, csgo_proc, csgo_client)
@@ -330,15 +265,18 @@ def newOverlay():
                             color = Colors.white,
                         )
             
-            if localPlayer.health > 0 and localPlayer.get_lifestate == 0:
-                if localPlayer.getWeapon(csgo_client) in _scoping_rifles:
-                    if not localPlayer.is_scoped:
-                        pm.draw_circle(
-                            centerX = screen_center_x,
-                            centerY = screen_center_y,
-                            radius = 3,
-                            color = Colors.red,
-                        ) 
+            # if localPlayer.health > 0 and localPlayer.get_lifestate == 0:
+            #     localPlayerWeapon = localPlayer.getWeapon(csgo_client)
+            #     if localPlayerWeapon in _scoping_rifles:
+            #         if not localPlayer.is_scoped:
+            #             pm.draw_circle(
+            #                 centerX = screen_center_x,
+            #                 centerY = screen_center_y,
+            #                 radius = 3,
+            #                 color = Colors.red,
+            #             )
+            #     else:
+            #         pass
             
             spectatorsArr = []
             for ents in entAddr:
@@ -491,7 +429,7 @@ def newOverlay():
 def main():
     threading.Thread(target=processInfo.checkGameFocus, name='checkGameFocus', daemon=True).start()
     threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
-    # threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
+    threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
     threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
     newOverlay() #start after all processes
     
