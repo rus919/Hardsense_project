@@ -9,8 +9,11 @@ from engine.gamedata import *
 
 import threading
 import time
-import multiprocessing
-from multiprocessing import Process
+# import multiprocessing
+# from multiprocessing import Process
+
+from tools.config import *
+from tools.triggerbot import *
 
 ntdll = windll.ntdll
 k32 = windll.kernel32
@@ -230,6 +233,8 @@ def newOverlay():
                                 spacing = 2.0,
                                 tint = Colors.purple,
                                 )
+                            else:
+                                spectatorsArr.clear()
                                 
                         else:
                             spectatorsArr.clear()
@@ -401,54 +406,17 @@ def newOverlay():
             #             ) 
         pm.end_drawing()
 
-def trigger():
-        try:
-            csgo_proc = pm.open_process(processName="csgo.exe")
-            csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
-            csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
-            
-            engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
-            get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
-        except Exception as err:
-            if DEBUG_MODE:
-                print(err)
-            exit()
-            
-        while True:
-            try:
-                if u32.GetAsyncKeyState(0x05):
-                    localPlayerAddr = pm.r_int(csgo_proc, csgo_client + Offset.dwLocalPlayer)
-                    # localPlayer = Entity(localPlayerAddr, csgo_proc, csgo_client)
-                    
-                    # player = pm.r_int(csgo_proc, csgo_client + Offset.dwLocalPlayer)
-                    entity_id = pm.r_int(csgo_proc, localPlayerAddr + Offset.m_iCrosshairId)
-                    entity = pm.r_int(csgo_proc, csgo_client + Offset.dwEntityList + (entity_id - 1) * 0x10)
-
-                    entity_team = pm.r_int(csgo_proc, entity + Offset.m_iTeamNum)
-                    player_team = pm.r_int(csgo_proc, localPlayerAddr + Offset.m_iTeamNum)
-
-                    if entity_id > 0 and entity_id <= 64 and player_team != entity_team:
-                        # k32.Sleep(5)
-                        u32.mouse_event(0x0002, 0, 0, 0, 0)
-                        k32.Sleep(50)
-                        u32.mouse_event(0x0004, 0, 0, 0, 0)
-                        k32.Sleep(150)
-            except Exception as err:
-                if DEBUG_MODE:
-                    print(err)
-                continue
-            time.sleep(0.0001)
-
 def main():
     threading.Thread(target=processInfo.checkGameFocus, name='checkGameFocus', daemon=True).start()
     threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
     threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
-    threading.Thread(target=trigger, name='trigger', daemon=True).start()
+    threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
     # proc = Process(target=test2)
     # proc.start()
     # threading.Thread(target=test2, name='test2', daemon=True).start()
     newOverlay() #start after all processes
     # proc.join()
-if __name__ == "__main__":
+    
+if __name__ == "__main__":    
     pm.overlay_init(fps=1000, title='test')
     main()
