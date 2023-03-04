@@ -20,6 +20,7 @@ def getBombInfo():
                         dwGetClientClassFn = pm.r_int(Process.csgo, client_networkable + 0x8)
                         entity_client_class = pm.r_int(Process.csgo, dwGetClientClassFn+ 0x1)
                         class_id = pm.r_int(Process.csgo, entity_client_class + 0x14)
+                        # print(class_id)
                         if class_id == 129:
                             if [entity] not in bombIndexAddr:
                                 bombIndexAddr.append(entity)

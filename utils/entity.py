@@ -1,7 +1,7 @@
 from engine.process import *
 from utils.offsets import *
 
-class Entity2():
+class Entity():
     def __init__(self, entityAddr):
         self.w2s = None
         self.entityObj = entityAddr

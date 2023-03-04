@@ -88,7 +88,6 @@ class Entity():
         return pm.r_int16(self.mem, getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
 
 # bombIndexAddr = []
-_scoping_rifles = [9, 40, 38, 11]
 
 def newOverlay():
     try:
@@ -179,8 +178,8 @@ def newOverlay():
                 view_matrix = pm.r_floats(csgo_proc, csgo_client + Offset.dwViewMatrix, 16)  
                 currentTime = pm.r_float(csgo_proc, csgo_engine + Offset.dwGlobalVars + 0x0010)
 
-                entAddr = pm.r_ints(csgo_proc, csgo_client + Offset.dwEntityList, 128)[0::4]
-                
+                entAddr = pm.r_uints(csgo_proc, csgo_client + Offset.dwEntityList, 128)[0::4]
+                # print(entAddr)
             except Exception as err:
                 if DEBUG_MODE:
                     print("2", err)
@@ -195,14 +194,8 @@ def newOverlay():
                         
                         bombtime = entity.bombtest - currentTime
                         defuseTime = entity.defusingTime - currentTime
-                                                        
-                        pm.draw_text(
-                        text= f"bomb",
-                        posX=head_pos["x"],
-                        posY=head_pos["y"],
-                        fontSize=25,
-                        color=Colors.purple,
-                        )
+                        
+                        pm.draw_texture(texture = C4, posX = head_pos["x"], posY = head_pos["y"], rotation = 0, scale = 0.6,tint = Colors.white)         
                         
                         if defuseTime > bombtime:
                             defuseTimeColor = Colors.red
@@ -265,17 +258,20 @@ def newOverlay():
                             color = Colors.white,
                         )
             
+            # print(localPlayer.get_lifestate)
             # if localPlayer.health > 0 and localPlayer.get_lifestate == 0:
-            #     localPlayerWeapon = localPlayer.getWeapon(csgo_client)
-            #     if localPlayerWeapon in _scoping_rifles:
-            #         if not localPlayer.is_scoped:
-            #             pm.draw_circle(
-            #                 centerX = screen_center_x,
-            #                 centerY = screen_center_y,
-            #                 radius = 3,
-            #                 color = Colors.red,
-            #             )
-            #     else:
+            #     try:
+            #         localPlayerWeapon = localPlayer.getWeapon(csgo_client)
+            #         if localPlayerWeapon == 9 or localPlayerWeapon == 11 or localPlayerWeapon == 38 or localPlayerWeapon == 40:
+            #             if not localPlayer.is_scoped:
+            #                 pm.draw_circle(
+            #                     centerX = screen_center_x,
+            #                     centerY = screen_center_y,
+            #                     radius = 3,
+            #                     color = Colors.red,
+            #                 )
+            #     except Exception as err:
+            #         print(err)
             #         pass
             
             spectatorsArr = []
@@ -283,7 +279,7 @@ def newOverlay():
                 if ents > 0:
                     try:
                         entity = Entity(ents, csgo_proc, csgo_client)
-                        
+                        # print(entity.name)
                         # if ents != localPlayerAddr:
                         #     print(entity.getWeapon(csgo_client))
                         
@@ -413,13 +409,13 @@ def newOverlay():
                             #     fontSize=1,
                             #     color=Colors.purple,
                             # )
-                            # pm.draw_text(
-                            #     text= entity.name,
-                            #     posX=head_pos["x"] - center - 10,
-                            #     posY=head_pos["y"] - center - 5,
-                            #     fontSize=5,
-                            #     color=Colors.red,
-                            # )
+                            pm.draw_text(
+                                text= entity.name,
+                                posX=head_pos["x"] - center - 10,
+                                posY=head_pos["y"] - center - 5,
+                                fontSize=5,
+                                color=Colors.red,
+                            )
                     except Exception as err:
                         if DEBUG_MODE:
                             print("3", err)
@@ -429,10 +425,10 @@ def newOverlay():
 def main():
     threading.Thread(target=processInfo.checkGameFocus, name='checkGameFocus', daemon=True).start()
     threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
-    threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
+    # threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
     threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
     newOverlay() #start after all processes
     
 if __name__ == "__main__":    
-    pm.overlay_init(fps=1000, title='test')
+    pm.overlay_init(fps=155, title='test')
     main()
