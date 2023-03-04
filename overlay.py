@@ -9,8 +9,6 @@ from engine.gamedata import *
 
 import threading
 import time
-# import multiprocessing
-# from multiprocessing import Process
 
 from tools.config import *
 from tools.triggerbot import *
@@ -156,15 +154,61 @@ def getPlayerInfo():
             pass
         print(playersInfoAddr)
         time.sleep(15.00)
-        
+
 def newOverlay():
     try:
         csgo_proc = pm.open_process(processName="csgo.exe")
         csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
         csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
         
+        Desert_Eagle= pm.load_texture("assets/images/deagle.png")
+        Dual_Berettas = pm.load_texture("assets/images/elite.png")
+        Five_SeveN= pm.load_texture("assets/images/fiveseven.png")
+        p2000 = pm.load_texture("assets/images/p2000.png")
+        Glock_18= pm.load_texture("assets/images/glock.png")
+        AK_47 = pm.load_texture("assets/images/ak47.png")
+        AUG = pm.load_texture("assets/images/aug.png")
+        AWP = pm.load_texture("assets/images/awp.png")
+        FAMAS = pm.load_texture("assets/images/famas.png")
+        G3SG1 = pm.load_texture("assets/images/g3sg1.png")
+        Galil_AR= pm.load_texture("assets/images/galil.png")
+        M249= pm.load_texture("assets/images/m249.png")
+        M4A4= pm.load_texture("assets/images/m4a4.png")
+        MAC_10= pm.load_texture("assets/images/mac10.png")
+        P90 = pm.load_texture("assets/images/p90.png")
+        MP5_SD= pm.load_texture("assets/images/mp5.png")
+        UMP_45= pm.load_texture("assets/images/ump.png")
+        XM1014= pm.load_texture("assets/images/xm104.png")
+        Bizon = pm.load_texture("assets/images/bizon.png")
+        MAG_7 = pm.load_texture("assets/images/mag7.png")
+        Negev = pm.load_texture("assets/images/negev.png")
+        Sawed_Off = pm.load_texture("assets/images/sawedoff.png")
+        Tec_9 = pm.load_texture("assets/images/tec9.png")
+        Zeus= pm.load_texture("assets/images/zeus_x27.png")
+        MP7 = pm.load_texture("assets/images/mp7.png")
+        MP9 = pm.load_texture("assets/images/mp9.png")
+        Nova= pm.load_texture("assets/images/nova.png")
+        P250= pm.load_texture("assets/images/p250.png")
+        SCAR_20 = pm.load_texture("assets/images/scar20.png")
+        SG_553= pm.load_texture("assets/images/sg553.png")
+        SSG_08= pm.load_texture("assets/images/ssg08.png")
+        M4A1_S= pm.load_texture("assets/images/m4a1_silencer.png")
+        USP_S = pm.load_texture("assets/images/usp_silencer.png")
+        CZ75_Auto = pm.load_texture("assets/images/cz75a.png")
+        R8_Revolver = pm.load_texture("assets/images/r8_revolver.png")
+        
+        Knife = pm.load_texture("assets/images/knife.png")
+        
+        Flashbang = pm.load_texture("assets/images/flash_grenade.png")
+        Explosive_Grenade = pm.load_texture("assets/images/explosive_grenade.png")
+        Smoke_Grenade = pm.load_texture("assets/images/smoke_grenade.png")
+        Molotov = pm.load_texture("assets/images/molotov.png")
+        Decoy_Grenade = pm.load_texture("assets/images/decoy_grenade.png")
+        Incendiary_Grenade = pm.load_texture("assets/images/incendiary_grenade.png")
+        C4 = pm.load_texture("assets/images/c4.png")
+        
         pm.load_font("assets/fonts/ff.ttf", 0)
-        p2000 = pm.load_texture("assets/images/p2000.png")        
+
     except Exception as err:
         if DEBUG_MODE:
             print(err)
@@ -206,114 +250,6 @@ def newOverlay():
                 if DEBUG_MODE:
                     print("2", err)
                 pass         
-            
-            
-            spectatorsArr = []
-            for ents in entAddr:
-                if ents > 0:
-                    try:
-                        entity = Entity(ents, csgo_proc, csgo_client)
-                        # # print(entity.name)
-                        
-                        if localPlayer.health > 0:
-                            
-                            # if entity.team == localPlayer.team:
-                            observed_target_handle = pm.r_int(csgo_proc, ents + Offset.m_hObserverTarget) & 0xFFF
-                            spectated = pm.r_int(csgo_proc, csgo_client + Offset.dwEntityList + (observed_target_handle - 1) * 0x10)
-                                                            
-                            if spectated == localPlayerAddr:
-                                spectatorsArr.append(entity.name)
-                                
-                                pm.draw_font(
-                                fontId = 0,
-                                text= 'Spectators: \n' + '\n'.join(spectatorsArr),
-                                posX=500,
-                                posY=150,
-                                fontSize=25,
-                                spacing = 2.0,
-                                tint = Colors.purple,
-                                )
-                            else:
-                                spectatorsArr.clear()
-                                
-                        else:
-                            spectatorsArr.clear()
-                            
-                        if not entity.dormant and entity.health > 0 and localPlayer.team != entity.team and ents != localPlayerAddr:
-                            entity.wts = pm.world_to_screen(view_matrix, entity.pos, 1)
-                            head_pos = pm.world_to_screen(view_matrix, entity.bone_pos(8), 1)
-                            
-                            head = entity.wts["y"] - head_pos["y"]
-                            width = head / 2
-                            center = width / 2
-                            
-                            # entity.getWeapon(csgo_client)
-
-                            pm.draw_circle(
-                                centerX = head_pos["x"],
-                                centerY = head_pos["y"],
-                                radius = 3,
-                                color = Colors.red,
-                            )
-                            
-                            # pm.draw_rectangle(
-                            # posX=head_pos["x"] - center,
-                            # posY=head_pos["y"] - center / 2,
-                            # width=width,
-                            # height=head + center / 2,
-                            # color=Colors.red,
-                            # )
-                            # pm.draw_rectangle_lines(
-                            #     posX=head_pos["x"] - center * 1.0,
-                            #     posY=head_pos["y"] - center / 2,
-                            #     width=width * 1.0,
-                            #     height=head + center / 2,
-                            #     color=Colors.red,
-                            #     lineThick=1.0,
-                            # )
-                            if entity.getWeapon(csgo_client) == 32: 
-                                pm.draw_texture(
-                                    texture = p2000, 
-                                    posX = head_pos["x"] / 1.005, 
-                                    posY = entity.wts["y"] * 1.01, 
-                                    rotation = 0, 
-                                    scale = 0.3,
-                                    tint = Colors.purple
-                                )
-                            # pm.draw_text(
-                            #     text= f"{entity.getWeapon(csgo_client)}",
-                            #     posX=head_pos["x"] - center - 10,
-                            #     posY=head_pos["y"] - center - 5,
-                            #     fontSize=5,
-                            #     color=Colors.red,
-                            # )
-                            
-                            # pm.draw_text(
-                            #     text= f"H:{entity.health}",
-                            #     posX=head_pos["x"] - center - 25,
-                            #     posY=head_pos["y"] - center / 2,
-                            #     fontSize=1,
-                            #     color=Colors.red,
-                            # )
-                        
-                            # pm.draw_text(
-                            #     text= f"A:{entity.armour}",
-                            #     posX=head_pos["x"] - center - 25,
-                            #     posY=(head_pos["y"] - center / 2) + 10,
-                            #     fontSize=1,
-                            #     color=Colors.purple,
-                            # )
-                            # pm.draw_text(
-                            #     text= entity.name,
-                            #     posX=head_pos["x"] - center - 10,
-                            #     posY=head_pos["y"] - center - 5,
-                            #     fontSize=5,
-                            #     color=Colors.red,
-                            # )
-                    except Exception as err:
-                        if DEBUG_MODE:
-                            print("3", err)
-                        pass
             
             for bombindex in bombIndexAddr:
                 try:
@@ -394,7 +330,149 @@ def newOverlay():
                             color = Colors.white,
                         )
             
-            
+            spectatorsArr = []
+            for ents in entAddr:
+                if ents > 0:
+                    try:
+                        entity = Entity(ents, csgo_proc, csgo_client)
+                        
+                        if localPlayer.health > 0:
+                            
+                            if entity.team == localPlayer.team:
+                                observed_target_handle = pm.r_int(csgo_proc, ents + Offset.m_hObserverTarget) & 0xFFF
+                                spectated = pm.r_int(csgo_proc, csgo_client + Offset.dwEntityList + (observed_target_handle - 1) * 0x10)
+                                                            
+                            if spectated == localPlayerAddr:
+                                spectatorsArr.append(entity.name)
+                                
+                                pm.draw_font(
+                                fontId = 0,
+                                text= 'Spectators: \n' + '\n'.join(spectatorsArr),
+                                posX=500,
+                                posY=150,
+                                fontSize=25,
+                                spacing = 2.0,
+                                tint = Colors.purple,
+                                )
+                            else:
+                                spectatorsArr.clear()
+                                
+                        else:
+                            spectatorsArr.clear()
+                            
+                        if not entity.dormant and entity.health > 0 and localPlayer.team != entity.team and ents != localPlayerAddr:
+                            entity.wts = pm.world_to_screen(view_matrix, entity.pos, 1)
+                            head_pos = pm.world_to_screen(view_matrix, entity.bone_pos(8), 1)
+                            
+                            head = entity.wts["y"] - head_pos["y"]
+                            width = head / 2
+                            center = width / 2
+                            
+                            pm.draw_circle(
+                                centerX = head_pos["x"],
+                                centerY = head_pos["y"],
+                                radius = 3,
+                                color = Colors.red,
+                            )
+                            
+                            # pm.draw_rectangle(
+                            # posX=head_pos["x"] - center,
+                            # posY=head_pos["y"] - center / 2,
+                            # width=width,
+                            # height=head + center / 2,
+                            # color=Colors.red,
+                            # )
+                            # pm.draw_rectangle_lines(
+                            #     posX=head_pos["x"] - center * 1.0,
+                            #     posY=head_pos["y"] - center / 2,
+                            #     width=width * 1.0,
+                            #     height=head + center / 2,
+                            #     color=Colors.red,
+                            #     lineThick=1.0,
+                            # )
+                            getEntWeapon = entity.getWeapon(csgo_client)
+
+                            if getEntWeapon == 42 or getEntWeapon == 59 or getEntWeapon == 42 or getEntWeapon == 500 or getEntWeapon == 503 or getEntWeapon == 505 or getEntWeapon == 506 or getEntWeapon == 507 or getEntWeapon == 508 or getEntWeapon == 509 or getEntWeapon == 510 or getEntWeapon == 511 or getEntWeapon == 512 or getEntWeapon == 513 or getEntWeapon == 514 or getEntWeapon == 515 or getEntWeapon == 516 or getEntWeapon == 517 or getEntWeapon == 518 or getEntWeapon == 519 or getEntWeapon == 520 or getEntWeapon == 521 or getEntWeapon == 522 or getEntWeapon == 523 or getEntWeapon == 524 or getEntWeapon == 525: 
+                                pm.draw_texture(texture = Knife, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                                
+                            if getEntWeapon == 1: pm.draw_texture(texture = Desert_Eagle, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 2: pm.draw_texture(texture = Dual_Berettas, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 3: pm.draw_texture(texture = Five_SeveN, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 4: pm.draw_texture(texture = Glock_18, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 7: pm.draw_texture(texture = AK_47, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 8: pm.draw_texture(texture = AUG, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 9: pm.draw_texture(texture = AWP, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 10: pm.draw_texture(texture = FAMAS, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 11: pm.draw_texture(texture = G3SG1, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 13: pm.draw_texture(texture = Galil_AR, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 14: pm.draw_texture(texture = M249, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 16: pm.draw_texture(texture = M4A4, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 17: pm.draw_texture(texture = MAC_10, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 19: pm.draw_texture(texture = P90, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 23: pm.draw_texture(texture = MP5_SD, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 24: pm.draw_texture(texture = UMP_45, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 25: pm.draw_texture(texture = XM1014, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 26: pm.draw_texture(texture = Bizon, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 27: pm.draw_texture(texture = MAG_7, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 28: pm.draw_texture(texture = Negev, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 29: pm.draw_texture(texture = Sawed_Off, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 30: pm.draw_texture(texture = Tec_9, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 31: pm.draw_texture(texture = Zeus, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 32: pm.draw_texture(texture = p2000, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 33: pm.draw_texture(texture = MP7, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 34: pm.draw_texture(texture = MP9, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 35: pm.draw_texture(texture = Nova, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 36: pm.draw_texture(texture = P250, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 38: pm.draw_texture(texture = SCAR_20, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 39: pm.draw_texture(texture = SG_553, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 40: pm.draw_texture(texture = SSG_08, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 60: pm.draw_texture(texture = M4A1_S, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 61: pm.draw_texture(texture = USP_S, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 63: pm.draw_texture(texture = CZ75_Auto, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 64: pm.draw_texture(texture = R8_Revolver, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            
+                            if getEntWeapon == 43: pm.draw_texture(texture = Flashbang, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 44: pm.draw_texture(texture = Explosive_Grenade, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 45: pm.draw_texture(texture = Smoke_Grenade, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 46: pm.draw_texture(texture = Molotov, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 47: pm.draw_texture(texture = Decoy_Grenade, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 48: pm.draw_texture(texture = Incendiary_Grenade, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            if getEntWeapon == 49: pm.draw_texture(texture = C4, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
+                            
+                            # pm.draw_text(
+                            #     text= f"{entity.getWeapon(csgo_client)}",
+                            #     posX=head_pos["x"] - center - 10,
+                            #     posY=head_pos["y"] - center - 5,
+                            #     fontSize=5,
+                            #     color=Colors.red,
+                            # )
+                            
+                            # pm.draw_text(
+                            #     text= f"H:{entity.health}",
+                            #     posX=head_pos["x"] - center - 25,
+                            #     posY=head_pos["y"] - center / 2,
+                            #     fontSize=1,
+                            #     color=Colors.red,
+                            # )
+                        
+                            # pm.draw_text(
+                            #     text= f"A:{entity.armour}",
+                            #     posX=head_pos["x"] - center - 25,
+                            #     posY=(head_pos["y"] - center / 2) + 10,
+                            #     fontSize=1,
+                            #     color=Colors.purple,
+                            # )
+                            # pm.draw_text(
+                            #     text= entity.name,
+                            #     posX=head_pos["x"] - center - 10,
+                            #     posY=head_pos["y"] - center - 5,
+                            #     fontSize=5,
+                            #     color=Colors.red,
+                            # )
+                    except Exception as err:
+                        if DEBUG_MODE:
+                            print("3", err)
+                        pass
             # if localPlayer.health > 0 and localPlayer.get_lifestate == 0:
             #     if localPlayer.getWeapon(csgo_client) in _scoping_rifles:
             #         if not localPlayer.is_scoped:
@@ -411,11 +489,7 @@ def main():
     threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
     threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
     threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
-    # proc = Process(target=test2)
-    # proc.start()
-    # threading.Thread(target=test2, name='test2', daemon=True).start()
     newOverlay() #start after all processes
-    # proc.join()
     
 if __name__ == "__main__":    
     pm.overlay_init(fps=1000, title='test')

@@ -21,7 +21,3 @@ class processInfo():
                 Process.k32.Sleep(1000) # 2 seconds delay for optimisation
             else:
                 processInfo.gameFocused = True
-
-def Weapon(index, name):
-    if index == 42: name = "Knife"
-    return name
