@@ -16,8 +16,6 @@ import time
 
 from tools.config import *
 from tools.triggerbot import *
-from tools.bombinfo import *
-from tools.playersinfo import *
 
 ntdll = windll.ntdll
 k32 = windll.kernel32
@@ -59,8 +57,7 @@ class Entity():
         self.defusingPlayer = pm.r_byte(self.mem, self.addr + 0x29c4) #m_bIsDefusing
         
         self.get_vec_punch = pm.r_vec3(self.mem, self.addr + Offset.m_aimPunchAngle)
-        self.get_shots_fired = pm.r_int(self.mem, self.addr + Offset.m_iShotsFired)
-        
+        self.get_shots_fired = pm.r_int(self.mem, self.addr + Offset.m_iShotsFired)        
         
     @property
     def name(self):
@@ -87,7 +84,68 @@ class Entity():
         getWeaponAddressHandle = pm.r_int(self.mem, module + Offset.dwEntityList + (getWeaponAddress - 1) * 0x10)
         return pm.r_int16(self.mem, getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
 
-# bombIndexAddr = []
+playersInfoAddr = []
+def getPlayerInfo():
+    try:
+        csgo_proc = pm.open_process(processName="csgo.exe")
+        csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
+        csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
+        engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
+        get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
+    except Exception as err:
+        print(err)
+        exit(0)
+    
+    if get_state == 6:
+        try:
+            
+            playersInfoAddr.clear()
+            for i in range(1, 32):
+                entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + i * 0x10)
+
+                player_resources = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwPlayerResource)
+                if entity != 0:
+                    ents = Entity(entity, Process.csgo, Process.csgo_client)
+                                        
+                    entityCompRank = pm.r_int(Process.csgo, player_resources + Offset.m_iCompetitiveRanking + (i+1) * 4)
+                    entityCompWins = pm.r_int(Process.csgo, player_resources + Offset.m_iCompetitiveWins + (i+1) * 4)
+                    
+                    if [i, ents.name, entity ,entityCompRank ,entityCompWins] not in playersInfoAddr:
+                        playersInfoAddr.append([i, ents.name, entity, entityCompRank, entityCompWins])
+        except Exception as err:
+            print(err)
+            pass
+    # print(len(playersInfoAddr))
+    # time.sleep(15.00)
+
+bombIndexAddr = []
+def getBombInfo():
+    while pm.overlay_loop():
+        try:
+            GameRulesProxy = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwGameRulesProxy)
+            bombPlanted = pm.r_int(Process.csgo, GameRulesProxy + Offset.m_bBombPlanted)
+            if bombPlanted == 1:
+                bombIndexAddr.clear()
+                for i in range(300, 550):
+                    entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + i * 0x10)
+                    if entity != 0:
+                        
+                        client_networkable = pm.r_int(Process.csgo, entity + 0x8)
+                        dwGetClientClassFn = pm.r_int(Process.csgo, client_networkable + 0x8)
+                        entity_client_class = pm.r_int(Process.csgo, dwGetClientClassFn+ 0x1)
+                        class_id = pm.r_int(Process.csgo, entity_client_class + 0x14)
+                        # print(class_id)
+                        if class_id == 129:
+                            if [entity] not in bombIndexAddr:
+                                bombIndexAddr.append(entity)
+            else:
+                bombIndexAddr.clear()
+        except Exception as err:
+            print(err)
+            pass
+        # print(bombPlanted)
+        
+        time.sleep(1.00)
 
 def newOverlay():
     try:
@@ -422,13 +480,459 @@ def newOverlay():
                         pass
         pm.end_drawing()
 
+def triggerbot():
+    while True:
+        if Process.csgo:
+            try:
+                if triggerbotEnabled == 1:
+                    if Process.u32.GetAsyncKeyState(triggerbotKey):
+                        localPlayerAddr = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwLocalPlayer)
+                        crosshairID = pm.r_int(Process.csgo, localPlayerAddr + Offset.m_iCrosshairId)
+
+                        entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + (crosshairID - 1) * 0x10)
+                        entity = Entity(entity, Process.csgo, Process.csgo_client)
+                        
+                        localplayer = Entity(localPlayerAddr, Process.csgo, Process.csgo_client)
+                        
+                        player_team = localplayer.team
+                        entity_team = entity.team
+
+                        if crosshairID > 0 and crosshairID <= 64 and player_team != entity_team:
+                            Process.k32.Sleep(triggerbotDelayBeforeShot)
+                            Process.u32.mouse_event(0x0002, 0, 0, 0, 0)
+                            Process.k32.Sleep(50)
+                            Process.u32.mouse_event(0x0004, 0, 0, 0, 0)
+                            Process.k32.Sleep(triggerbotDelayAfterShot)
+            except Exception as err:
+                if Process.DEBUG_MODE:
+                    print(err)
+                continue
+        time.sleep(0.001)
+
+# from PyQt5 import QtCore, QtGui, QtWidgets
+
+
+# class Ui_MainWindow(object):
+#     def setupUi(self, MainWindow):
+#         MainWindow.setObjectName("MainWindow")
+#         MainWindow.resize(856, 598)
+#         MainWindow.setMinimumSize(QtCore.QSize(700, 500))
+#         MainWindow.setStyleSheet("*{\n"
+# "    border: none;\n"
+# "    background-color: transparent;\n"
+# "    background: none;\n"
+# "    padding: 0;\n"
+# "    margin: 0;\n"
+# "    color: #fff;\n"
+# "}\n"
+# "\n"
+# "#centralwidget{\n"
+# "    background-color: #1f232a;\n"
+# "}\n"
+# "\n"
+# "#leftMenuSubContainer{\n"
+# "    background-color: #16191d;\n"
+# "}\n"
+# "\n"
+# "#leftMenuSubContainer QPushButton{\n"
+# "    text-align: left;\n"
+# "    padding: 5px 10px;\n"
+# "    border-top-left-radius: 10px;\n"
+# "    border-bottom-left-radius: 10px;\n"
+# "    color: red;\n"
+# "}")
+#         self.centralwidget = QtWidgets.QWidget(MainWindow)
+#         self.centralwidget.setStyleSheet("")
+#         self.centralwidget.setObjectName("centralwidget")
+#         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
+#         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+#         self.horizontalLayout.setSpacing(0)
+#         self.horizontalLayout.setObjectName("horizontalLayout")
+#         self.leftMenuContainer = QtWidgets.QWidget(self.centralwidget)
+#         self.leftMenuContainer.setObjectName("leftMenuContainer")
+#         self.verticalLayout = QtWidgets.QVBoxLayout(self.leftMenuContainer)
+#         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+#         self.verticalLayout.setSpacing(0)
+#         self.verticalLayout.setObjectName("verticalLayout")
+#         self.leftMenuSubContainer = QtWidgets.QWidget(self.leftMenuContainer)
+#         self.leftMenuSubContainer.setObjectName("leftMenuSubContainer")
+#         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.leftMenuSubContainer)
+#         self.verticalLayout_2.setContentsMargins(5, 0, 5, 0)
+#         self.verticalLayout_2.setSpacing(0)
+#         self.verticalLayout_2.setObjectName("verticalLayout_2")
+#         self.leftMenuHeaderContainer = QtWidgets.QFrame(self.leftMenuSubContainer)
+#         self.leftMenuHeaderContainer.setFrameShape(QtWidgets.QFrame.StyledPanel)
+#         self.leftMenuHeaderContainer.setFrameShadow(QtWidgets.QFrame.Raised)
+#         self.leftMenuHeaderContainer.setObjectName("leftMenuHeaderContainer")
+#         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.leftMenuHeaderContainer)
+#         self.verticalLayout_3.setContentsMargins(0, 6, 0, 0)
+#         self.verticalLayout_3.setSpacing(0)
+#         self.verticalLayout_3.setObjectName("verticalLayout_3")
+#         self.HeaderText = QtWidgets.QLabel(self.leftMenuHeaderContainer)
+#         font = QtGui.QFont()
+#         font.setBold(True)
+#         font.setWeight(75)
+#         self.HeaderText.setFont(font)
+#         self.HeaderText.setObjectName("HeaderText")
+#         self.verticalLayout_3.addWidget(self.HeaderText, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
+#         self.verticalLayout_2.addWidget(self.leftMenuHeaderContainer, 0, QtCore.Qt.AlignTop)
+#         self.leftMenuMainContainer = QtWidgets.QFrame(self.leftMenuSubContainer)
+#         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+#         sizePolicy.setHorizontalStretch(0)
+#         sizePolicy.setVerticalStretch(0)
+#         sizePolicy.setHeightForWidth(self.leftMenuMainContainer.sizePolicy().hasHeightForWidth())
+#         self.leftMenuMainContainer.setSizePolicy(sizePolicy)
+#         self.leftMenuMainContainer.setFrameShape(QtWidgets.QFrame.StyledPanel)
+#         self.leftMenuMainContainer.setFrameShadow(QtWidgets.QFrame.Raised)
+#         self.leftMenuMainContainer.setObjectName("leftMenuMainContainer")
+#         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.leftMenuMainContainer)
+#         self.verticalLayout_4.setContentsMargins(0, 10, 0, 10)
+#         self.verticalLayout_4.setSpacing(0)
+#         self.verticalLayout_4.setObjectName("verticalLayout_4")
+#         self.wh = QtWidgets.QPushButton(self.leftMenuMainContainer)
+#         self.wh.setObjectName("wh")
+#         self.verticalLayout_4.addWidget(self.wh)
+#         self.playersBtn = QtWidgets.QPushButton(self.leftMenuMainContainer)
+#         self.playersBtn.setObjectName("playersBtn")
+#         self.verticalLayout_4.addWidget(self.playersBtn)
+#         self.verticalLayout_2.addWidget(self.leftMenuMainContainer, 0, QtCore.Qt.AlignTop)
+#         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+#         self.verticalLayout_2.addItem(spacerItem)
+#         self.leftMenuFooterContainer = QtWidgets.QFrame(self.leftMenuSubContainer)
+#         self.leftMenuFooterContainer.setFrameShape(QtWidgets.QFrame.StyledPanel)
+#         self.leftMenuFooterContainer.setFrameShadow(QtWidgets.QFrame.Raised)
+#         self.leftMenuFooterContainer.setObjectName("leftMenuFooterContainer")
+#         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.leftMenuFooterContainer)
+#         self.verticalLayout_5.setContentsMargins(0, 10, 0, 10)
+#         self.verticalLayout_5.setSpacing(0)
+#         self.verticalLayout_5.setObjectName("verticalLayout_5")
+#         self.settingsBtn = QtWidgets.QPushButton(self.leftMenuFooterContainer)
+#         self.settingsBtn.setObjectName("settingsBtn")
+#         self.verticalLayout_5.addWidget(self.settingsBtn)
+#         self.verticalLayout_2.addWidget(self.leftMenuFooterContainer, 0, QtCore.Qt.AlignBottom)
+#         self.verticalLayout.addWidget(self.leftMenuSubContainer, 0, QtCore.Qt.AlignLeft)
+#         self.horizontalLayout.addWidget(self.leftMenuContainer, 0, QtCore.Qt.AlignLeft)
+#         self.mainBodyContainer = QtWidgets.QWidget(self.centralwidget)
+#         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+#         sizePolicy.setHorizontalStretch(0)
+#         sizePolicy.setVerticalStretch(0)
+#         sizePolicy.setHeightForWidth(self.mainBodyContainer.sizePolicy().hasHeightForWidth())
+#         self.mainBodyContainer.setSizePolicy(sizePolicy)
+#         self.mainBodyContainer.setStyleSheet("")
+#         self.mainBodyContainer.setObjectName("mainBodyContainer")
+#         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.mainBodyContainer)
+#         self.verticalLayout_6.setContentsMargins(6, 0, 6, 0)
+#         self.verticalLayout_6.setSpacing(0)
+#         self.verticalLayout_6.setObjectName("verticalLayout_6")
+#         self.headerContainer = QtWidgets.QWidget(self.mainBodyContainer)
+#         self.headerContainer.setStyleSheet("")
+#         self.headerContainer.setObjectName("headerContainer")
+#         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.headerContainer)
+#         self.horizontalLayout_3.setContentsMargins(0, 6, 6, 6)
+#         self.horizontalLayout_3.setSpacing(0)
+#         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+#         self.verticalLayout_6.addWidget(self.headerContainer)
+#         self.mainBodyContent = QtWidgets.QFrame(self.mainBodyContainer)
+#         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+#         sizePolicy.setHorizontalStretch(0)
+#         sizePolicy.setVerticalStretch(0)
+#         sizePolicy.setHeightForWidth(self.mainBodyContent.sizePolicy().hasHeightForWidth())
+#         self.mainBodyContent.setSizePolicy(sizePolicy)
+#         self.mainBodyContent.setStyleSheet("background-color: rgb(170, 170, 0);")
+#         self.mainBodyContent.setFrameShape(QtWidgets.QFrame.StyledPanel)
+#         self.mainBodyContent.setFrameShadow(QtWidgets.QFrame.Raised)
+#         self.mainBodyContent.setObjectName("mainBodyContent")
+#         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.mainBodyContent)
+#         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
+#         self.verticalLayout_7.setSpacing(0)
+#         self.verticalLayout_7.setObjectName("verticalLayout_7")
+#         self.mainBodyWidget = QtWidgets.QStackedWidget(self.mainBodyContent)
+#         self.mainBodyWidget.setObjectName("mainBodyWidget")
+#         self.playersPage = QtWidgets.QWidget()
+#         self.playersPage.setStyleSheet("background-color: rgb(50, 50, 50);")
+#         self.playersPage.setObjectName("playersPage")
+#         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.playersPage)
+#         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+#         self.verticalLayout_8.setSpacing(0)
+#         self.verticalLayout_8.setObjectName("verticalLayout_8")
+#         self.playersRefreshBtnContainer = QtWidgets.QWidget(self.playersPage)
+#         self.playersRefreshBtnContainer.setObjectName("playersRefreshBtnContainer")
+#         self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.playersRefreshBtnContainer)
+#         self.verticalLayout_10.setContentsMargins(-1, 0, -1, 0)
+#         self.verticalLayout_10.setObjectName("verticalLayout_10")
+#         self.playersRefreshBtn = QtWidgets.QPushButton(self.playersRefreshBtnContainer)
+#         self.playersRefreshBtn.setObjectName("playersRefreshBtn")
+#         self.verticalLayout_10.addWidget(self.playersRefreshBtn)
+#         self.verticalLayout_8.addWidget(self.playersRefreshBtnContainer, 0, QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+#         self.playersContainer = QtWidgets.QWidget(self.playersPage)
+#         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+#         sizePolicy.setHorizontalStretch(0)
+#         sizePolicy.setVerticalStretch(0)
+#         sizePolicy.setHeightForWidth(self.playersContainer.sizePolicy().hasHeightForWidth())
+#         self.playersContainer.setSizePolicy(sizePolicy)
+#         self.playersContainer.setStyleSheet("border: 2px solid black;")
+#         self.playersContainer.setObjectName("playersContainer")
+#         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.playersContainer)
+#         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+#         self.playersNameContainer = QtWidgets.QWidget(self.playersContainer)
+#         self.playersNameContainer.setObjectName("playersNameContainer")
+#         self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.playersNameContainer)
+#         self.verticalLayout_11.setObjectName("verticalLayout_11")
+#         self.playersName0 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName0.setText("")
+#         self.playersName0.setObjectName("playersName0")
+#         self.verticalLayout_11.addWidget(self.playersName0)
+#         self.playersName1 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName1.setText("")
+#         self.playersName1.setObjectName("playersName1")
+#         self.verticalLayout_11.addWidget(self.playersName1)
+#         self.playersName2 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName2.setText("")
+#         self.playersName2.setObjectName("playersName2")
+#         self.verticalLayout_11.addWidget(self.playersName2)
+#         self.playersName3 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName3.setText("")
+#         self.playersName3.setObjectName("playersName3")
+#         self.verticalLayout_11.addWidget(self.playersName3)
+#         self.playersName4 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName4.setText("")
+#         self.playersName4.setObjectName("playersName4")
+#         self.verticalLayout_11.addWidget(self.playersName4)
+#         self.playersName5 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName5.setText("")
+#         self.playersName5.setObjectName("playersName5")
+#         self.verticalLayout_11.addWidget(self.playersName5)
+#         self.playersName6 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName6.setText("")
+#         self.playersName6.setObjectName("playersName6")
+#         self.verticalLayout_11.addWidget(self.playersName6)
+#         self.playersName7 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName7.setText("")
+#         self.playersName7.setObjectName("playersName7")
+#         self.verticalLayout_11.addWidget(self.playersName7)
+#         self.playersName8 = QtWidgets.QLabel(self.playersNameContainer)
+#         self.playersName8.setText("")
+#         self.playersName8.setObjectName("playersName8")
+#         self.verticalLayout_11.addWidget(self.playersName8)
+#         self.horizontalLayout_4.addWidget(self.playersNameContainer)
+#         self.playersRankContainer = QtWidgets.QWidget(self.playersContainer)
+#         self.playersRankContainer.setObjectName("playersRankContainer")
+#         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.playersRankContainer)
+#         self.verticalLayout_9.setObjectName("verticalLayout_9")
+#         self.playersRank0 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank0.setText("")
+#         self.playersRank0.setObjectName("playersRank0")
+#         self.verticalLayout_9.addWidget(self.playersRank0)
+#         self.playersRank1 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank1.setText("")
+#         self.playersRank1.setObjectName("playersRank1")
+#         self.verticalLayout_9.addWidget(self.playersRank1)
+#         self.playersRank2 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank2.setText("")
+#         self.playersRank2.setObjectName("playersRank2")
+#         self.verticalLayout_9.addWidget(self.playersRank2)
+#         self.playersRank3 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank3.setText("")
+#         self.playersRank3.setObjectName("playersRank3")
+#         self.verticalLayout_9.addWidget(self.playersRank3)
+#         self.playersRank4 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank4.setText("")
+#         self.playersRank4.setObjectName("playersRank4")
+#         self.verticalLayout_9.addWidget(self.playersRank4)
+#         self.playersRank5 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank5.setText("")
+#         self.playersRank5.setObjectName("playersRank5")
+#         self.verticalLayout_9.addWidget(self.playersRank5)
+#         self.playersRank6 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank6.setText("")
+#         self.playersRank6.setObjectName("playersRank6")
+#         self.verticalLayout_9.addWidget(self.playersRank6)
+#         self.playersRank7 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank7.setText("")
+#         self.playersRank7.setObjectName("playersRank7")
+#         self.verticalLayout_9.addWidget(self.playersRank7)
+#         self.playersRank8 = QtWidgets.QLabel(self.playersRankContainer)
+#         self.playersRank8.setText("")
+#         self.playersRank8.setObjectName("playersRank8")
+#         self.verticalLayout_9.addWidget(self.playersRank8)
+#         self.horizontalLayout_4.addWidget(self.playersRankContainer)
+#         self.playersWinsContainer = QtWidgets.QWidget(self.playersContainer)
+#         self.playersWinsContainer.setObjectName("playersWinsContainer")
+#         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.playersWinsContainer)
+#         self.verticalLayout_12.setObjectName("verticalLayout_12")
+#         self.playersWins0 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins0.setText("")
+#         self.playersWins0.setObjectName("playersWins0")
+#         self.verticalLayout_12.addWidget(self.playersWins0)
+#         self.playersWins1 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins1.setText("")
+#         self.playersWins1.setObjectName("playersWins1")
+#         self.verticalLayout_12.addWidget(self.playersWins1)
+#         self.playersWins2 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins2.setText("")
+#         self.playersWins2.setObjectName("playersWins2")
+#         self.verticalLayout_12.addWidget(self.playersWins2)
+#         self.playersWins3 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins3.setText("")
+#         self.playersWins3.setObjectName("playersWins3")
+#         self.verticalLayout_12.addWidget(self.playersWins3)
+#         self.playersWins4 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins4.setText("")
+#         self.playersWins4.setObjectName("playersWins4")
+#         self.verticalLayout_12.addWidget(self.playersWins4)
+#         self.playersWins5 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins5.setText("")
+#         self.playersWins5.setObjectName("playersWins5")
+#         self.verticalLayout_12.addWidget(self.playersWins5)
+#         self.playersWins6 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins6.setText("")
+#         self.playersWins6.setObjectName("playersWins6")
+#         self.verticalLayout_12.addWidget(self.playersWins6)
+#         self.playersWins7 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins7.setText("")
+#         self.playersWins7.setObjectName("playersWins7")
+#         self.verticalLayout_12.addWidget(self.playersWins7)
+#         self.playersWins8 = QtWidgets.QLabel(self.playersWinsContainer)
+#         self.playersWins8.setText("")
+#         self.playersWins8.setObjectName("playersWins8")
+#         self.verticalLayout_12.addWidget(self.playersWins8)
+#         self.horizontalLayout_4.addWidget(self.playersWinsContainer)
+#         self.playersFaceitContainer = QtWidgets.QWidget(self.playersContainer)
+#         self.playersFaceitContainer.setObjectName("playersFaceitContainer")
+#         self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.playersFaceitContainer)
+#         self.verticalLayout_13.setObjectName("verticalLayout_13")
+#         self.horizontalLayout_4.addWidget(self.playersFaceitContainer)
+#         self.verticalLayout_8.addWidget(self.playersContainer)
+#         self.mainBodyWidget.addWidget(self.playersPage)
+#         self.testPage = QtWidgets.QWidget()
+#         self.testPage.setObjectName("testPage")
+#         self.mainBodyWidget.addWidget(self.testPage)
+#         self.verticalLayout_7.addWidget(self.mainBodyWidget)
+#         self.verticalLayout_6.addWidget(self.mainBodyContent)
+#         self.horizontalLayout.addWidget(self.mainBodyContainer)
+#         MainWindow.setCentralWidget(self.centralwidget)
+
+#         self.retranslateUi(MainWindow)
+#         self.mainBodyWidget.setCurrentIndex(0)
+#         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+#     def display_players(self): #Update players button -- make a check if the rank is not 0 then display players
+#         getPlayerInfo()
+#         _translate = QtCore.QCoreApplication.translate
+#         if len(playersInfoAddr) == 9:
+#             print('clicked')
+#             self.playersName0.setText(_translate("MainWindow", str(playersInfoAddr[0][1])))
+#             self.playersName1.setText(_translate("MainWindow", str(playersInfoAddr[1][1])))
+#             self.playersName2.setText(_translate("MainWindow", str(playersInfoAddr[2][1])))
+#             self.playersName3.setText(_translate("MainWindow", str(playersInfoAddr[3][1])))
+#             self.playersName4.setText(_translate("MainWindow", str(playersInfoAddr[4][1])))
+#             self.playersName5.setText(_translate("MainWindow", str(playersInfoAddr[5][1])))
+#             self.playersName6.setText(_translate("MainWindow", str(playersInfoAddr[6][1])))
+#             self.playersName7.setText(_translate("MainWindow", str(playersInfoAddr[7][1])))
+#             self.playersName8.setText(_translate("MainWindow", str(playersInfoAddr[8][1])))
+            
+#             self.playersRank0.setText(_translate("MainWindow", str(playersInfoAddr[0][3])))
+#             self.playersRank1.setText(_translate("MainWindow", str(playersInfoAddr[1][3])))
+#             self.playersRank2.setText(_translate("MainWindow", str(playersInfoAddr[2][3])))
+#             self.playersRank3.setText(_translate("MainWindow", str(playersInfoAddr[3][3])))
+#             self.playersRank4.setText(_translate("MainWindow", str(playersInfoAddr[4][3])))
+#             self.playersRank5.setText(_translate("MainWindow", str(playersInfoAddr[5][3])))
+#             self.playersRank6.setText(_translate("MainWindow", str(playersInfoAddr[6][3])))
+#             self.playersRank7.setText(_translate("MainWindow", str(playersInfoAddr[7][3])))
+#             self.playersRank8.setText(_translate("MainWindow", str(playersInfoAddr[8][3])))
+            
+#             self.playersWins0.setText(_translate("MainWindow", str(playersInfoAddr[0][4])))
+#             self.playersWins1.setText(_translate("MainWindow", str(playersInfoAddr[1][4])))
+#             self.playersWins2.setText(_translate("MainWindow", str(playersInfoAddr[2][4])))
+#             self.playersWins3.setText(_translate("MainWindow", str(playersInfoAddr[3][4])))
+#             self.playersWins4.setText(_translate("MainWindow", str(playersInfoAddr[4][4])))
+#             self.playersWins5.setText(_translate("MainWindow", str(playersInfoAddr[5][4])))
+#             self.playersWins6.setText(_translate("MainWindow", str(playersInfoAddr[6][4])))
+#             self.playersWins7.setText(_translate("MainWindow", str(playersInfoAddr[7][4])))
+#             self.playersWins8.setText(_translate("MainWindow", str(playersInfoAddr[8][4])))
+            
+#         elif len(playersInfoAddr) == 3:
+#             self.playersName0.setText(_translate("MainWindow", str(playersInfoAddr[0][1])))
+#             self.playersName1.setText(_translate("MainWindow", str(playersInfoAddr[1][1])))
+#             self.playersName2.setText(_translate("MainWindow", str(playersInfoAddr[2][1])))
+            
+#             self.playersRank0.setText(_translate("MainWindow", str(playersInfoAddr[0][3])))
+#             self.playersRank1.setText(_translate("MainWindow", str(playersInfoAddr[1][3])))
+#             self.playersRank2.setText(_translate("MainWindow", str(playersInfoAddr[2][3])))
+            
+#             self.playersWins0.setText(_translate("MainWindow", str(playersInfoAddr[0][4])))
+#             self.playersWins1.setText(_translate("MainWindow", str(playersInfoAddr[1][4])))
+#             self.playersWins2.setText(_translate("MainWindow", str(playersInfoAddr[2][4])))
+            
+#         else:
+#             print('you are not playing on matchmaking or not all players are connected')
+            
+#     def retranslateUi(self, MainWindow):
+#         _translate = QtCore.QCoreApplication.translate
+#         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+#         self.HeaderText.setText(_translate("MainWindow", "HARDSENSE BETA"))
+#         self.wh.setToolTip(_translate("MainWindow", "Analysis"))
+#         self.wh.setText(_translate("MainWindow", "WH"))
+#         self.playersBtn.setToolTip(_translate("MainWindow", "Reports"))
+#         self.playersBtn.setText(_translate("MainWindow", "Players"))
+#         self.settingsBtn.setToolTip(_translate("MainWindow", "Settings"))
+#         self.settingsBtn.setText(_translate("MainWindow", "Settings"))
+#         self.playersRefreshBtn.setText(_translate("MainWindow", "refresh"))
+        
+#         self.wh.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(1))
+#         self.playersBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(0))
+#         self.playersRefreshBtn.clicked.connect(self.display_players)
+
+
+    # def retranslateUi(self, MainWindow):
+    #     _translate = QtCore.QCoreApplication.translate
+    #     MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+    #     self.HeaderText.setText(_translate("MainWindow", "HARDSENSE BETA"))
+    #     self.homeBtn.setToolTip(_translate("MainWindow", "Home"))
+    #     self.homeBtn.setText(_translate("MainWindow", "AIMBOT"))
+    #     self.analysisBtn.setToolTip(_translate("MainWindow", "Analysis"))
+    #     self.analysisBtn.setText(_translate("MainWindow", "WH"))
+    #     self.reportsBtn.setToolTip(_translate("MainWindow", "Reports"))
+    #     self.reportsBtn.setText(_translate("MainWindow", "Players"))
+        
+
+        
+    #     self.settingsBtn.setToolTip(_translate("MainWindow", "Settings"))
+    #     self.settingsBtn.setText(_translate("MainWindow", "Settings"))
+    #     self.pushButton_4.setText(_translate("MainWindow", "refresh"))
+        
+    #     self.playersName0.setText(_translate("MainWindow", "0"))
+    #     self.playersName1.setText(_translate("MainWindow", "0"))
+    #     self.playersName2.setText(_translate("MainWindow", "0"))
+    #     self.playersName3.setText(_translate("MainWindow", "0"))
+    #     self.playersName4.setText(_translate("MainWindow", "0"))
+    #     self.playersName5.setText(_translate("MainWindow", "0"))
+    #     self.playersName6.setText(_translate("MainWindow", "0"))
+    #     self.playersName7.setText(_translate("MainWindow", "0"))
+    #     self.playersName8.setText(_translate("MainWindow", "0"))
+        
+    #     self.analysisBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(1))
+    #     self.reportsBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(0))
+    #     self.pushButton_4.clicked.connect(self.display_players)
+
+
+
 def main():
     threading.Thread(target=processInfo.checkGameFocus, name='checkGameFocus', daemon=True).start()
     threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
-    # threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
     threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
     newOverlay() #start after all processes
     
 if __name__ == "__main__":    
-    pm.overlay_init(fps=155, title='test')
+    pm.overlay_init(fps=1550, title='test')
+    
+    # app = QtWidgets.QApplication(sys.argv)
+    # MainWindow = QtWidgets.QMainWindow()
+    # ui = Ui_MainWindow()
+    # ui.setupUi(MainWindow)
+    # MainWindow.show()
+    
     main()
+    
+    # sys.exit(app.exec_())
+    
