@@ -917,7 +917,7 @@ QWidget:pressed {
                        </font>
                       </property>
                       <property name="text">
-                       <string>asdasdasd</string>
+                       <string>HARDSENSE</string>
                       </property>
                       <property name="textFormat">
                        <enum>Qt::AutoText</enum>
@@ -1611,7 +1611,7 @@ QWidget:pressed {
                        </font>
                       </property>
                       <property name="text">
-                       <string>32</string>
+                       <string>999</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>

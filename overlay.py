@@ -1735,13 +1735,9 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.mainBodyWidget.setCurrentIndex(0)
          
-        
-        self.buttonGroup_2.buttonClicked[int].connect(self.openFaceit) # adding [int] to get the button ID from a group
-        self.buttonGroup.buttonClicked[int].connect(self.openCSGOStats)
-         
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def display_players(self): #Update players button -- make a check if the rank is not 0 then display players
+    def display_players(self): #Update players button -- make a check if the rank is not 0 then display players        
         getPlayerInfo()
         _translate = QtCore.QCoreApplication.translate
         
@@ -1750,61 +1746,68 @@ class Ui_MainWindow(object):
         icon8 = QtGui.QIcon()
         icon8.addPixmap(QtGui.QPixmap(":/icons/assets/UI/csgoPlayer_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 
+        steamidsFounds = 0
+        for steamids in playersInfoAddr: #Check that the button is not clicked when nothing is there otherwise - crash
+            if steamids[5] > 1:
+                steamidsFounds = 1
+        
+        
+        if steamidsFounds == 1:
         
         # if len(playersInfoAddr) == 9:
             
         # for eee in playersInfoAddr: #Display players by team -- future update
         #     if eee[2] == 2:
         
-        self.playersName0.setText(_translate("MainWindow", str(playersInfoAddr[0][1])))
-        self.playersName1.setText(_translate("MainWindow", str(playersInfoAddr[1][1])))
-        self.playersName2.setText(_translate("MainWindow", str(playersInfoAddr[2][1])))
-        self.playersName3.setText(_translate("MainWindow", str(playersInfoAddr[3][1])))
-        self.playersName4.setText(_translate("MainWindow", str(playersInfoAddr[4][1])))
-        self.playersName5.setText(_translate("MainWindow", str(playersInfoAddr[5][1])))
-        self.playersName6.setText(_translate("MainWindow", str(playersInfoAddr[6][1])))
-        self.playersName7.setText(_translate("MainWindow", str(playersInfoAddr[7][1])))
-        self.playersName8.setText(_translate("MainWindow", str(playersInfoAddr[8][1])))
-        
-        self.playersRank0.setText(_translate("MainWindow", str(playersInfoAddr[0][3])))
-        self.playersRank1.setText(_translate("MainWindow", str(playersInfoAddr[1][3])))
-        self.playersRank2.setText(_translate("MainWindow", str(playersInfoAddr[2][3])))
-        self.playersRank3.setText(_translate("MainWindow", str(playersInfoAddr[3][3])))
-        self.playersRank4.setText(_translate("MainWindow", str(playersInfoAddr[4][3])))
-        self.playersRank5.setText(_translate("MainWindow", str(playersInfoAddr[5][3])))
-        self.playersRank6.setText(_translate("MainWindow", str(playersInfoAddr[6][3])))
-        self.playersRank7.setText(_translate("MainWindow", str(playersInfoAddr[7][3])))
-        self.playersRank8.setText(_translate("MainWindow", str(playersInfoAddr[8][3])))
-        
-        self.playersWins0.setText(_translate("MainWindow", str(playersInfoAddr[0][4])))
-        self.playersWins1.setText(_translate("MainWindow", str(playersInfoAddr[1][4])))
-        self.playersWins2.setText(_translate("MainWindow", str(playersInfoAddr[2][4])))
-        self.playersWins3.setText(_translate("MainWindow", str(playersInfoAddr[3][4])))
-        self.playersWins4.setText(_translate("MainWindow", str(playersInfoAddr[4][4])))
-        self.playersWins5.setText(_translate("MainWindow", str(playersInfoAddr[5][4])))
-        self.playersWins6.setText(_translate("MainWindow", str(playersInfoAddr[6][4])))
-        self.playersWins7.setText(_translate("MainWindow", str(playersInfoAddr[7][4])))
-        self.playersWins8.setText(_translate("MainWindow", str(playersInfoAddr[8][4])))
-        
-        self.playersFaceit0.setIcon(icon7)
-        self.playersFaceit1.setIcon(icon7)
-        self.playersFaceit2.setIcon(icon7)
-        self.playersFaceit3.setIcon(icon7)
-        self.playersFaceit4.setIcon(icon7)
-        self.playersFaceit5.setIcon(icon7)
-        self.playersFaceit6.setIcon(icon7)
-        self.playersFaceit7.setIcon(icon7)
-        self.playersFaceit8.setIcon(icon7)        
-        
-        self.CSGOStatsBtn.setIcon(icon8)
-        self.CSGOStatsBtn_2.setIcon(icon8)
-        self.CSGOStatsBtn_3.setIcon(icon8)
-        self.CSGOStatsBtn_4.setIcon(icon8)
-        self.CSGOStatsBtn_5.setIcon(icon8)
-        self.CSGOStatsBtn_6.setIcon(icon8)
-        self.CSGOStatsBtn_7.setIcon(icon8)
-        self.CSGOStatsBtn_8.setIcon(icon8)
-        self.CSGOStatsBtn_9.setIcon(icon8)
+            self.playersName0.setText(_translate("MainWindow", str(playersInfoAddr[0][1])))
+            self.playersName1.setText(_translate("MainWindow", str(playersInfoAddr[1][1])))
+            self.playersName2.setText(_translate("MainWindow", str(playersInfoAddr[2][1])))
+            self.playersName3.setText(_translate("MainWindow", str(playersInfoAddr[3][1])))
+            self.playersName4.setText(_translate("MainWindow", str(playersInfoAddr[4][1])))
+            self.playersName5.setText(_translate("MainWindow", str(playersInfoAddr[5][1])))
+            self.playersName6.setText(_translate("MainWindow", str(playersInfoAddr[6][1])))
+            self.playersName7.setText(_translate("MainWindow", str(playersInfoAddr[7][1])))
+            self.playersName8.setText(_translate("MainWindow", str(playersInfoAddr[8][1])))
+            
+            self.playersRank0.setText(_translate("MainWindow", str(playersInfoAddr[0][3])))
+            self.playersRank1.setText(_translate("MainWindow", str(playersInfoAddr[1][3])))
+            self.playersRank2.setText(_translate("MainWindow", str(playersInfoAddr[2][3])))
+            self.playersRank3.setText(_translate("MainWindow", str(playersInfoAddr[3][3])))
+            self.playersRank4.setText(_translate("MainWindow", str(playersInfoAddr[4][3])))
+            self.playersRank5.setText(_translate("MainWindow", str(playersInfoAddr[5][3])))
+            self.playersRank6.setText(_translate("MainWindow", str(playersInfoAddr[6][3])))
+            self.playersRank7.setText(_translate("MainWindow", str(playersInfoAddr[7][3])))
+            self.playersRank8.setText(_translate("MainWindow", str(playersInfoAddr[8][3])))
+            
+            self.playersWins0.setText(_translate("MainWindow", str(playersInfoAddr[0][4])))
+            self.playersWins1.setText(_translate("MainWindow", str(playersInfoAddr[1][4])))
+            self.playersWins2.setText(_translate("MainWindow", str(playersInfoAddr[2][4])))
+            self.playersWins3.setText(_translate("MainWindow", str(playersInfoAddr[3][4])))
+            self.playersWins4.setText(_translate("MainWindow", str(playersInfoAddr[4][4])))
+            self.playersWins5.setText(_translate("MainWindow", str(playersInfoAddr[5][4])))
+            self.playersWins6.setText(_translate("MainWindow", str(playersInfoAddr[6][4])))
+            self.playersWins7.setText(_translate("MainWindow", str(playersInfoAddr[7][4])))
+            self.playersWins8.setText(_translate("MainWindow", str(playersInfoAddr[8][4])))
+            
+            self.playersFaceit0.setIcon(icon7)
+            self.playersFaceit1.setIcon(icon7)
+            self.playersFaceit2.setIcon(icon7)
+            self.playersFaceit3.setIcon(icon7)
+            self.playersFaceit4.setIcon(icon7)
+            self.playersFaceit5.setIcon(icon7)
+            self.playersFaceit6.setIcon(icon7)
+            self.playersFaceit7.setIcon(icon7)
+            self.playersFaceit8.setIcon(icon7)        
+            
+            self.CSGOStatsBtn.setIcon(icon8)
+            self.CSGOStatsBtn_2.setIcon(icon8)
+            self.CSGOStatsBtn_3.setIcon(icon8)
+            self.CSGOStatsBtn_4.setIcon(icon8)
+            self.CSGOStatsBtn_5.setIcon(icon8)
+            self.CSGOStatsBtn_6.setIcon(icon8)
+            self.CSGOStatsBtn_7.setIcon(icon8)
+            self.CSGOStatsBtn_8.setIcon(icon8)
+            self.CSGOStatsBtn_9.setIcon(icon8)
         
         # elif len(playersInfoAddr) == 3:
         #     self.playersName0.setText(_translate("MainWindow", str(playersInfoAddr[0][1])))
@@ -1912,6 +1915,9 @@ class Ui_MainWindow(object):
         self.wallhackBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(2))
         self.playersBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(0))
         self.settingsBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(1))
+        
+        self.buttonGroup_2.buttonClicked[int].connect(self.openFaceit) # adding [int] to get the button ID from a group
+        self.buttonGroup.buttonClicked[int].connect(self.openCSGOStats)
         
         self.playersRefreshBtn.clicked.connect(self.display_players)
         
