@@ -686,7 +686,7 @@ QPushButton:pressed {
                        <string notr="true"/>
                       </property>
                       <property name="text">
-                       <string>asd</string>
+                       <string>STATUS:</string>
                       </property>
                      </widget>
                     </item>
@@ -1185,6 +1185,11 @@ QWidget:pressed {
                      <height>16777215</height>
                     </size>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLabel{
+	padding: 10px;
+}</string>
+                   </property>
                    <layout class="QVBoxLayout" name="verticalLayout_9">
                     <property name="spacing">
                      <number>0</number>
@@ -1255,7 +1260,7 @@ QWidget:pressed {
                        </font>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">padding: 10px;</string>
+                       <string notr="true"/>
                       </property>
                       <property name="frameShape">
                        <enum>QFrame::NoFrame</enum>
@@ -1316,6 +1321,9 @@ QWidget:pressed {
                       <property name="text">
                        <string/>
                       </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
+                      </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
@@ -1345,6 +1353,9 @@ QWidget:pressed {
                       <property name="text">
                        <string/>
                       </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
+                      </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
@@ -1371,8 +1382,14 @@ QWidget:pressed {
                         <bold>true</bold>
                        </font>
                       </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
                       <property name="text">
                        <string/>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -1403,6 +1420,9 @@ QWidget:pressed {
                       <property name="text">
                        <string/>
                       </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
+                      </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
@@ -1431,6 +1451,9 @@ QWidget:pressed {
                       </property>
                       <property name="text">
                        <string/>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -1461,6 +1484,9 @@ QWidget:pressed {
                       <property name="text">
                        <string/>
                       </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
+                      </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
@@ -1490,6 +1516,9 @@ QWidget:pressed {
                       <property name="text">
                        <string/>
                       </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
+                      </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
@@ -1518,6 +1547,9 @@ QWidget:pressed {
                       </property>
                       <property name="text">
                        <string/>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -2275,7 +2307,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn">
+                     <widget class="QPushButton" name="CSGOStatsBtn0">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2311,7 +2343,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_2">
+                     <widget class="QPushButton" name="CSGOStatsBtn1">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2340,7 +2372,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_3">
+                     <widget class="QPushButton" name="CSGOStatsBtn2">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2369,7 +2401,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_4">
+                     <widget class="QPushButton" name="CSGOStatsBtn3">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2398,7 +2430,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_5">
+                     <widget class="QPushButton" name="CSGOStatsBtn4">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2427,7 +2459,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_6">
+                     <widget class="QPushButton" name="CSGOStatsBtn5">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2456,7 +2488,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_7">
+                     <widget class="QPushButton" name="CSGOStatsBtn6">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2485,7 +2517,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_8">
+                     <widget class="QPushButton" name="CSGOStatsBtn7">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2514,7 +2546,7 @@ QWidget:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="CSGOStatsBtn_9">
+                     <widget class="QPushButton" name="CSGOStatsBtn8">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -2777,7 +2809,7 @@ padding: 0 0 5px 0;</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>
