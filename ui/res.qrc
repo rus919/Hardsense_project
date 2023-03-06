@@ -1,291 +1,34 @@
 <RCC>
   <qresource prefix="icons">
-    <file>C:/Users/Ruslan/Desktop/New folder/activity.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/airplay.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/alert-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/alert-octagon.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/alert-triangle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/align-center.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/align-justify.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/align-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/align-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/anchor.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/aperture.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/archive.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-down.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-down-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-down-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-down-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-left-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-right-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-up.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-up-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-up-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/arrow-up-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/at-sign.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/award.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/bar-chart.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/bar-chart-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/battery.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/battery-charging.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/bell.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/bell-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/bluetooth.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/bold.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/book.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/bookmark.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/book-open.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/box.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/briefcase.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/calendar.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/camera.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/camera-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cast.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/check.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/check-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/check-square.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevron-down.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevron-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevron-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevrons-down.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevrons-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevrons-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevrons-up.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chevron-up.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/chrome.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/clipboard.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/clock.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cloud.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cloud-drizzle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cloud-lightning.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cloud-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cloud-rain.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cloud-snow.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/code.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/codepen.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/codesandbox.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/coffee.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/columns.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/command.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/compass.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/copy.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-down-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-down-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-left-down.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-left-up.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-right-down.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-right-up.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-up-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/corner-up-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/cpu.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/credit-card.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/crop.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/crosshair.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/database.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/delete.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/disc.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/divide.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/divide-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/divide-square.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/dollar-sign.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/download.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/download-cloud.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/dribbble.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/droplet.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/edit.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/edit-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/edit-3.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/external-link.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/eye.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/eye-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/facebook.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/fast-forward.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/feather.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/figma.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/file.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/file-minus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/file-plus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/file-text.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/film.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/filter.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/flag.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/folder.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/folder-minus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/folder-plus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/framer.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/frown.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/gift.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/git-branch.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/git-commit.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/github.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/gitlab.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/git-merge.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/git-pull-request.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/globe.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/grid.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/hard-drive.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/hash.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/headphones.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/heart.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/help-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/hexagon.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/home.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/image.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/inbox.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/info.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/instagram.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/italic.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/key.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/layers.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/layout.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/life-buoy.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/link.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/link-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/linkedin.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/list.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/loader.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/lock.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/log-in.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/log-out.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/mail.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/map.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/map-pin.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/maximize.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/maximize-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/meh.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/menu.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/message-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/message-square.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/mic.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/mic-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/minimize.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/minimize-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/minus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/minus-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/minus-square.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/monitor.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/moon.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/more-horizontal.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/more-vertical.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/mouse-pointer.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/move.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/music.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/navigation.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/navigation-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/octagon.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/package.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/paperclip.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/pause.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/pause-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/pen-tool.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/percent.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/phone.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/phone-call.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/phone-forwarded.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/phone-incoming.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/phone-missed.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/phone-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/phone-outgoing.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/pie-chart.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/play.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/play-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/plus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/plus-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/plus-square.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/pocket.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/power.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/printer.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/radio.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/refresh-ccw.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/refresh-cw.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/repeat.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/rewind.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/rotate-ccw.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/rotate-cw.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/rss.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/save.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/scissors.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/search.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/send.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/server.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/settings.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/share.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/share-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/shield.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/shield-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/shopping-bag.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/shopping-cart.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/shuffle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/sidebar.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/skip-back.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/skip-forward.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/slack.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/slash.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/sliders.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/smartphone.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/smile.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/speaker.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/square.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/star.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/stop-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/sun.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/sunrise.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/sunset.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/table.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/tablet.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/tag.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/target.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/terminal.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/thermometer.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/thumbs-down.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/thumbs-up.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/toggle-left.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/toggle-right.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/tool.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/trash.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/trash-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/trello.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/trending-down.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/trending-up.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/triangle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/truck.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/tv.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/twitch.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/twitter.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/type.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/umbrella.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/underline.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/unlock.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/upload.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/upload-cloud.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/user.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/user-check.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/user-minus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/user-plus.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/users.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/user-x.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/video.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/video-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/voicemail.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/volume.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/volume-1.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/volume-2.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/volume-x.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/watch.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/wifi.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/wifi-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/wind.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/x.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/x-circle.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/x-octagon.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/x-square.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/youtube.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/zap.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/zap-off.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/zoom-in.svg</file>
-    <file>C:/Users/Ruslan/Desktop/New folder/zoom-out.svg</file>
+    <file>../assets/UI/csgoPlayer_icon.svg</file>
+    <file>../assets/UI/faceit_icon.png</file>
+    <file>../assets/UI/eye_icon.svg</file>
+    <file>../assets/UI/players_icon.svg</file>
+    <file>settings_icon.svg</file>
+    <file>../assets/UI/minus_icon.svg</file>
+    <file>../assets/UI/cross_icon.svg</file>
+    <file>../assets/UI/square_icon.svg</file>
+    <file>../assets/UI/menu_icon.svg</file>
+    <file>../assets/UI/refresh_icon.svg</file>
+  </qresource>
+  <qresource prefix="ranks">
+    <file>../assets/Ranks/dmg.png</file>
+    <file>../assets/Ranks/global.png</file>
+    <file>../assets/Ranks/gn1.png</file>
+    <file>../assets/Ranks/gn2.png</file>
+    <file>../assets/Ranks/gn3.png</file>
+    <file>../assets/Ranks/gn4.png</file>
+    <file>../assets/Ranks/le.png</file>
+    <file>../assets/Ranks/lem.png</file>
+    <file>../assets/Ranks/mg.png</file>
+    <file>../assets/Ranks/mg1.png</file>
+    <file>../assets/Ranks/mg2.png</file>
+    <file>../assets/Ranks/silver_elite.png</file>
+    <file>../assets/Ranks/silver1.png</file>
+    <file>../assets/Ranks/silver2.png</file>
+    <file>../assets/Ranks/silver3.png</file>
+    <file>../assets/Ranks/silver4.png</file>
+    <file>../assets/Ranks/silver5.png</file>
+    <file>../assets/Ranks/supreme.png</file>
   </qresource>
 </RCC>

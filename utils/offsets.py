@@ -17,6 +17,7 @@ class Offset():
     dwClientState_PlayerInfo = int(response["signatures"]["dwClientState_PlayerInfo"])
     is_c4_owner = int(response["signatures"]["is_c4_owner"])
     dwGlobalVars = int(response["signatures"]["dwGlobalVars"])
+    dwClientState = int(response["signatures"]["dwClientState"])
     
     m_iHealth = int(response["netvars"]["m_iHealth"])
     m_iTeamNum = int(response["netvars"]["m_iTeamNum"])
