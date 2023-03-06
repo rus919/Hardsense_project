@@ -141,33 +141,45 @@ def getPlayerInfo():
     # time.sleep(15.00)
 
 bombIndexAddr = []
-# def getBombInfo():
-#     while pm.overlay_loop():
-#         try:
-#             GameRulesProxy = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwGameRulesProxy)
-#             bombPlanted = pm.r_int(Process.csgo, GameRulesProxy + Offset.m_bBombPlanted)
-#             if bombPlanted == 1:
-#                 bombIndexAddr.clear()
-#                 for i in range(300, 550):
-#                     entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + i * 0x10)
-#                     if entity != 0:
-                        
-#                         client_networkable = pm.r_int(Process.csgo, entity + 0x8)
-#                         dwGetClientClassFn = pm.r_int(Process.csgo, client_networkable + 0x8)
-#                         entity_client_class = pm.r_int(Process.csgo, dwGetClientClassFn+ 0x1)
-#                         class_id = pm.r_int(Process.csgo, entity_client_class + 0x14)
-#                         # print(class_id)
-#                         if class_id == 129:
-#                             if [entity] not in bombIndexAddr:
-#                                 bombIndexAddr.append(entity)
-#             else:
-#                 bombIndexAddr.clear()
-#         except Exception as err:
-#             print(err)
-#             pass
-#         # print(bombPlanted)
+def getBombInfo():
+    while pm.overlay_loop():
+        try:
+            csgo_proc = pm.open_process(processName="csgo.exe")
+            csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
+            csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
+            engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
+            get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
+        except Exception as err:
+            print(err)
+            # exit(0)
+            pass
         
-#         time.sleep(1.00)
+        if get_state == 6:
+            try:
+                GameRulesProxy = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwGameRulesProxy)
+                bombPlanted = pm.r_int(Process.csgo, GameRulesProxy + Offset.m_bBombPlanted)
+                if bombPlanted == 1:
+                    bombIndexAddr.clear()
+                    for i in range(300, 550):
+                        entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + i * 0x10)
+                        if entity != 0:
+                            
+                            client_networkable = pm.r_int(Process.csgo, entity + 0x8)
+                            dwGetClientClassFn = pm.r_int(Process.csgo, client_networkable + 0x8)
+                            entity_client_class = pm.r_int(Process.csgo, dwGetClientClassFn+ 0x1)
+                            class_id = pm.r_int(Process.csgo, entity_client_class + 0x14)
+                            # print(class_id)
+                            if class_id == 129:
+                                if [entity] not in bombIndexAddr:
+                                    bombIndexAddr.append(entity)
+                else:
+                    bombIndexAddr.clear()
+            except Exception as err:
+                print('111', err)
+                pass
+        # print(bombPlanted)
+        
+        time.sleep(1.00)
 
 def newOverlay():
     try:
@@ -1756,67 +1768,91 @@ class Ui_MainWindow(object):
         icon7.addPixmap(QtGui.QPixmap(":/icons/assets/UI/faceit_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon8 = QtGui.QIcon()
         icon8.addPixmap(QtGui.QPixmap(":/icons/assets/UI/csgoPlayer_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-                
-        steamidsFounds = 0
-        for steamids in playersInfoAddr: #Check that the button is not clicked when nothing is there otherwise - crash
-            if steamids[5] > 1:
-                steamidsFounds = 1
-        
-        
-        if steamidsFounds == 1:
-        
-        # if len(playersInfoAddr) == 9:
-        
-            # playersNameArr = []
-            for i in range(0, 9): #Display players by team -- future update
-                # asd = str(i) + 'setText(_translate("MainWindow", str(playersInfoAdd[' + str(i) + '][1])))'
-                # print(asd)
-                playerNames = 'self.playersName' + str(i) + '.setText(_translate("MainWindow", str(playersInfoAddr[' + str(i) + '][1])))'
-                playerWins = 'self.playersWins' + str(i) + '.setText(_translate("MainWindow", str(playersInfoAddr[' + str(i) + '][4])))'
-                playersFaceit = 'self.playersFaceit' + str(i) + '.setIcon(icon7)'
-                playersCSGOStats = 'self.CSGOStatsBtn' + str(i) + '.setIcon(icon8)'
-                
-                exec(playerNames), exec(playerWins), exec(playersFaceit), exec(playersCSGOStats)
-            
-            self.playersRank0.setText(_translate("MainWindow", str(playersInfoAddr[0][3])))
-            self.playersRank1.setText(_translate("MainWindow", str(playersInfoAddr[1][3])))
-            self.playersRank2.setText(_translate("MainWindow", str(playersInfoAddr[2][3])))
-            self.playersRank3.setText(_translate("MainWindow", str(playersInfoAddr[3][3])))
-            self.playersRank4.setText(_translate("MainWindow", str(playersInfoAddr[4][3])))
-            self.playersRank5.setText(_translate("MainWindow", str(playersInfoAddr[5][3])))
-            self.playersRank6.setText(_translate("MainWindow", str(playersInfoAddr[6][3])))
-            self.playersRank7.setText(_translate("MainWindow", str(playersInfoAddr[7][3])))
-            self.playersRank8.setText(_translate("MainWindow", str(playersInfoAddr[8][3])))
         
         Rank_Global = QtGui.QPixmap(":/ranks/assets/Ranks/global.png")
         Rank_Supreme = QtGui.QPixmap(":/ranks/assets/Ranks/supreme.png")
-        self.playersRank2.setPixmap(Rank_Supreme)
+        Rank_Lem = QtGui.QPixmap(":/ranks/assets/Ranks/lem.png")
+        Rank_Le = QtGui.QPixmap(":/ranks/assets/Ranks/le.png")
+        Rank_Dmg = QtGui.QPixmap(":/ranks/assets/Ranks/dmg.png")
+        Rank_Mg3 = QtGui.QPixmap(":/ranks/assets/Ranks/mg2.png")
+        Rank_Mg2 = QtGui.QPixmap(":/ranks/assets/Ranks/mg1.png")
+        Rank_Mg1 = QtGui.QPixmap(":/ranks/assets/Ranks/mg.png")
+        Rank_Gn4 = QtGui.QPixmap(":/ranks/assets/Ranks/gn4.png")
+        Rank_Gn3 = QtGui.QPixmap(":/ranks/assets/Ranks/gn3.png")
+        Rank_Gn2 = QtGui.QPixmap(":/ranks/assets/Ranks/gn2.png")
+        Rank_Gn1 = QtGui.QPixmap(":/ranks/assets/Ranks/gn1.png")
+        Rank_Se = QtGui.QPixmap(":/ranks/assets/Ranks/silver_elite.png")
+        Rank_S5 = QtGui.QPixmap(":/ranks/assets/Ranks/silver5.png")
+        Rank_S4 = QtGui.QPixmap(":/ranks/assets/Ranks/silver4.png")
+        Rank_S3 = QtGui.QPixmap(":/ranks/assets/Ranks/silver3.png")
+        Rank_S2 = QtGui.QPixmap(":/ranks/assets/Ranks/silver2.png")
+        Rank_S1 = QtGui.QPixmap(":/ranks/assets/Ranks/silver1.png")
         
-        print(self.playersRank0.text())
+        #Add unranked image -- Future update
         
-        # elif len(playersInfoAddr) == 3:
-        #     self.playersName0.setText(_translate("MainWindow", str(playersInfoAddr[0][1])))
-        #     self.playersName1.setText(_translate("MainWindow", str(playersInfoAddr[1][1])))
-        #     self.playersName2.setText(_translate("MainWindow", str(playersInfoAddr[2][1])))
+        steamidsFounds = 0
+        for steamids in playersInfoAddr: #Check that the button is not clicked when nothing is there otherwise - crash
+            if steamids[5] > 1:
+                steamidsFounds = 1        
+        
+        if steamidsFounds == 1:
+        
+            if len(playersInfoAddr) < 10:
             
-        #     self.playersRank0.setText(_translate("MainWindow", str(playersInfoAddr[0][3])))
-        #     self.playersRank1.setText(_translate("MainWindow", str(playersInfoAddr[1][3])))
-        #     self.playersRank2.setText(_translate("MainWindow", str(playersInfoAddr[2][3])))
-            
-        #     self.playersWins0.setText(_translate("MainWindow", str(playersInfoAddr[0][4])))
-        #     self.playersWins1.setText(_translate("MainWindow", str(playersInfoAddr[1][4])))
-        #     self.playersWins2.setText(_translate("MainWindow", str(playersInfoAddr[2][4])))
-            
-        #     self.playersFaceit0.setIcon(icon7)
-        #     self.playersFaceit1.setIcon(icon7)
-        #     self.playersFaceit2.setIcon(icon7)    
-            
-        #     self.CSGOStatsBtn.setIcon(icon8)
-        #     self.CSGOStatsBtn_2.setIcon(icon8)
-        #     self.CSGOStatsBtn_3.setIcon(icon8)
-            
-        # else:
-        #     self.playersRefreshMsg.setText('ERROR: Players not found')
+                for i in range(0, len(playersInfoAddr) - 1): #Display players by team -- future update
+                    playerNames = 'self.playersName' + str(i) + '.setText(_translate("MainWindow", str(playersInfoAddr[' + str(i) + '][1])))'
+                    playerWins = 'self.playersWins' + str(i) + '.setText(_translate("MainWindow", str(playersInfoAddr[' + str(i) + '][4])))'
+                    playersFaceit = 'self.playersFaceit' + str(i) + '.setIcon(icon7)'
+                    playersCSGOStats = 'self.CSGOStatsBtn' + str(i) + '.setIcon(icon8)'
+                    
+                    
+                    exec(playerNames), exec(playerWins), exec(playersFaceit), exec(playersCSGOStats)
+                    
+                    if playersInfoAddr[i][3] == 18: #Global
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Global)'
+                    elif playersInfoAddr[i][3] == 17:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Supreme)'
+                    elif playersInfoAddr[i][3] == 16:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Lem)'
+                    elif playersInfoAddr[i][3] == 15:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Le)'
+                    elif playersInfoAddr[i][3] == 14:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Dmg)'
+                    elif playersInfoAddr[i][3] == 13:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Mg3)'
+                    elif playersInfoAddr[i][3] == 12:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Mg2)'
+                    elif playersInfoAddr[i][3] == 11:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Mg1)'
+                    elif playersInfoAddr[i][3] == 10:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Gn4)'
+                    elif playersInfoAddr[i][3] == 9:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Gn3)'
+                    elif playersInfoAddr[i][3] == 8:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Gn2)'
+                    elif playersInfoAddr[i][3] == 7:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Gn1)'
+                    elif playersInfoAddr[i][3] == 6:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Se)'
+                    elif playersInfoAddr[i][3] == 5:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_S5)'
+                    elif playersInfoAddr[i][3] == 4:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_S4)'
+                    elif playersInfoAddr[i][3] == 3:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_S3)'
+                    elif playersInfoAddr[i][3] == 2:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_S2)'
+                    elif playersInfoAddr[i][3] == 1:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_S1)'
+                    elif playersInfoAddr[i][3] == 0:
+                        playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Supreme)'
+                        print('Rank 0')
+                    else:
+                        playersRank = 'print("No rank")'
+                
+                    exec(playersRank)
+            else:
+                print("222")
     
     def openFaceit(self, btn):
         steamidsFounds = 0
@@ -1912,7 +1948,7 @@ import res
 
 def main():
     threading.Thread(target=processInfo.checkGameFocus, name='checkGameFocus', daemon=True).start()
-    # threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
+    threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
     threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
     newOverlay() #start after all processes
     
