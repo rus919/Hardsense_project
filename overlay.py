@@ -85,14 +85,60 @@ class Entity():
         getWeaponAddress = pm.r_int(self.mem, self.addr + Offset.m_hActiveWeapon) & 0xFFF
         getWeaponAddressHandle = pm.r_int(self.mem, module + Offset.dwEntityList + (getWeaponAddress - 1) * 0x10)
         return pm.r_int16(self.mem, getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
+
+
+import keyboard
+import pymem
+import pymem.process
+
+EntityList = []
+def entityScan():
+    global EntityList
+    # pme = pymem.Pymem("csgo.exe")
+    # client = pymem.process.module_from_name(pme.process_handle, "client.dll").lpBaseOfDll
+    try:
+        csgo_proc = pm.open_process(processName="csgo.exe")
+        csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
+        csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
+        
+        engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
+
+        get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
+        get_maxClients = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_MaxPlayer)
+
+    except Exception as err:
+        print(err)
+        exit(0)
+    while True:
+        if get_state == 6:
+            try:
+                EntityList.clear()
+                for index in range(1, 64):                    
+                    entity = pm.r_uint(csgo_proc, csgo_client + Offset.dwEntityList + index * 0x10)
+                    # print(entity)
+                    
+                    if entity != 0:
+                        client_networkable = pm.r_int(Process.csgo, entity + 0x8)
+                        dwGetClientClassFn = pm.r_int(Process.csgo, client_networkable + 0x8)
+                        entity_client_class = pm.r_int(Process.csgo, dwGetClientClassFn+ 0x1)
+                        class_id = pm.r_int(Process.csgo, entity_client_class + 0x14)
+                        if class_id == 40:
+                            # print(class_id)
+                        
+                            if [entity] not in EntityList:
+                                EntityList.append(entity)
+                        else:
+                            continue
+            except Exception as err:
+                print('123123', err)
+                pass
+        time.sleep(0.0001)
+        # print(EntityList)
+        
     
-    # def getPlayerSteamID(module):
-    #     player_info = pm.r_int(self.mem, module + Offset.dwClientState_PlayerInfo)
-    #     player_info_items = pm.r_int(self.mem, pm.r_int(self.mem, player_info + 0x40) + 0xC)
-    #     return pm.r_int(self.mem, player_info_items + 0x28 + ((i-1) * 0x34))
 
 playersInfoAddr = []
-def getPlayerInfo():
+def getPlayerInfo(): # Not returning properly, missing player data when in entity he is there
     try:
         csgo_proc = pm.open_process(processName="csgo.exe")
         csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
@@ -100,6 +146,7 @@ def getPlayerInfo():
         engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
         # print(engine_ptr)
         get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
+
     except Exception as err:
         print(err)
         exit(0)
@@ -107,19 +154,20 @@ def getPlayerInfo():
     if get_state == 6:
         try:
             playersInfoAddr.clear()
-            for i in range(1, 32):
+            for index in range(1, 64):
+                localPlayerAddr = pm.r_int(csgo_proc, csgo_client + Offset.dwLocalPlayer) 
+                player_info = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_PlayerInfo)
+                player_resources = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwPlayerResource)       
+                        
+                entity = pm.r_uint(csgo_proc, csgo_client + Offset.dwEntityList + index * 0x10)
                 
                 
-                entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + i * 0x10)
-                localPlayerAddr = pm.r_int(csgo_proc, csgo_client + Offset.dwLocalPlayer)                
-                
-                player_resources = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwPlayerResource)
-                if entity != 0 and entity != localPlayerAddr:
+                if entity != 0:
+                    print(entity)
                     
-                    player_info = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_PlayerInfo)
                     aox = pm.r_int(csgo_proc, player_info + 0x40)
                     dxa = pm.r_int(csgo_proc, aox + 0xC)
-                    xea = pm.r_int(csgo_proc, dxa + 0x28 + (i * 0x34))
+                    xea = pm.r_int(csgo_proc, dxa + 0x28 + (index * 0x34))
                     playerSteamID = pm.r_string(csgo_proc, xea + 0x94) # Getting steamID32
                     id_split = playerSteamID.split(":") #Convert steamID32 to array
                     steam64id = 76561197960265728 #Base for adding
@@ -127,59 +175,59 @@ def getPlayerInfo():
                     if id_split[1] == "1":
                         steam64id += 1
                     
-                    ents = Entity(entity, Process.csgo, Process.csgo_client)
+                    ents = Entity(entity, csgo_proc, csgo_client)
                                         
-                    entityCompRank = pm.r_int(Process.csgo, player_resources + Offset.m_iCompetitiveRanking + (i+1) * 4)
-                    entityCompWins = pm.r_int(Process.csgo, player_resources + Offset.m_iCompetitiveWins + (i+1) * 4)
+                    entityCompRank = pm.r_int(csgo_proc, player_resources + Offset.m_iCompetitiveRanking + (index+1) * 4)
+                    entityCompWins = pm.r_int(csgo_proc, player_resources + Offset.m_iCompetitiveWins + (index+1) * 4)
                     
-                    if [i, ents.name, ents.team ,entityCompRank ,entityCompWins, steam64id] not in playersInfoAddr:
-                        playersInfoAddr.append([i, ents.name, ents.team, entityCompRank, entityCompWins, steam64id])
+                    if [index, ents.name, ents.team ,entityCompRank ,entityCompWins, steam64id] not in playersInfoAddr:
+                        playersInfoAddr.append([index, ents.name, ents.team, entityCompRank, entityCompWins, steam64id])
         except Exception as err:
-            print(err)
+            print('123123', err)
             pass
-    print(playersInfoAddr)
-    # time.sleep(15.00)
+    # print(playersInfoAddr)
+        # time.sleep(4.00)
 
 bombIndexAddr = []
-def getBombInfo():
-    while pm.overlay_loop():
-        try:
-            csgo_proc = pm.open_process(processName="csgo.exe")
-            csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
-            csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
-            engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
-            get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
-        except Exception as err:
-            print(err)
-            # exit(0)
-            pass
+# def getBombInfo():
+#     while pm.overlay_loop():
+#         try:
+#             csgo_proc = pm.open_process(processName="csgo.exe")
+#             csgo_client = pm.get_module(csgo_proc, "client.dll")["base"]
+#             csgo_engine = pm.get_module(csgo_proc, "engine.dll")["base"]
+#             engine_ptr = pm.r_uint(csgo_proc, csgo_engine + Offset.dwClientState)
+#             get_state = pm.r_int(csgo_proc, engine_ptr + Offset.dwClientState_State)
+#         except Exception as err:
+#             print(err)
+#             # exit(0)
+#             pass
         
-        if get_state == 6:
-            try:
-                GameRulesProxy = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwGameRulesProxy)
-                bombPlanted = pm.r_int(Process.csgo, GameRulesProxy + Offset.m_bBombPlanted)
-                if bombPlanted == 1:
-                    bombIndexAddr.clear()
-                    for i in range(300, 550):
-                        entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + i * 0x10)
-                        if entity != 0:
+#         if get_state == 6:
+#             try:
+#                 GameRulesProxy = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwGameRulesProxy)
+#                 bombPlanted = pm.r_int(Process.csgo, GameRulesProxy + Offset.m_bBombPlanted)
+#                 if bombPlanted == 1:
+#                     bombIndexAddr.clear()
+#                     for i in range(300, 550):
+#                         entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + i * 0x10)
+#                         if entity != 0:
                             
-                            client_networkable = pm.r_int(Process.csgo, entity + 0x8)
-                            dwGetClientClassFn = pm.r_int(Process.csgo, client_networkable + 0x8)
-                            entity_client_class = pm.r_int(Process.csgo, dwGetClientClassFn+ 0x1)
-                            class_id = pm.r_int(Process.csgo, entity_client_class + 0x14)
-                            # print(class_id)
-                            if class_id == 129:
-                                if [entity] not in bombIndexAddr:
-                                    bombIndexAddr.append(entity)
-                else:
-                    bombIndexAddr.clear()
-            except Exception as err:
-                print('111', err)
-                pass
+#                             client_networkable = pm.r_int(Process.csgo, entity + 0x8)
+#                             dwGetClientClassFn = pm.r_int(Process.csgo, client_networkable + 0x8)
+#                             entity_client_class = pm.r_int(Process.csgo, dwGetClientClassFn+ 0x1)
+#                             class_id = pm.r_int(Process.csgo, entity_client_class + 0x14)
+#                             # print(class_id)
+#                             if class_id == 129:
+#                                 if [entity] not in bombIndexAddr:
+#                                     bombIndexAddr.append(entity)
+#                 else:
+#                     bombIndexAddr.clear()
+#             except Exception as err:
+#                 print('111', err)
+#                 pass
         # print(bombPlanted)
         
-        time.sleep(1.00)
+        # time.sleep(1.00)
 
 def newOverlay():
     try:
@@ -271,7 +319,7 @@ def newOverlay():
                 view_matrix = pm.r_floats(csgo_proc, csgo_client + Offset.dwViewMatrix, 16)  
                 currentTime = pm.r_float(csgo_proc, csgo_engine + Offset.dwGlobalVars + 0x0010)
 
-                entAddr = pm.r_ints(csgo_proc, csgo_client + Offset.dwEntityList, 128)[0::4]
+                # entAddr = pm.r_ints(csgo_proc, csgo_client + Offset.dwEntityList, 128)[0::4]
 
                 # print(entAddr)
                 # print(entAddr)
@@ -280,64 +328,65 @@ def newOverlay():
                     print("003", err)
                 pass         
                         
-            for bombindex in bombIndexAddr:
-                try:
-                    entity = Entity(bombindex, csgo_proc, csgo_client)
-                    try:
-                        entity.wts2 = entity.pos
-                        head_pos = pm.world_to_screen(view_matrix, entity.wts2, 1)
+            # for bombindex in bombIndexAddr:
+            #     try:
+            #         entAddr = pm.r_ints(csgo_proc, csgo_client + Offset.dwEntityList, 128)[0::4]
+            #         entity = Entity(bombindex, csgo_proc, csgo_client)
+            #         try:
+            #             entity.wts2 = entity.pos
+            #             head_pos = pm.world_to_screen(view_matrix, entity.wts2, 1)
                         
-                        bombtime = entity.bombtest - currentTime
-                        defuseTime = entity.defusingTime - currentTime
+            #             bombtime = entity.bombtest - currentTime
+            #             defuseTime = entity.defusingTime - currentTime
                         
-                        pm.draw_texture(texture = C4, posX = head_pos["x"], posY = head_pos["y"], rotation = 0, scale = 0.6,tint = Colors.white)         
+            #             pm.draw_texture(texture = C4, posX = head_pos["x"], posY = head_pos["y"], rotation = 0, scale = 0.6,tint = Colors.white)         
                         
-                        if defuseTime > bombtime:
-                            defuseTimeColor = Colors.red
-                        else:
-                            defuseTimeColor = Colors.cyan
+            #             if defuseTime > bombtime:
+            #                 defuseTimeColor = Colors.red
+            #             else:
+            #                 defuseTimeColor = Colors.cyan
                         
-                        if entity.bombTicking and bombtime > 0:
-                            if entity.bombSite == 0:
-                                pm.draw_text(
-                                text= f"BOMB: A",
-                                posX=bombTextPos_x,
-                                posY=bombTextPos_y,
-                                fontSize=25,
-                                color=Colors.cyan,
-                                )
-                            else:
-                                pm.draw_text(
-                                text= f"BOMB: B",
-                                posX=bombTextPos_x,
-                                posY=bombTextPos_y,
-                                fontSize=25,
-                                color=Colors.cyan,
-                                )
+            #             if entity.bombTicking and bombtime > 0:
+            #                 if entity.bombSite == 0:
+            #                     pm.draw_text(
+            #                     text= f"BOMB: A",
+            #                     posX=bombTextPos_x,
+            #                     posY=bombTextPos_y,
+            #                     fontSize=25,
+            #                     color=Colors.cyan,
+            #                     )
+            #                 else:
+            #                     pm.draw_text(
+            #                     text= f"BOMB: B",
+            #                     posX=bombTextPos_x,
+            #                     posY=bombTextPos_y,
+            #                     fontSize=25,
+            #                     color=Colors.cyan,
+            #                     )
                             
-                            pm.draw_text(
-                            text= f"{bombtime:.3}",
-                            posX=bombTextPos_x * 1.05,
-                            posY=bombTextPos_y * 1.05,
-                            fontSize=25,
-                            color=Colors.purple,
-                            )
-                            if entity.defusingPlayer != 255:
-                                pm.draw_text(
-                                text= f"{defuseTime:.3}",
-                                posX=bombTextPos_x * 1.05,
-                                posY=bombTextPos_y * 1.1,
-                                fontSize=25,
-                                color=defuseTimeColor,
-                                )
+            #                 pm.draw_text(
+            #                 text= f"{bombtime:.3}",
+            #                 posX=bombTextPos_x * 1.05,
+            #                 posY=bombTextPos_y * 1.05,
+            #                 fontSize=25,
+            #                 color=Colors.purple,
+            #                 )
+            #                 if entity.defusingPlayer != 255:
+            #                     pm.draw_text(
+            #                     text= f"{defuseTime:.3}",
+            #                     posX=bombTextPos_x * 1.05,
+            #                     posY=bombTextPos_y * 1.1,
+            #                     fontSize=25,
+            #                     color=defuseTimeColor,
+            #                     )
 
-                    except Exception as err:
-                        # print(err)
-                        pass
-                except Exception as err:
-                    if DEBUG_MODE:
-                        print("004", err)
-                    pass
+            #         except Exception as err:
+            #             # print(err)
+            #             pass
+            #     except Exception as err:
+            #         if DEBUG_MODE:
+            #             print("004", err)
+            #         pass
             
             
             if localPlayerAddr != 0:
@@ -387,10 +436,17 @@ def newOverlay():
             #             continue
             
             spectatorsArr = []
-            for ents in entAddr:                    
-                if ents > 0:
+            for i in EntityList:
+                try:
+                    ents = i
+                    # print(ents)
+                except Exception as err:
+                    print(err)
+                # for ents in entAddr:                   
+                if EntityList:
                     try:
                         entity = Entity(ents, csgo_proc, csgo_client)
+                        # print(entity.name)
                         if localPlayer.health > 0:
                             
                             if entity.team == localPlayer.team:
@@ -415,9 +471,16 @@ def newOverlay():
                         else:
                             spectatorsArr.clear()
                             
+                        # if not entity.dormant and entity.health > 0 and ents != localPlayerAddr:
+                        # print(entity.name)
                         if not entity.dormant and entity.health > 0 and localPlayer.team != entity.team and ents != localPlayerAddr:
                             entity.wts = pm.world_to_screen(view_matrix, entity.pos, 1)
+                            print(entity.wts)
                             head_pos = pm.world_to_screen(view_matrix, entity.bone_pos(8), 1)
+                            
+                            if entity.wts is None and head_pos is None:
+                                print('none')
+                                continue
                             
                             head = entity.wts["y"] - head_pos["y"]
                             width = head / 2
@@ -446,6 +509,7 @@ def newOverlay():
                             #     lineThick=1.0,
                             # )
                             getEntWeapon = entity.getWeapon(csgo_client)
+                            # print(getEntWeapon)
 
                             if getEntWeapon == 42 or getEntWeapon == 59 or getEntWeapon == 42 or getEntWeapon == 500 or getEntWeapon == 503 or getEntWeapon == 505 or getEntWeapon == 506 or getEntWeapon == 507 or getEntWeapon == 508 or getEntWeapon == 509 or getEntWeapon == 510 or getEntWeapon == 511 or getEntWeapon == 512 or getEntWeapon == 513 or getEntWeapon == 514 or getEntWeapon == 515 or getEntWeapon == 516 or getEntWeapon == 517 or getEntWeapon == 518 or getEntWeapon == 519 or getEntWeapon == 520 or getEntWeapon == 521 or getEntWeapon == 522 or getEntWeapon == 523 or getEntWeapon == 524 or getEntWeapon == 525: 
                                 pm.draw_texture(texture = Knife, posX = head_pos["x"] / 1.005, posY = entity.wts["y"] * 1.01, rotation = 0, scale = 0.3,tint = Colors.purple)
@@ -502,13 +566,13 @@ def newOverlay():
                             #     color=Colors.red,
                             # )
                             
-                            # pm.draw_text(
-                            #     text= f"H:{entity.health}",
-                            #     posX=head_pos["x"] - center - 25,
-                            #     posY=head_pos["y"] - center / 2,
-                            #     fontSize=1,
-                            #     color=Colors.red,
-                            # )
+                            pm.draw_text(
+                                text= f"H:{entity.health}",
+                                posX=head_pos["x"] - center - 25,
+                                posY=head_pos["y"] - center / 2,
+                                fontSize=1,
+                                color=Colors.red,
+                            )
                         
                             # pm.draw_text(
                             #     text= f"A:{entity.armour}",
@@ -527,22 +591,22 @@ def newOverlay():
                                 )
                     except Exception as err:
                         # if DEBUG_MODE:
-                            # print("005", err)
+                        #     print("005", err)
                         pass
         pm.end_drawing()
 
 def triggerbot(): # Check if game is running, memory leak when game is closed #
-    while True:
-        if Process.csgo:
-            engine_ptr = pm.r_uint(Process.csgo, Process.csgo_engine + Offset.dwClientState)
-            get_state = pm.r_int(Process.csgo, engine_ptr + Offset.dwClientState_State)
-            if get_state == 6:
-                try:
-                        if Process.u32.GetAsyncKeyState(6):
+    while pm.overlay_loop():
+        try:
+            if Process.csgo:
+                engine_ptr = pm.r_uint(Process.csgo, Process.csgo_engine + Offset.dwClientState)
+                get_state = pm.r_int(Process.csgo, engine_ptr + Offset.dwClientState_State)
+                if get_state == 6:
+                    if Process.u32.GetAsyncKeyState(6):                    
                             localPlayerAddr = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwLocalPlayer)
                             crosshairID = pm.r_int(Process.csgo, localPlayerAddr + Offset.m_iCrosshairId)
 
-                            entity = pm.r_int(Process.csgo, Process.csgo_client + Offset.dwEntityList + (crosshairID - 1) * 0x10)
+                            entity = pm.r_uint(Process.csgo, Process.csgo_client + Offset.dwEntityList + (crosshairID - 1) * 0x10)
                             entity = Entity(entity, Process.csgo, Process.csgo_client)
                             
                             localplayer = Entity(localPlayerAddr, Process.csgo, Process.csgo_client)
@@ -551,16 +615,15 @@ def triggerbot(): # Check if game is running, memory leak when game is closed #
                             entity_team = entity.team
 
                             if crosshairID > 0 and crosshairID <= 64 and player_team != entity_team:
-                                Process.k32.Sleep(0)
                                 Process.u32.mouse_event(0x0002, 0, 0, 0, 0)
                                 Process.k32.Sleep(50)
                                 Process.u32.mouse_event(0x0004, 0, 0, 0, 0)
-                                Process.k32.Sleep(150)
-                except Exception as err:
-                    if Process.DEBUG_MODE:
-                        print("006", err)
-                    continue
-        time.sleep(0.01)
+                                Process.k32.Sleep(200)
+        except Exception as err:
+            if Process.DEBUG_MODE:
+                print("006", err)
+            continue
+        time.sleep(0.000001)
 
 import webbrowser
 
@@ -571,6 +634,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        # MainWindow.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         MainWindow.resize(700, 550)
         MainWindow.setMinimumSize(QtCore.QSize(700, 550))
         MainWindow.setMaximumSize(QtCore.QSize(700, 550))
@@ -1793,13 +1857,15 @@ class Ui_MainWindow(object):
         steamidsFounds = 0
         for steamids in playersInfoAddr: #Check that the button is not clicked when nothing is there otherwise - crash
             if steamids[5] > 1:
-                steamidsFounds = 1        
+                steamidsFounds = 1 
+            else:
+                print('error')      
         
         if steamidsFounds == 1:
         
             if len(playersInfoAddr) < 10:
             
-                for i in range(0, len(playersInfoAddr) - 1): #Display players by team -- future update
+                for i in range(0, len(playersInfoAddr)): #Display players by team -- future update
                     playerNames = 'self.playersName' + str(i) + '.setText(_translate("MainWindow", str(playersInfoAddr[' + str(i) + '][1])))'
                     playerWins = 'self.playersWins' + str(i) + '.setText(_translate("MainWindow", str(playersInfoAddr[' + str(i) + '][4])))'
                     playersFaceit = 'self.playersFaceit' + str(i) + '.setIcon(icon7)'
@@ -1948,11 +2014,13 @@ import res
 
 def main():
     threading.Thread(target=processInfo.checkGameFocus, name='checkGameFocus', daemon=True).start()
-    threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
-    threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
+    # threading.Thread(target=getBombInfo, name='getBombInfo', daemon=True).start()
+    # threading.Thread(target=triggerbot, name='Trigger.triggerbot', daemon=True).start()
+    threading.Thread(target=entityScan, name='entityScan', daemon=True).start()
+    # threading.Thread(target=getPlayerInfo, name='getPlayerInfo', daemon=True).start()
     newOverlay() #start after all processes
     
-if __name__ == "__main__":    
+if __name__ == "__main__":
     pm.overlay_init(fps=145, title='test')
     
     app = QtWidgets.QApplication(sys.argv)
