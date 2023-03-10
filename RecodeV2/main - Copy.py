@@ -1,9 +1,10 @@
 import os, struct
 from dataclasses import dataclass
 import ctypes as ctypes
-from pymem import Pymem, process, exception, pattern
 import threading
 from requests import get
+
+from pymem import Pymem, process, exception, pattern
 
 import pyMeow as meow
 
@@ -17,13 +18,6 @@ class Colors:
     orange = meow.get_color("orange")
     black = meow.get_color("black")
     purple = meow.get_color("purple")
-    white = meow.get_color("white")
-    cyan = meow.get_color("cyan")
-    red = meow.get_color("red")
-    green = meow.get_color("green")
-    pink = meow.get_color("pink")
-    crosshair = meow.new_color(255, 0, 255, 255)
-    recoil = meow.new_color(0, 0, 255, 155)
     
 class LocalPlayer():
     def __init__(self, address):
@@ -31,129 +25,92 @@ class LocalPlayer():
     
     @staticmethod
     def get_local_player():
-        return csgo.read_uint(csgo_client + Offsets.dwLocalPlayer)
+        return meow.r_uint(csgo, csgo_client + Offsets.dwLocalPlayer)
     
     @staticmethod
     def get_crosshair_id():
-        return csgo.read_uint(LocalPlayer.get_local_player() + Offsets.m_iCrosshairId)
+        return meow.r_uint(csgo, LocalPlayer.get_local_player() + Offsets.m_iCrosshairId)
 
 class Entity():
     def __init__(self, address):
         self.address = address
     
     def get_id(self):
-        return csgo.read_int(self.address + 0x64)
+        return meow.r_int(csgo, self.address + 0x64)
     
     def get_team(self):
-        return csgo.read_int(self.address + Offsets.m_iTeamNum)
+        return meow.r_int(csgo, self.address + Offsets.m_iTeamNum)
     
     def get_health(self):
-        return csgo.read_int(self.address + Offsets.m_iHealth)
+        return meow.r_int(csgo, self.address + Offsets.m_iHealth)
     
     def get_armour(self):
-        return csgo.read_int(self.address + Offsets.m_ArmorValue)
+        return meow.r_int(csgo, self.address + Offsets.m_ArmorValue)
 
     def get_dormant(self):
-        return csgo.read_int(self.address + Offsets.m_bDormant)
-    
-    def get_life_state(self):
-        return csgo.read_int(self.address + Offsets.m_lifeState)
-    
-    def is_scoped(self):
-        return csgo.read_bool(self.address + Offsets.m_bIsScoped)
-    
-    def get_vec_punch(self):
-        vec_punch_x = csgo.read_float(self.address + Offsets.m_aimPunchAngle)
-        vec_punch_y = csgo.read_float(self.address + Offsets.m_aimPunchAngle + 4)
-        vec_punch_z = csgo.read_float(self.address + Offsets.m_aimPunchAngle + 8)
-        return meow.vec3(vec_punch_x, vec_punch_y, vec_punch_z)
-    
-    def get_shots_fired(self):
-        return csgo.read_int(self.address + Offsets.m_iShotsFired)
+        return meow.r_int(csgo, self.address + Offsets.m_bDormant)
 
     def get_position(self):
-        localpos_x = csgo.read_float(self.address + Offsets.m_vecOrigin)
-        localpos_y = csgo.read_float(self.address + Offsets.m_vecOrigin + 4)
-        localpos_z = csgo.read_float(self.address + Offsets.m_vecOrigin + 8)
+        localpos_x = meow.r_float(csgo, self.address + Offsets.m_vecOrigin)
+        localpos_y = meow.r_float(csgo, self.address + Offsets.m_vecOrigin + 4)
+        localpos_z = meow.r_float(csgo, self.address + Offsets.m_vecOrigin + 8)
         return meow.vec3(localpos_x, localpos_y, localpos_z)
 
     def get_bone_position(self, bone_id: int):
-        bone_matrix = csgo.read_uint(self.address + Offsets.m_dwBoneMatrix)
-        return meow.vec3(csgo.read_float(bone_matrix + 0x30 * bone_id + 0x0c),
-                       csgo.read_float(bone_matrix + 0x30 * bone_id + 0x1c),
-                       csgo.read_float(bone_matrix + 0x30 * bone_id + 0x2c)
+        bone_matrix = meow.r_uint(csgo, self.address + Offsets.m_dwBoneMatrix)
+        return meow.vec3(meow.r_float(csgo, bone_matrix + 0x30 * bone_id + 0x0c),
+                       meow.r_float(csgo, bone_matrix + 0x30 * bone_id + 0x1c),
+                       meow.r_float(csgo, bone_matrix + 0x30 * bone_id + 0x2c)
         )
   
     def getWeapon(self):
-        getWeaponAddress = csgo.read_uint(self.address + Offsets.m_hActiveWeapon) & 0xFFF
-        getWeaponAddressHandle = csgo.read_uint(csgo_client + Offsets.dwEntityList + (getWeaponAddress - 1) * 0x10)
-        return csgo.read_short(getWeaponAddressHandle + Offsets.m_iItemDefinitionIndex)
+        getWeaponAddress = meow.r_uint(csgo, self.address + Offsets.m_hActiveWeapon) & 0xFFF
+        getWeaponAddressHandle = meow.r_uint(csgo, csgo_client + Offsets.dwEntityList + (getWeaponAddress - 1) * 0x10)
+        return meow.r_int16(csgo, getWeaponAddressHandle + Offsets.m_iItemDefinitionIndex)
     
-    # def get_player_id(self, index):
+    # def get_player_name(index):
     #     player_info = csgo.read_uint(Engine.get_state() + Offsets.dwClientState_PlayerInfo)
     #     player_items = csgo.read_uint(csgo.read_uint(player_info + 0x40) + 0xC)
     #     info = csgo.read_uint(player_items + 0x28 + (index * 0x34))
     #     if info != 0:
-    #         return csgo.read_uint(info + 0x90) # 0x94 = steamid32, char 0x10 == name, 
+    #         return csgo.read_bytes(info + 0x10, 32) #0x94
         
     @property
     def get_name(self):
-        radar_base = csgo.read_uint(csgo_client + Offsets.dwRadarBase)
-        hud_radar = csgo.read_uint(radar_base + 0x78)
-        return csgo.read_string(hud_radar + 0x300 + (0x174 * (self.get_id() - 1)), 32)
+        radar_base = meow.r_uint(csgo, csgo_client + Offsets.dwRadarBase)
+        hud_radar = meow.r_uint(csgo, radar_base + 0x78)
+        return meow.r_string(csgo, hud_radar + 0x300 + (0x174 * (self.get_id() - 1)), 32)
     
     def get_observed_target_handle(self):
-        return csgo.read_int(self.address + Offsets.m_hObserverTarget) & 0xFFF
+        return meow.r_uint(csgo, self.address + Offsets.m_hObserverTarget) & 0xFFF
+        
 
 class Engine():
     @staticmethod
     def get_entity(index):
-        return csgo.read_uint(csgo_client + Offsets.dwEntityList + index * 0x10)
+        # return meow.r_int64(csgo, csgo_client + Offsets.dwEntityList + index * 0x10)
+        return csgo2.read_uint(csgo_client2 + Offsets.dwEntityList + index * 0x10)
 
     @staticmethod
     def get_view_matrix():
-        view = csgo.read_bytes(csgo_client + Offsets.dwViewMatrix, 64)
+        view = meow.r_bytes(csgo, csgo_client + Offsets.dwViewMatrix, 64)
         matrix = struct.unpack("16f", view)
         return matrix
 
     @staticmethod
     def get_state():
-        return csgo.read_uint(csgo_engine + Offsets.dwClientState)
+        return meow.r_uint(csgo, csgo_engine + Offsets.dwClientState)
     
     @staticmethod
     def get_client_state():
-        return csgo.read_uint(Engine.get_state() + Offsets.dwClientState_State)
+        return meow.r_uint(csgo, Engine.get_state() + Offsets.dwClientState_State)
     
     @staticmethod
-    def get_GameRulesProxy():
-        return csgo.read_uint(csgo_client + Offsets.dwGameRulesProxy)
-    
-    @staticmethod
-    def get_bomb_planted():
-        return csgo.read_uint(Engine.get_GameRulesProxy() + Offsets.m_bBombPlanted)
-    
-    @staticmethod
-    def get_bomb_ticking(bomb_entity):
-        return csgo.read_bool(bomb_entity + Offsets.m_bBombTicking)
-    
-    @staticmethod
-    def get_bomb_site(bomb_entity):
-        return csgo.read_short(bomb_entity + Offsets.m_nBombSite)
-    
-    @staticmethod
-    def get_bomb_time(bomb_entity):
-        return csgo.read_float(bomb_entity + Offsets.m_flC4Blow) - Engine.get_curr_time() #To start countdown 
-    
-    @staticmethod
-    def get_defuse_time(bomb_entity):
-        return csgo.read_float(bomb_entity + Offsets.m_flDefuseCountDown) - Engine.get_curr_time() #To start countdown 
-    
-    def is_defusing_bomb(bomb_entity):
-        return csgo.read_int(bomb_entity + Offsets.m_hBombDefuser)
-    
-    @staticmethod
-    def get_curr_time():
-        return csgo.read_float(csgo_engine + Offsets.dwGlobalVars + 0x10)
+    def test(index):
+        raw = csgo2.read_bytes(csgo_client2 + Offsets.dwEntityList + index * 0x10, struct.calcsize('I'))
+        # print(struct.calcsize('I'))
+        raw2 = struct.unpack('<I', raw)[0]
+        return raw2
 
 def GetWindowText(handle, length=100):
         window_text = ctypes.create_string_buffer(length)
@@ -165,42 +122,35 @@ def GetWindowText(handle, length=100):
         return window_text.value
 
 EntityList = []
-bombAddr = []
 def entity_parse():
     while True:
         if Engine.get_client_state() == 6:
             try:
                 EntityList.clear()
                 
-                for i in range(0, 512):                    
-                    entity = csgo.read_uint(csgo_client + Offsets.dwEntityList + i * 0x10)
+                # ent_addrs = meow.r_uints(csgo, csgo_client + Offsets.dwEntityList, 128)[0::4]
+                # print(ent_addrs)
+                for i in range(1, 64):                    
+                    entity = Engine.get_entity(i)
+                    print(entity)
                     if entity != 0:
-                        ents = Entity(entity)
-                        client_networkable = csgo.read_uint(entity + 0x8)
-                        dwGetClientClassFn = csgo.read_uint(client_networkable + 0x8)
-                        entity_client_class = csgo.read_uint(dwGetClientClassFn+ 0x1)
-                        class_id = csgo.read_uint(entity_client_class + 0x14)
-                        
-                        if class_id == 40:
-                            if not EntityList.__contains__(entity):
-                                EntityList.append(entity)
-                                
-                        if Engine.get_bomb_planted() == 1:
-                            if class_id == 129:
-                                if not bombAddr.__contains__(entity):
-                                    bombAddr.append(entity) 
-                        else:
-                            bombAddr.clear()
-                            
+                        # client_networkable = csgo2.read_uint(entity + 0x8)
+                        # dwGetClientClassFn = csgo2.read_uint(client_networkable + 0x8)
+                        # entity_client_class = csgo2.read_uint(dwGetClientClassFn+ 0x1)
+                        # class_id = csgo2.read_uint(entity_client_class + 0x14)
+                        # if class_id == 40:					
+                        if [entity] not in EntityList:
+                            EntityList.append(entity)
                 # print(EntityList)
+                        # tempEntList = EntityList
             except Exception as err:
                 print('entity_parse: ', err)
                 pass
         else:
             k32.Sleep(2000)
             continue
-        
-        k32.Sleep(1000)
+        # print(EntityList)
+        time.sleep(10.0)
 
 def trigger():
     while True:
@@ -210,21 +160,19 @@ def trigger():
                 entity_id = LocalPlayer.get_crosshair_id()
                 if entity_id != 0 and entity_id < 64:
                     entity = Entity(Engine.get_entity(entity_id - 1))
+                    
                     if Local_player.get_team() != entity.get_team() and entity.get_health() > 0:
-                        # k32.Sleep(1)
+                        k32.Sleep(1)
                         mouse.click()
                         k32.Sleep(200)
-        k32.Sleep(1)
 
 def esp():
     # weapon_id_list = [1, 2, 3, 4, 7, 8, 9, 10, 11, 13, 14, 16, 17, 19, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 38, 39, 40, 
     #            41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 55, 56, 57, 58, 59, 60, 61, 63, 64, 500, 503, 505, 506, 507, 508, 509, 512, 514, 
     #            515, 516, 517, 518, 519, 520, 521, 522, 523, 525]
     knife_weapons = [42, 59, 500, 503, 505, 506, 507, 508, 509, 512, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 525]
-    scoped_weapons = [9, 11, 38, 40]
     try:
         meow.load_font("assets/fonts/ff.ttf", 0)
-        crosshair = meow.load_texture("assets/images/crosshair.png")
         Desert_Eagle = meow.load_texture("assets/images/desert_eagle.png")
         Dual_Berettas = meow.load_texture("assets/images/elite.png")
         Five_SeveN = meow.load_texture("assets/images/fiveseven.png")
@@ -277,156 +225,45 @@ def esp():
         
         meow.begin_drawing()
         
-        get_screen_width_x = meow.get_screen_width()
-        get_screen_width_y = meow.get_screen_height()
-        
-        get_screen_center_x =meow.get_screen_width() // 2
-        get_screen_center_y = meow.get_screen_height() // 2
-        
+        # for i in range(1, 64):
+        #     if Engine.test(i) != 0:
+        #         print(Engine.test(i))
+            
+                
         if GetWindowText( u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
             meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.get_color("red"))
             meow.draw_fps(50, 50)
             if Engine.get_client_state() == 6:
                 try:
                     Local_player = Entity(LocalPlayer.get_local_player())
-                    view_matrix = Engine.get_view_matrix()
-                    server_time = Engine.get_curr_time()
+                    
+                    # currentTime = meow.r_float(csgo_proc, csgo_engine + Offset.dwGlobalVars + 0x0010)
                 except Exception as err:
-                    print('001 INIT ERROR:', err)
-                
-                if LocalPlayer.get_local_player() != 0:
-                    if Local_player.get_health() > 0:
-                        try:
-                            local_player_weapon = Local_player.getWeapon()
-                            for holding_scoped_weapons in scoped_weapons:
-                                if local_player_weapon == holding_scoped_weapons:
-                                    if not Local_player.is_scoped():
-                                        
-                                        meow.draw_line(
-                                            startPosX =get_screen_center_x - 5, 
-                                            startPosY =get_screen_center_y, 
-                                            endPosX =get_screen_center_x + 5, 
-                                            endPosY =get_screen_center_y, 
-                                            color = Colors.crosshair, 
-                                            thick = 1.0
-                                        )
-                                        meow.draw_line(
-                                            startPosX =get_screen_center_x, 
-                                            startPosY =get_screen_center_y - 5, 
-                                            endPosX =get_screen_center_x, 
-                                            endPosY =get_screen_center_y + 5, 
-                                            color = Colors.crosshair, 
-                                            thick = 1.0
-                                        )
-                                else:
-                                    continue
-                        except Exception as err:
-                            print('AWP CROSSHAIR ERROR:',err)
-                            continue
-                
-                    if Local_player.get_vec_punch()['x'] != 0.0:
-                        player_fov_x = meow.get_screen_width() // 90
-                        player_fov_y = meow.get_screen_height() // 90
-                        crosshair_x = get_screen_center_x - player_fov_x * Local_player.get_vec_punch()["y"]
-                        crosshair_y = get_screen_center_y - player_fov_y * -Local_player.get_vec_punch()["x"]
-                        if Local_player.get_shots_fired() > 1:
-                            meow.draw_line(
-                                startPosX =crosshair_x - 5, 
-                                startPosY =crosshair_y, 
-                                endPosX =crosshair_x + 5, 
-                                endPosY =crosshair_y, 
-                                color = Colors.recoil, 
-                                thick = 1.0
-                            )
-                            meow.draw_line(
-                                startPosX =crosshair_x, 
-                                startPosY =crosshair_y - 5, 
-                                endPosX =crosshair_x, 
-                                endPosY =crosshair_y + 5, 
-                                color = Colors.recoil, 
-                                thick = 1.0
-                            )
-
-                for bomb_index in bombAddr:
-                    try:
-                        bomb_entity = Entity(bomb_index)
-                        bomb_pos = bomb_entity.get_position()
-                        bomb_w2s_pos = meow.world_to_screen(view_matrix, bomb_pos, 1)
-                        bomb_time = Engine.get_bomb_time(bomb_index)
-                        defuse_time = Engine.get_defuse_time(bomb_index)
-                                                
-                        bomb_site = ''
-                        if Engine.get_bomb_site(bomb_index) == 0: bomb_site = 'BOMB: A'
-                        if Engine.get_bomb_site(bomb_index) == 1: bomb_site = 'BOMB: B'
-                        if defuse_time > bomb_time:
-                            defuse_color = Colors.red
-                        else:
-                            defuse_color = Colors.green
-                        
-                        if Engine.get_bomb_ticking(bomb_index) and bomb_time > 0:
+                    print('ESP INIT ERROR:', err)
                             
-                            meow.draw_text(
-                                text= str(bomb_site),
-                                posX=get_screen_width_x / 100,
-                                posY=get_screen_width_y / 1.5 ,
-                                fontSize=25,
-                                color=Colors.cyan,
-                            )
-                            
-                            meow.draw_text(
-                                text= f"{bomb_time:.3}",
-                                posX=get_screen_width_x / 100,
-                                posY=(get_screen_width_y / 1.5) * 1.05,
-                                fontSize=25,
-                                color=Colors.orange,
-                            )
-                            
-                            if Engine.is_defusing_bomb(bomb_index) > 0:
-                                meow.draw_text(
-                                    text= f"{defuse_time:.3}",
-                                    posX=get_screen_width_x / 100,
-                                    posY=(get_screen_width_y / 1.5) * 1.10,
-                                    fontSize=25,
-                                    color=defuse_color,
-                                )
-
-                        
-                        meow.draw_texture(texture = C4, posX = bomb_w2s_pos["x"], posY = bomb_w2s_pos["y"], rotation = 0, scale = 0.6,tint = Colors.white)
-                        
-                        
-                        
-                    except Exception as err:
-                        # print('BOMB DISPLAY ERROR:', err)
-                        continue
-                
-                
-                
                 spectators = []
                 for ents in EntityList:
                         
                     try:
-                        
+                        view_matrix = Engine.get_view_matrix()
                         entity = Entity(ents)
                                     
+                        
                         if Local_player.get_health() <= 0:
                             spectators.clear()
                             
-                        if entity.get_team() == Local_player.get_team():
-                            #Entity will be removed from spectator list only when WH can display it, thats why team check should be used until another method is not found
-                            spectated = Engine.get_entity(entity.get_observed_target_handle() - 1)
-                            if spectated == LocalPlayer.get_local_player():
-                                spectators.append(entity.get_name)
-                                meow.draw_font(
-                                    fontId = 0,
-                                    text= '\n'.join(spectators),
-                                    posX=get_screen_width_x / 100,
-                                    posY=get_screen_width_y / 1.8,
-                                    fontSize=25,
-                                    spacing = 2.0,
-                                    tint = Colors.white,
-                                )
-
-            
+                        spectated = Engine.get_entity(entity.get_observed_target_handle() - 1)
+                        if spectated == LocalPlayer.get_local_player():
+                            spectators.append(entity.get_name)
+                            meow.draw_font(
+                                fontId = 0,
+                                text= '\n'.join(spectators),
+                                posX=500,
+                                posY=150,
+                                fontSize=25,
+                                spacing = 2.0,
+                                tint = Colors.purple,
+                            )
 
                         if not entity.get_dormant() and entity.get_health() > 0 and Local_player.get_team() != entity.get_team() and ents != LocalPlayer.get_local_player():
 
@@ -461,13 +298,6 @@ def esp():
                                 color=Colors.orange,
                             )
                             
-                            meow.draw_text(
-                                    text= entity.get_name,
-                                    posX=head_pos["x"] - center - 10,
-                                    posY=head_pos["y"] - center - 5,
-                                    fontSize=5,
-                                    color=Colors.white,
-                                )
 
                             # meow.draw_text(
                             #     text= f"A:{entity.get_armour()}",
@@ -547,9 +377,10 @@ def esp():
 
 def main():
     try:
-        meow.overlay_init(fps=155, title='test')
+        meow.overlay_init(fps=3000, title='test')
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()
+        # threading.Thread(target=specator_list, name='specator_list', daemon=True).start()
         esp()
         
     except Exception as err:
@@ -569,14 +400,17 @@ if __name__ == '__main__':
         exit(0)
  
     try:
-        csgo = Pymem('csgo.exe')
-        csgo_client = process.module_from_name(csgo.process_handle, 'client.dll').lpBaseOfDll
-        csgo_engine = process.module_from_name(csgo.process_handle, 'engine.dll').lpBaseOfDll
+        csgo = meow.open_process(processName="csgo.exe")
+        csgo_client = meow.get_module(csgo, "client.dll")["base"]
+        csgo_engine = meow.get_module(csgo, "engine.dll")["base"]
+        
+        csgo2 = Pymem('csgo.exe')
+        csgo_client2 = process.module_from_name(csgo2.process_handle, 'client.dll').lpBaseOfDll
         
         ntdll = ctypes.windll.ntdll
         k32 = ctypes.windll.kernel32
         u32 = ctypes.windll.user32
-    except exception.ProcessNotFound as err:
+    except Exception as err:
         print(err)
         print('Could not find CS:GO process!\nMake sure the game is running first!')
         exit(0)

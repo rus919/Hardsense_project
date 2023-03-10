@@ -455,10 +455,11 @@ def newOverlay():
                                                             
                                 if spectated == localPlayerAddr:
                                     spectatorsArr.append(entity.name)
+                                    print(spectatorsArr)
                                     
                                     pm.draw_font(
                                     fontId = 0,
-                                    text= 'Spectators: \n' + '\n'.join(spectatorsArr),
+                                    text= 'Spectators: \n' + entity.get_team() + '\n'.join(spectatorsArr),
                                     posX=500,
                                     posY=150,
                                     fontSize=25,
@@ -475,7 +476,7 @@ def newOverlay():
                         # print(entity.name)
                         if not entity.dormant and entity.health > 0 and localPlayer.team != entity.team and ents != localPlayerAddr:
                             entity.wts = pm.world_to_screen(view_matrix, entity.pos, 1)
-                            print(entity.wts)
+                            # print(entity.wts)
                             head_pos = pm.world_to_screen(view_matrix, entity.bone_pos(8), 1)
                             
                             if entity.wts is None and head_pos is None:
@@ -2021,7 +2022,7 @@ def main():
     newOverlay() #start after all processes
     
 if __name__ == "__main__":
-    pm.overlay_init(fps=145, title='test')
+    pm.overlay_init(fps=10000, title='test')
     
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
