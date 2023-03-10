@@ -1,1 +1,0 @@
-# Hardsense_project

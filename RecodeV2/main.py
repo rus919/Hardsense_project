@@ -248,10 +248,19 @@ def trigger():
                 if entity_id != 0 and entity_id < 64:
                     entity = Entity(Engine.get_entity(entity_id - 1))
                     if Local_player.get_team() != entity.get_team() and entity.get_health() > 0:
-                        # k32.Sleep(1)
-                        mouse.click()
-                        k32.Sleep(200)
-        k32.Sleep(1)
+                        if Local_player.getWeapon() == 1: # make custom trigger for every weapon                     
+                            k32.Sleep(1)
+                            mouse.click()
+                            k32.Sleep(350)
+                        if Local_player.getWeapon() == 7:
+                            k32.Sleep(1)
+                            mouse.click()
+                            k32.Sleep(200)
+                        else:
+                            k32.Sleep(1)
+                            mouse.click()
+                            k32.Sleep(200)
+        # k32.Sleep(1) # add a check in menu Trigger V2 - Means it will be more accurate but sometimes can shoot slower
 
 def rcs_control():
     g_old_punch = 0
@@ -512,30 +521,30 @@ def esp():
                                 color = meow.get_color("red"),
                             )
             
-                            meow.draw_rectangle_lines(
-                                posX=head_pos['x'] - center * 1.0,
-                                posY=head_pos['y'] - center / 2,
-                                width=width * 1.0,
-                                height=head + center / 2,
-                                color=Colors.black,
-                                lineThick=1.0,
-                            )
+                            # meow.draw_rectangle_lines(
+                            #     posX=head_pos['x'] - center * 1.0,
+                            #     posY=head_pos['y'] - center / 2,
+                            #     width=width * 1.0,
+                            #     height=head + center / 2,
+                            #     color=Colors.black,
+                            #     lineThick=1.0,
+                            # )
                             
-                            meow.draw_text(
-                                text= f"H:{entity.get_health()}",
-                                posX=head_pos["x"] - center - 25,
-                                posY=head_pos["y"] - center / 2,
-                                fontSize=1,
-                                color=Colors.orange,
-                            )
+                            # meow.draw_text(
+                            #     text= f"H:{entity.get_health()}",
+                            #     posX=head_pos["x"] - center - 25,
+                            #     posY=head_pos["y"] - center / 2,
+                            #     fontSize=1,
+                            #     color=Colors.orange,
+                            # )
                             
-                            meow.draw_text(
-                                    text= entity.get_name,
-                                    posX=head_pos["x"] - center - 10,
-                                    posY=head_pos["y"] - center - 5,
-                                    fontSize=5,
-                                    color=Colors.white,
-                                )
+                            # meow.draw_text(
+                            #         text= entity.get_name,
+                            #         posX=head_pos["x"] - center - 10,
+                            #         posY=head_pos["y"] - center - 5,
+                            #         fontSize=5,
+                            #         color=Colors.white,
+                            #     )
 
                             # meow.draw_text(
                             #     text= f"A:{entity.get_armour()}",
@@ -615,7 +624,7 @@ def esp():
 
 def main():
     try:
-        meow.overlay_init(fps=155, title='test')
+        meow.overlay_init(fps=1500, title='test')
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()
         # threading.Thread(target=rcs_control, name='rcs_control', daemon=True).start()
@@ -629,7 +638,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(720, 600)
-        MainWindow.setMinimumSize(QtCore.QSize(700, 600))
+        MainWindow.setMinimumSize(QtCore.QSize(720, 600))
         MainWindow.setMaximumSize(QtCore.QSize(720, 600))
         MainWindow.setStyleSheet(
             "QMainWindow {background: transparent; }\n"
@@ -713,16 +722,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.leftMenuBtn.sizePolicy().hasHeightForWidth())
         self.leftMenuBtn.setSizePolicy(sizePolicy)
-        self.leftMenuBtn.setMinimumSize(QtCore.QSize(70, 60))
-        self.leftMenuBtn.setStyleSheet(
-            "QPushButton:hover {\n"
-            "    background-color: rgb(33, 37, 43);\n"
-            "}\n"
-            "QPushButton:pressed {    \n"
-            "    background-color: rgb(85, 170, 255);\n"
-            "}\n"
-            ""
-        )
+        self.leftMenuBtn.setMinimumSize(QtCore.QSize(70, 40))
+        self.leftMenuBtn.setStyleSheet("")
         self.leftMenuBtn.setText("")
         self.leftMenuBtn.setIconSize(QtCore.QSize(34, 34))
         self.leftMenuBtn.setObjectName("leftMenuBtn")
@@ -891,7 +892,7 @@ class Ui_MainWindow(object):
         self.headerBtnMinimise.setText("")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(
-            QtGui.QPixmap(":/icons/RecodeV2/UI/icons/minus_icon.svg"),
+            QtGui.QPixmap(":/icons/UI/icons/minus_icon.svg"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
@@ -921,7 +922,7 @@ class Ui_MainWindow(object):
         self.headerBtnClose.setText("")
         icon4 = QtGui.QIcon()
         icon4.addPixmap(
-            QtGui.QPixmap(":/icons/RecodeV2/UI/icons/cross_icon.svg"),
+            QtGui.QPixmap(":/icons/UI/icons/cross_icon.svg"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
@@ -1024,6 +1025,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRefreshMsg.setFont(font)
         self.playersRefreshMsg.setStyleSheet("")
+        self.playersRefreshMsg.setText("")
         self.playersRefreshMsg.setObjectName("playersRefreshMsg")
         self.horizontalLayout_7.addWidget(self.playersRefreshMsg)
         self.horizontalLayout_5.addWidget(
@@ -1101,7 +1103,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.playersContainer.setFont(font)
-        self.playersContainer.setStyleSheet("background-color: rgb(43, 51, 66);\n" "")
+        self.playersContainer.setStyleSheet("background-color: rgb(29, 32, 40);\n" "")
         self.playersContainer.setObjectName("playersContainer")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.playersContainer)
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -1153,6 +1155,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName1.setFont(font)
+        self.playersName1.setText("")
         self.playersName1.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName1.setObjectName("playersName1")
         self.verticalLayout_11.addWidget(self.playersName1)
@@ -1164,6 +1167,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName2.setFont(font)
+        self.playersName2.setText("")
         self.playersName2.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName2.setObjectName("playersName2")
         self.verticalLayout_11.addWidget(self.playersName2)
@@ -1175,6 +1179,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName3.setFont(font)
+        self.playersName3.setText("")
         self.playersName3.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName3.setObjectName("playersName3")
         self.verticalLayout_11.addWidget(self.playersName3)
@@ -1186,6 +1191,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName4.setFont(font)
+        self.playersName4.setText("")
         self.playersName4.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName4.setObjectName("playersName4")
         self.verticalLayout_11.addWidget(self.playersName4)
@@ -1197,6 +1203,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName5.setFont(font)
+        self.playersName5.setText("")
         self.playersName5.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName5.setObjectName("playersName5")
         self.verticalLayout_11.addWidget(self.playersName5)
@@ -1208,6 +1215,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName6.setFont(font)
+        self.playersName6.setText("")
         self.playersName6.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName6.setObjectName("playersName6")
         self.verticalLayout_11.addWidget(self.playersName6)
@@ -1219,6 +1227,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName7.setFont(font)
+        self.playersName7.setText("")
         self.playersName7.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName7.setObjectName("playersName7")
         self.verticalLayout_11.addWidget(self.playersName7)
@@ -1230,6 +1239,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName8.setFont(font)
+        self.playersName8.setText("")
         self.playersName8.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName8.setObjectName("playersName8")
         self.verticalLayout_11.addWidget(self.playersName8)
@@ -1241,6 +1251,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersName9.setFont(font)
+        self.playersName9.setText("")
         self.playersName9.setAlignment(QtCore.Qt.AlignCenter)
         self.playersName9.setObjectName("playersName9")
         self.verticalLayout_11.addWidget(self.playersName9)
@@ -1305,7 +1316,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRank1.setFont(font)
         self.playersRank1.setText("")
-        self.playersRank1.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/gn1.png"))
         self.playersRank1.setScaledContents(True)
         self.playersRank1.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank1.setObjectName("playersRank1")
@@ -1319,7 +1329,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRank2.setFont(font)
         self.playersRank2.setText("")
-        self.playersRank2.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/gn1.png"))
         self.playersRank2.setScaledContents(True)
         self.playersRank2.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank2.setObjectName("playersRank2")
@@ -1334,7 +1343,6 @@ class Ui_MainWindow(object):
         self.playersRank3.setFont(font)
         self.playersRank3.setStyleSheet("")
         self.playersRank3.setText("")
-        self.playersRank3.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/gn1.png"))
         self.playersRank3.setScaledContents(True)
         self.playersRank3.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank3.setObjectName("playersRank3")
@@ -1348,7 +1356,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRank4.setFont(font)
         self.playersRank4.setText("")
-        self.playersRank4.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/gn1.png"))
         self.playersRank4.setScaledContents(True)
         self.playersRank4.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank4.setObjectName("playersRank4")
@@ -1362,7 +1369,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRank5.setFont(font)
         self.playersRank5.setText("")
-        self.playersRank5.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/gn1.png"))
         self.playersRank5.setScaledContents(True)
         self.playersRank5.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank5.setObjectName("playersRank5")
@@ -1376,7 +1382,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRank6.setFont(font)
         self.playersRank6.setText("")
-        self.playersRank6.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/global.png"))
         self.playersRank6.setScaledContents(True)
         self.playersRank6.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank6.setObjectName("playersRank6")
@@ -1390,7 +1395,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRank7.setFont(font)
         self.playersRank7.setText("")
-        self.playersRank7.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/gn1.png"))
         self.playersRank7.setScaledContents(True)
         self.playersRank7.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank7.setObjectName("playersRank7")
@@ -1404,7 +1408,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.playersRank8.setFont(font)
         self.playersRank8.setText("")
-        self.playersRank8.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/global.png"))
         self.playersRank8.setScaledContents(True)
         self.playersRank8.setAlignment(QtCore.Qt.AlignCenter)
         self.playersRank8.setObjectName("playersRank8")
@@ -1412,7 +1415,6 @@ class Ui_MainWindow(object):
         self.playersRank9 = QtWidgets.QLabel(self.playersRankContainer)
         self.playersRank9.setMaximumSize(QtCore.QSize(16777215, 45))
         self.playersRank9.setText("")
-        self.playersRank9.setPixmap(QtGui.QPixmap(":/ranks/UI/Ranks/gn3.png"))
         self.playersRank9.setScaledContents(True)
         self.playersRank9.setObjectName("playersRank9")
         self.verticalLayout_9.addWidget(self.playersRank9)
@@ -1456,6 +1458,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins1.setFont(font)
+        self.playersWins1.setText("")
         self.playersWins1.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins1.setObjectName("playersWins1")
         self.verticalLayout_12.addWidget(self.playersWins1)
@@ -1467,6 +1470,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins2.setFont(font)
+        self.playersWins2.setText("")
         self.playersWins2.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins2.setObjectName("playersWins2")
         self.verticalLayout_12.addWidget(self.playersWins2)
@@ -1478,6 +1482,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins3.setFont(font)
+        self.playersWins3.setText("")
         self.playersWins3.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins3.setObjectName("playersWins3")
         self.verticalLayout_12.addWidget(self.playersWins3)
@@ -1489,6 +1494,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins4.setFont(font)
+        self.playersWins4.setText("")
         self.playersWins4.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins4.setObjectName("playersWins4")
         self.verticalLayout_12.addWidget(self.playersWins4)
@@ -1500,6 +1506,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins5.setFont(font)
+        self.playersWins5.setText("")
         self.playersWins5.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins5.setObjectName("playersWins5")
         self.verticalLayout_12.addWidget(self.playersWins5)
@@ -1511,6 +1518,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins6.setFont(font)
+        self.playersWins6.setText("")
         self.playersWins6.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins6.setObjectName("playersWins6")
         self.verticalLayout_12.addWidget(self.playersWins6)
@@ -1522,6 +1530,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins7.setFont(font)
+        self.playersWins7.setText("")
         self.playersWins7.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins7.setObjectName("playersWins7")
         self.verticalLayout_12.addWidget(self.playersWins7)
@@ -1533,6 +1542,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins8.setFont(font)
+        self.playersWins8.setText("")
         self.playersWins8.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins8.setObjectName("playersWins8")
         self.verticalLayout_12.addWidget(self.playersWins8)
@@ -1543,6 +1553,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.playersWins9.setFont(font)
+        self.playersWins9.setText("")
         self.playersWins9.setAlignment(QtCore.Qt.AlignCenter)
         self.playersWins9.setObjectName("playersWins9")
         self.verticalLayout_12.addWidget(self.playersWins9)
@@ -1714,7 +1725,6 @@ class Ui_MainWindow(object):
         self.playersFaceit9.setMinimumSize(QtCore.QSize(0, 45))
         self.playersFaceit9.setMaximumSize(QtCore.QSize(16777215, 45))
         self.playersFaceit9.setText("")
-        self.playersFaceit9.setIcon(icon6)
         self.playersFaceit9.setIconSize(QtCore.QSize(50, 1000))
         self.playersFaceit9.setObjectName("playersFaceit9")
         self.verticalLayout_14.addWidget(self.playersFaceit9)
@@ -1876,130 +1886,308 @@ class Ui_MainWindow(object):
         self.CSGOStatsBtn9.setMinimumSize(QtCore.QSize(0, 45))
         self.CSGOStatsBtn9.setMaximumSize(QtCore.QSize(16777215, 45))
         self.CSGOStatsBtn9.setText("")
-        self.CSGOStatsBtn9.setIcon(icon7)
         self.CSGOStatsBtn9.setIconSize(QtCore.QSize(25, 1000))
         self.CSGOStatsBtn9.setObjectName("CSGOStatsBtn9")
         self.verticalLayout_15.addWidget(self.CSGOStatsBtn9)
         self.horizontalLayout_4.addWidget(self.playersCSGOStatsContainer)
         self.verticalLayout_8.addWidget(self.playersContainer, 0, QtCore.Qt.AlignLeft)
         self.mainBodyWidget.addWidget(self.playersPage)
-        self.settingsPage = QtWidgets.QWidget()
-        self.settingsPage.setStyleSheet("background-color: rgb(29, 32, 40);\n" "")
-        self.settingsPage.setObjectName("settingsPage")
-        self.gridLayout = QtWidgets.QGridLayout(self.settingsPage)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.setSpacing(0)
-        self.gridLayout.setObjectName("gridLayout")
-        self.widget = QtWidgets.QWidget(self.settingsPage)
-        self.widget.setObjectName("widget")
-        self.gridLayout.addWidget(self.widget, 0, 0, 1, 1)
-        self.widget_4 = QtWidgets.QWidget(self.settingsPage)
-        self.widget_4.setObjectName("widget_4")
-        self.gridLayout.addWidget(self.widget_4, 1, 0, 1, 1)
-        self.widget_6 = QtWidgets.QWidget(self.settingsPage)
-        self.widget_6.setStyleSheet("")
-        self.widget_6.setObjectName("widget_6")
-        self.verticalLayout_17 = QtWidgets.QVBoxLayout(self.widget_6)
-        self.verticalLayout_17.setObjectName("verticalLayout_17")
-        self.widget_3 = QtWidgets.QWidget(self.widget_6)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(False)
-        font.setWeight(50)
-        self.widget_3.setFont(font)
-        self.widget_3.setStyleSheet(
-            "border-bottom: 2px solid #212D4B;\n" "padding: 0 0 5px 0;"
-        )
-        self.widget_3.setObjectName("widget_3")
-        self.verticalLayout_18 = QtWidgets.QVBoxLayout(self.widget_3)
-        self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_18.setSpacing(0)
-        self.verticalLayout_18.setObjectName("verticalLayout_18")
-        self.label = QtWidgets.QLabel(self.widget_3)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label.setFont(font)
-        self.label.setStyleSheet("")
-        self.label.setObjectName("label")
-        self.verticalLayout_18.addWidget(self.label, 0, QtCore.Qt.AlignLeft)
-        self.verticalLayout_17.addWidget(self.widget_3)
-        self.widget_7 = QtWidgets.QWidget(self.widget_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.widget_7.sizePolicy().hasHeightForWidth())
-        self.widget_7.setSizePolicy(sizePolicy)
-        self.widget_7.setMinimumSize(QtCore.QSize(0, 200))
-        self.widget_7.setStyleSheet("")
-        self.widget_7.setObjectName("widget_7")
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.widget_7)
-        self.horizontalLayout_8.setContentsMargins(-1, 0, 0, 0)
-        self.horizontalLayout_8.setSpacing(0)
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.widget_8left = QtWidgets.QWidget(self.widget_7)
-        self.widget_8left.setObjectName("widget_8left")
-        self.verticalLayout_19 = QtWidgets.QVBoxLayout(self.widget_8left)
-        self.verticalLayout_19.setObjectName("verticalLayout_19")
-        self.label_2 = QtWidgets.QLabel(self.widget_8left)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout_19.addWidget(self.label_2)
-        self.horizontalLayout_8.addWidget(self.widget_8left)
-        self.widget_8right = QtWidgets.QWidget(self.widget_7)
-        self.widget_8right.setObjectName("widget_8right")
-        self.verticalLayout_20 = QtWidgets.QVBoxLayout(self.widget_8right)
-        self.verticalLayout_20.setObjectName("verticalLayout_20")
-        self.horizontalSlider = QtWidgets.QSlider(self.widget_8right)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.horizontalSlider.sizePolicy().hasHeightForWidth()
-        )
-        self.horizontalSlider.setSizePolicy(sizePolicy)
-        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSlider.setObjectName("horizontalSlider")
-        self.verticalLayout_20.addWidget(self.horizontalSlider)
-        self.horizontalLayout_8.addWidget(self.widget_8right)
-        self.verticalLayout_17.addWidget(self.widget_7, 0, QtCore.Qt.AlignTop)
-        self.gridLayout.addWidget(self.widget_6, 0, 1, 1, 1)
-        self.widget_5 = QtWidgets.QWidget(self.settingsPage)
-        self.widget_5.setObjectName("widget_5")
-        self.gridLayout.addWidget(self.widget_5, 1, 1, 1, 1)
-        self.mainBodyWidget.addWidget(self.settingsPage)
         self.wallhackPage = QtWidgets.QWidget()
-        self.wallhackPage.setStyleSheet("background-color: rgb(75,75, 75);")
+        self.wallhackPage.setStyleSheet("background-color: rgb(29, 32, 40);\n" "")
         self.wallhackPage.setObjectName("wallhackPage")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.wallhackPage)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.widget_2 = QtWidgets.QWidget(self.wallhackPage)
-        self.widget_2.setObjectName("widget_2")
-        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.widget_2)
+        self.wallhack_left_container = QtWidgets.QWidget(self.wallhackPage)
+        self.wallhack_left_container.setStyleSheet("margin: 0 5px 0 5px;\n" "")
+        self.wallhack_left_container.setObjectName("wallhack_left_container")
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.wallhack_left_container)
+        self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_10.setSpacing(0)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
+        self.wallhack_left_header_container = QtWidgets.QWidget(
+            self.wallhack_left_container
+        )
+        self.wallhack_left_header_container.setStyleSheet(
+            "border-bottom: 2px solid #212D4B;\n" "padding: 10px  0 10px 0;"
+        )
+        self.wallhack_left_header_container.setObjectName(
+            "wallhack_left_header_container"
+        )
+        self.verticalLayout_21 = QtWidgets.QVBoxLayout(
+            self.wallhack_left_header_container
+        )
+        self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_21.setSpacing(0)
+        self.verticalLayout_21.setObjectName("verticalLayout_21")
+        self.wallhack_left_header = QtWidgets.QLabel(
+            self.wallhack_left_header_container
+        )
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.wallhack_left_header.setFont(font)
+        self.wallhack_left_header.setObjectName("wallhack_left_header")
+        self.verticalLayout_21.addWidget(self.wallhack_left_header)
+        self.verticalLayout_10.addWidget(
+            self.wallhack_left_header_container, 0, QtCore.Qt.AlignTop
+        )
+        self.wallhack_left = QtWidgets.QWidget(self.wallhack_left_container)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.wallhack_left.sizePolicy().hasHeightForWidth()
+        )
+        self.wallhack_left.setSizePolicy(sizePolicy)
+        self.wallhack_left.setStyleSheet("padding: 10px 0;")
+        self.wallhack_left.setObjectName("wallhack_left")
+        self.verticalLayout_24 = QtWidgets.QVBoxLayout(self.wallhack_left)
+        self.verticalLayout_24.setContentsMargins(0, 0, -1, 0)
+        self.verticalLayout_24.setSpacing(0)
+        self.verticalLayout_24.setObjectName("verticalLayout_24")
+        self.checkBox = QtWidgets.QCheckBox(self.wallhack_left)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        self.checkBox.setFont(font)
+        self.checkBox.setObjectName("checkBox")
+        self.verticalLayout_24.addWidget(self.checkBox)
+        self.checkBox_4 = QtWidgets.QCheckBox(self.wallhack_left)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        self.checkBox_4.setFont(font)
+        self.checkBox_4.setObjectName("checkBox_4")
+        self.verticalLayout_24.addWidget(self.checkBox_4)
+        self.checkBox_5 = QtWidgets.QCheckBox(self.wallhack_left)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        self.checkBox_5.setFont(font)
+        self.checkBox_5.setObjectName("checkBox_5")
+        self.verticalLayout_24.addWidget(self.checkBox_5)
+        self.checkBox_6 = QtWidgets.QCheckBox(self.wallhack_left)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        self.checkBox_6.setFont(font)
+        self.checkBox_6.setObjectName("checkBox_6")
+        self.verticalLayout_24.addWidget(self.checkBox_6)
+        self.checkBox_7 = QtWidgets.QCheckBox(self.wallhack_left)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        self.checkBox_7.setFont(font)
+        self.checkBox_7.setObjectName("checkBox_7")
+        self.verticalLayout_24.addWidget(self.checkBox_7)
+        self.checkBox_8 = QtWidgets.QCheckBox(self.wallhack_left)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        self.checkBox_8.setFont(font)
+        self.checkBox_8.setObjectName("checkBox_8")
+        self.verticalLayout_24.addWidget(self.checkBox_8)
+        self.checkBox_9 = QtWidgets.QCheckBox(self.wallhack_left)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        font.setStrikeOut(False)
+        self.checkBox_9.setFont(font)
+        self.checkBox_9.setObjectName("checkBox_9")
+        self.verticalLayout_24.addWidget(self.checkBox_9)
+        self.verticalLayout_10.addWidget(self.wallhack_left)
+        self.horizontalLayout_2.addWidget(
+            self.wallhack_left_container, 0, QtCore.Qt.AlignTop
+        )
+        self.wallhack_middle_container = QtWidgets.QWidget(self.wallhackPage)
+        self.wallhack_middle_container.setStyleSheet("margin: 0 5px 0 5px;")
+        self.wallhack_middle_container.setObjectName("wallhack_middle_container")
+        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.wallhack_middle_container)
         self.verticalLayout_13.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_13.setSpacing(0)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
-        self.checkBox = QtWidgets.QCheckBox(self.widget_2)
-        self.checkBox.setChecked(False)
-        self.checkBox.setTristate(False)
-        self.checkBox.setObjectName("checkBox")
-        self.verticalLayout_13.addWidget(self.checkBox)
-        self.horizontalLayout_2.addWidget(self.widget_2)
+        self.wallhack_middle_header_container = QtWidgets.QWidget(
+            self.wallhack_middle_container
+        )
+        self.wallhack_middle_header_container.setStyleSheet(
+            "border-bottom: 2px solid #212D4B;\n" "padding: 10px 0 10px 0;"
+        )
+        self.wallhack_middle_header_container.setObjectName(
+            "wallhack_middle_header_container"
+        )
+        self.verticalLayout_22 = QtWidgets.QVBoxLayout(
+            self.wallhack_middle_header_container
+        )
+        self.verticalLayout_22.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_22.setSpacing(0)
+        self.verticalLayout_22.setObjectName("verticalLayout_22")
+        self.wallhack_middle_header = QtWidgets.QLabel(
+            self.wallhack_middle_header_container
+        )
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.wallhack_middle_header.setFont(font)
+        self.wallhack_middle_header.setObjectName("wallhack_middle_header")
+        self.verticalLayout_22.addWidget(self.wallhack_middle_header)
+        self.verticalLayout_13.addWidget(
+            self.wallhack_middle_header_container, 0, QtCore.Qt.AlignTop
+        )
+        self.widget_7 = QtWidgets.QWidget(self.wallhack_middle_container)
+        self.widget_7.setStyleSheet("padding: 10px 0;")
+        self.widget_7.setObjectName("widget_7")
+        self.verticalLayout_26 = QtWidgets.QVBoxLayout(self.widget_7)
+        self.verticalLayout_26.setObjectName("verticalLayout_26")
+        self.checkBox_10 = QtWidgets.QCheckBox(self.widget_7)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.checkBox_10.setFont(font)
+        self.checkBox_10.setObjectName("checkBox_10")
+        self.verticalLayout_26.addWidget(self.checkBox_10)
+        self.verticalLayout_13.addWidget(self.widget_7)
+        self.horizontalLayout_2.addWidget(
+            self.wallhack_middle_container, 0, QtCore.Qt.AlignTop
+        )
+        self.wallhack_right_container = QtWidgets.QWidget(self.wallhackPage)
+        self.wallhack_right_container.setStyleSheet("margin: 0 5px 0 5px;")
+        self.wallhack_right_container.setObjectName("wallhack_right_container")
+        self.verticalLayout_20 = QtWidgets.QVBoxLayout(self.wallhack_right_container)
+        self.verticalLayout_20.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_20.setSpacing(0)
+        self.verticalLayout_20.setObjectName("verticalLayout_20")
+        self.wallhack_right_header_container = QtWidgets.QWidget(
+            self.wallhack_right_container
+        )
+        self.wallhack_right_header_container.setStyleSheet(
+            "border-bottom: 2px solid #212D4B;\n" "padding: 10px 0 10px 0;"
+        )
+        self.wallhack_right_header_container.setObjectName(
+            "wallhack_right_header_container"
+        )
+        self.verticalLayout_23 = QtWidgets.QVBoxLayout(
+            self.wallhack_right_header_container
+        )
+        self.verticalLayout_23.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_23.setSpacing(0)
+        self.verticalLayout_23.setObjectName("verticalLayout_23")
+        self.wallhack_right_header = QtWidgets.QLabel(
+            self.wallhack_right_header_container
+        )
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.wallhack_right_header.setFont(font)
+        self.wallhack_right_header.setObjectName("wallhack_right_header")
+        self.verticalLayout_23.addWidget(self.wallhack_right_header)
+        self.verticalLayout_20.addWidget(
+            self.wallhack_right_header_container, 0, QtCore.Qt.AlignTop
+        )
+        self.widget_9 = QtWidgets.QWidget(self.wallhack_right_container)
+        self.widget_9.setStyleSheet("padding: 10px 0;")
+        self.widget_9.setObjectName("widget_9")
+        self.verticalLayout_25 = QtWidgets.QVBoxLayout(self.widget_9)
+        self.verticalLayout_25.setObjectName("verticalLayout_25")
+        self.checkBox_13 = QtWidgets.QCheckBox(self.widget_9)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.checkBox_13.setFont(font)
+        self.checkBox_13.setObjectName("checkBox_13")
+        self.verticalLayout_25.addWidget(self.checkBox_13)
+        self.checkBox_12 = QtWidgets.QCheckBox(self.widget_9)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.checkBox_12.setFont(font)
+        self.checkBox_12.setObjectName("checkBox_12")
+        self.verticalLayout_25.addWidget(self.checkBox_12)
+        self.checkBox_11 = QtWidgets.QCheckBox(self.widget_9)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.checkBox_11.setFont(font)
+        self.checkBox_11.setObjectName("checkBox_11")
+        self.verticalLayout_25.addWidget(self.checkBox_11)
+        self.verticalLayout_20.addWidget(self.widget_9)
+        self.horizontalLayout_2.addWidget(
+            self.wallhack_right_container, 0, QtCore.Qt.AlignTop
+        )
         self.mainBodyWidget.addWidget(self.wallhackPage)
+        self.settingsPage = QtWidgets.QWidget()
+        self.settingsPage.setObjectName("settingsPage")
+        self.verticalLayout_18 = QtWidgets.QVBoxLayout(self.settingsPage)
+        self.verticalLayout_18.setObjectName("verticalLayout_18")
+        self.settingsPageContainer = QtWidgets.QWidget(self.settingsPage)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.settingsPageContainer.sizePolicy().hasHeightForWidth()
+        )
+        self.settingsPageContainer.setSizePolicy(sizePolicy)
+        self.settingsPageContainer.setObjectName("settingsPageContainer")
+        self.verticalLayout_17 = QtWidgets.QVBoxLayout(self.settingsPageContainer)
+        self.verticalLayout_17.setObjectName("verticalLayout_17")
+        self.settingsPageTop = QtWidgets.QWidget(self.settingsPageContainer)
+        self.settingsPageTop.setObjectName("settingsPageTop")
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.settingsPageTop)
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.settingsPageTopLeft = QtWidgets.QWidget(self.settingsPageTop)
+        self.settingsPageTopLeft.setObjectName("settingsPageTopLeft")
+        self.horizontalLayout_8.addWidget(self.settingsPageTopLeft)
+        self.settingsPageTopRight = QtWidgets.QWidget(self.settingsPageTop)
+        self.settingsPageTopRight.setObjectName("settingsPageTopRight")
+        self.horizontalLayout_8.addWidget(self.settingsPageTopRight)
+        self.verticalLayout_17.addWidget(self.settingsPageTop)
+        self.settingsPageBottom = QtWidgets.QWidget(self.settingsPageContainer)
+        self.settingsPageBottom.setObjectName("settingsPageBottom")
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.settingsPageBottom)
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
+        self.settingsPageBottomLeft = QtWidgets.QWidget(self.settingsPageBottom)
+        self.settingsPageBottomLeft.setObjectName("settingsPageBottomLeft")
+        self.horizontalLayout_9.addWidget(self.settingsPageBottomLeft)
+        self.settingsPageBottomRight = QtWidgets.QWidget(self.settingsPageBottom)
+        self.settingsPageBottomRight.setObjectName("settingsPageBottomRight")
+        self.horizontalLayout_9.addWidget(self.settingsPageBottomRight)
+        self.verticalLayout_17.addWidget(self.settingsPageBottom)
+        self.verticalLayout_18.addWidget(self.settingsPageContainer)
+        self.mainBodyWidget.addWidget(self.settingsPage)
         self.verticalLayout_7.addWidget(self.mainBodyWidget)
         self.verticalLayout_6.addWidget(self.mainBodyContent)
         self.horizontalLayout.addWidget(self.mainBodyContainer)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.mainBodyWidget.setCurrentIndex(0)
+        self.mainBodyWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
 
     def display_players(self): #Update players button -- make a check if the rank is not 0 then display players        
         getPlayerInfo()
@@ -2051,8 +2239,8 @@ class Ui_MainWindow(object):
                     
                     exec(playerNames), exec(playerWins), exec(playersFaceit), exec(playersCSGOStats)
                     
-                    for ranks in playersInfo[i][3]:
-                        print(ranks)
+                    # for ranks in playersInfo[i][3]:
+                    #     print(ranks)
                     
                     if playersInfo[i][3] == 18: #Global
                         playersRank = 'self.playersRank' + str(i) + '.setPixmap(Rank_Global)'
@@ -2170,39 +2358,31 @@ class Ui_MainWindow(object):
         self.wallhackBtn.setToolTip(_translate("MainWindow", "Analysis"))
         self.playersBtn.setToolTip(_translate("MainWindow", "Reports"))
         self.settingsBtn.setToolTip(_translate("MainWindow", "Settings"))
-        self.playersRefreshMsg.setText(_translate("MainWindow", "STATUS:"))
         self.PlayersNameHeader.setText(_translate("MainWindow", "NAME"))
         self.playersName0.setText(_translate("MainWindow", "PLAYER"))
-        self.playersName1.setText(_translate("MainWindow", "1"))
-        self.playersName2.setText(_translate("MainWindow", "2"))
-        self.playersName3.setText(_translate("MainWindow", "3"))
-        self.playersName4.setText(_translate("MainWindow", "4"))
-        self.playersName5.setText(_translate("MainWindow", "5"))
-        self.playersName6.setText(_translate("MainWindow", "6"))
-        self.playersName7.setText(_translate("MainWindow", "7"))
-        self.playersName8.setText(_translate("MainWindow", "asdasdasdasd"))
-        self.playersName9.setText(_translate("MainWindow", "asdadasdasd"))
         self.playersRankHeader.setText(_translate("MainWindow", "RANK"))
         self.playersWinsHeader.setText(_translate("MainWindow", "WINS"))
         self.playersWins0.setText(_translate("MainWindow", "999"))
-        self.playersWins1.setText(_translate("MainWindow", "1"))
-        self.playersWins2.setText(_translate("MainWindow", "1"))
-        self.playersWins3.setText(_translate("MainWindow", "1"))
-        self.playersWins4.setText(_translate("MainWindow", "1"))
-        self.playersWins5.setText(_translate("MainWindow", "1"))
-        self.playersWins6.setText(_translate("MainWindow", "1"))
-        self.playersWins7.setText(_translate("MainWindow", "1"))
-        self.playersWins8.setText(_translate("MainWindow", "2322"))
-        self.playersWins9.setText(_translate("MainWindow", "123"))
         self.playersFaceitHeader.setText(_translate("MainWindow", "FACEIT"))
         self.CSGOStatsHeader.setText(_translate("MainWindow", "CSGOSTATS"))
-        self.label.setText(_translate("MainWindow", "Overlay"))
-        self.label_2.setText(_translate("MainWindow", "Performance"))
-        self.checkBox.setText(_translate("MainWindow", "CheckBox"))
+        self.wallhack_left_header.setText(_translate("MainWindow", "Players"))
+        self.checkBox.setText(_translate("MainWindow", "Box ESP"))
+        self.checkBox_4.setText(_translate("MainWindow", "Head Dot"))
+        self.checkBox_5.setText(_translate("MainWindow", "Draw Name"))
+        self.checkBox_6.setText(_translate("MainWindow", "Draw Health [Text]"))
+        self.checkBox_7.setText(_translate("MainWindow", "Draw Armor [Text]"))
+        self.checkBox_8.setText(_translate("MainWindow", "Draw Health [Icon]"))
+        self.checkBox_9.setText(_translate("MainWindow", "Draw Weapons [Icon]"))
+        self.wallhack_middle_header.setText(_translate("MainWindow", "World"))
+        self.checkBox_10.setText(_translate("MainWindow", "Bomb Planted Info"))
+        self.wallhack_right_header.setText(_translate("MainWindow", "Misc"))
+        self.checkBox_13.setText(_translate("MainWindow", "Recoil Crosshair"))
+        self.checkBox_12.setText(_translate("MainWindow", "Sniper Crosshair"))
+        self.checkBox_11.setText(_translate("MainWindow", "Spectator List"))
         
-        self.wallhackBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(2))
+        self.wallhackBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(1))
         self.playersBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(0))
-        self.settingsBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(1))
+        self.settingsBtn.clicked.connect(lambda: self.mainBodyWidget.setCurrentIndex(2))
         
         self.buttonGroup_2.buttonClicked[int].connect(self.openFaceit) # adding [int] to get the button ID from a group
         self.buttonGroup.buttonClicked[int].connect(self.openCSGOStats)
