@@ -1,0 +1,36 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>UI/icons/cross_icon.svg</file>
+    <file>UI/icons/csgoPlayer_icon.svg</file>
+    <file>UI/icons/eye_icon.svg</file>
+    <file>UI/icons/trigger_icon.svg</file>
+    <file>UI/icons/faceit_icon.png</file>
+    <file>UI/icons/menu_icon.svg</file>
+    <file>UI/icons/minus_icon.svg</file>
+    <file>UI/icons/players_icon.svg</file>
+    <file>UI/icons/refresh_icon.svg</file>
+    <file>UI/icons/settings_icon.svg</file>
+    <file>UI/icons/square_icon.svg</file>
+    <file>UI/icons/user_icon.svg</file>
+  </qresource>
+  <qresource prefix="ranks">
+    <file>UI/Ranks/dmg.png</file>
+    <file>UI/Ranks/global.png</file>
+    <file>UI/Ranks/gn1.png</file>
+    <file>UI/Ranks/gn2.png</file>
+    <file>UI/Ranks/gn3.png</file>
+    <file>UI/Ranks/gn4.png</file>
+    <file>UI/Ranks/le.png</file>
+    <file>UI/Ranks/lem.png</file>
+    <file>UI/Ranks/mg.png</file>
+    <file>UI/Ranks/mg1.png</file>
+    <file>UI/Ranks/mg2.png</file>
+    <file>UI/Ranks/silver_elite.png</file>
+    <file>UI/Ranks/silver1.png</file>
+    <file>UI/Ranks/silver2.png</file>
+    <file>UI/Ranks/silver3.png</file>
+    <file>UI/Ranks/silver4.png</file>
+    <file>UI/Ranks/silver5.png</file>
+    <file>UI/Ranks/supreme.png</file>
+  </qresource>
+</RCC>
