@@ -1,5 +1,8 @@
 from ctypes import windll, Structure, c_float, c_uint32, c_uint64, c_char, sizeof, pointer, c_long, c_uint8, create_string_buffer, create_unicode_buffer, c_uint16, c_int32 
 
+# class Vector3(Structure):
+#     _fields_ = [('x', c_float), ('y', c_float), ('z', c_float)]
+
 class PROCESSENTRY32(Structure):
     _fields_ = [
         ("dwSize", c_uint32),
@@ -14,33 +17,33 @@ class PROCESSENTRY32(Structure):
         ("szExeFile", c_char * 260)
     ]
 
-class Process:
+class Windll:
     ntdll = windll.ntdll
     k32 = windll.kernel32
     u32 = windll.user32
-    
-    
+
+class Process:
     @staticmethod
     def get_process_handle(name):
         handle = 0
         entry = PROCESSENTRY32()
-        snap = Process.k32.CreateToolhelp32Snapshot(0x00000002, 0)
+        snap = Windll.k32.CreateToolhelp32Snapshot(0x00000002, 0)
         entry.dwSize = sizeof(PROCESSENTRY32)
-        while Process.k32.Process32Next(snap, pointer(entry)):
+        while Windll.k32.Process32Next(snap, pointer(entry)):
             if entry.szExeFile == name.encode("ascii", "ignore"):
-                handle = Process.k32.OpenProcess(0x430, 0, entry.th32ProcessID)
+                handle = Windll.k32.OpenProcess(0x430, 0, entry.th32ProcessID)
                 break
-        Process.k32.CloseHandle(snap)
+        Windll.k32.CloseHandle(snap)
         return handle
 
     @staticmethod
     def get_process_peb(handle, wow64):
         buffer = (c_uint64 * 6)(0)
         if wow64:
-            if Process.ntdll.NtQueryInformationProcess(handle, 26, pointer(buffer), 8, 0) == 0:
+            if Windll.ntdll.NtQueryInformationProcess(handle, 26, pointer(buffer), 8, 0) == 0:
                 return buffer[0]
         else:
-            if Process.ntdll.NtQueryInformationProcess(handle, 0, pointer(buffer), 48, 0) == 0:
+            if Windll.ntdll.NtQueryInformationProcess(handle, 0, pointer(buffer), 48, 0) == 0:
                 return buffer[1]
         return 0
 
@@ -57,52 +60,52 @@ class Process:
 
     def is_running(self):
         buffer = c_uint32()
-        Process.k32.GetExitCodeProcess(self.mem, pointer(buffer))
+        Windll.k32.GetExitCodeProcess(self.mem, pointer(buffer))
         return buffer.value == 0x103
 
-    def read_vec3(self, address):
-        buffer = Vector3()
-        Process.ntdll.NtReadVirtualMemory(self.mem, c_long(address), pointer(buffer), 12, 0)
-        return buffer
+    # def read_vec3(self, address):
+    #     buffer = Vector3()
+    #     Windll.ntdll.NtReadVirtualMemory(self.mem, c_long(address), pointer(buffer), 12, 0)
+    #     return buffer
 
     def read_buffer(self, address, length):
         buffer = (c_uint8 * length)()
-        Process.ntdll.NtReadVirtualMemory(self.mem, address, buffer, length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, address, buffer, length, 0)
         return buffer
 
     def read_string(self, address, length=120):
         buffer = create_string_buffer(length)
-        Process.ntdll.NtReadVirtualMemory(self.mem, address, buffer, length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, address, buffer, length, 0)
         return buffer.value
 
     def read_unicode(self, address, length=120):
         buffer = create_unicode_buffer(length)
-        Process.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
         return buffer.value
 
     def read_float(self, address, length=4):
         buffer = c_float()
-        Process.ntdll.NtReadVirtualMemory(self.mem, c_long(address), pointer(buffer), length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, c_long(address), pointer(buffer), length, 0)
         return buffer.value
 
     def read_i8(self, address, length=1):
         buffer = c_uint8()
-        Process.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
         return buffer.value
 
     def read_i16(self, address, length=2):
         buffer = c_uint16()
-        Process.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
         return buffer.value
 
     def read_i32(self, address, length=4):
         buffer = c_uint32()
-        Process.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, address, pointer(buffer), length, 0)
         return buffer.value
 
     def read_i64(self, address, length=8):
         buffer = c_uint64()
-        Process.ntdll.NtReadVirtualMemory(self.mem, c_uint64(address), pointer(buffer), length, 0)
+        Windll.ntdll.NtReadVirtualMemory(self.mem, c_uint64(address), pointer(buffer), length, 0)
         return buffer.value
 
     def get_module(self, name):
