@@ -264,7 +264,7 @@ def trigger():
                             # k32.Sleep(200)
                         # time.sleep(0.01)
                         # time.sleep(0.01)
-                        k32.Sleep(1) 
+                        # k32.Sleep(1) 
                         u32.mouse_event(0x0002, 0, 0, 0, 0)
                         k32.Sleep(25)
                         u32.mouse_event(0x0004, 0, 0, 0, 0)
@@ -661,7 +661,7 @@ def main():
     try:
         meow.overlay_init(fps=144, title='test')
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
-        # threading.Thread(target=trigger, name='trigger', daemon=True).start()
+        threading.Thread(target=trigger, name='trigger', daemon=True).start()
         # threading.Thread(target=rcs_control, name='rcs_control', daemon=True).start()
         esp()
         

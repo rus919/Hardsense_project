@@ -604,25 +604,38 @@ if __name__ == "__main__":
                         continue                   
                     
                     # print(get_target_angle(self, _target, _target_bone)) 
-                    if u32.GetAsyncKeyState(5):
+                    if u32.GetAsyncKeyState(6):
                         cross_id = self.get_cross_index()
                         if cross_id == 0:
                             continue
                         cross_target = Entity.get_client_entity(cross_id - 1)
                         # print(cross_target)
                         if self.get_team_num() != cross_target.get_team_num() and cross_target.get_health() > 0:
-                            g_aimbot_rcs = True
-                            g_aimbot_head = False
-                            g_aimbot_fov = 3.0 / 180.0
-                            g_aimbot_smooth = 5.0
-                            g_current_tick = self.get_tick_count()
-                            if not _target.is_valid() and not get_best_target(view_angle, self):
-                                continue
-                            aim_at_target(fl_sensitivity, view_angle, get_target_angle(self, _target, _target_bone))
                             u32.mouse_event(0x0002, 0, 0, 0, 0)
                             k32.Sleep(50)
                             u32.mouse_event(0x0004, 0, 0, 0, 0)
                             k32.Sleep(200)
+                    
+                    if u32.GetAsyncKeyState(5):
+                        g_aimbot_rcs = False
+                        g_aimbot_head = True
+                        g_aimbot_fov = 1.0 / 180.0
+                        g_aimbot_smooth = 1.1
+                            
+                        g_current_tick = self.get_tick_count()
+                        if not _target.is_valid() and not get_best_target(view_angle, self):
+                            continue
+                        aim_at_target(fl_sensitivity, view_angle, get_target_angle(self, _target, _target_bone))
+                        
+                        cross_id = self.get_cross_index()
+                        if cross_id == 0:
+                            continue
+                        cross_target = Entity.get_client_entity(cross_id - 1)
+                        if self.get_team_num() != cross_target.get_team_num() and cross_target.get_health() > 0:
+                            u32.mouse_event(0x0002, 0, 0, 0, 0)
+                            k32.Sleep(50)
+                            u32.mouse_event(0x0004, 0, 0, 0, 0)
+                            k32.Sleep(250)
 
                     # if u32.GetAsyncKeyState(g_triggerbot_key):
                     #     cross_id = self.get_cross_index()
