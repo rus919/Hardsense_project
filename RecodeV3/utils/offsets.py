@@ -1,7 +1,7 @@
 from requests import get
 
 class Offset():
-    url = 'https://raw.githubusercontent.com/frk1/hazedumper/master/csgo.json'
+    url = 'https://raw.githubusercontent.com/Akandesh/blazedumper/master/csgo.json'
     response = get(url).json()
 
     anim_overlays = int(response["signatures"]["anim_overlays"])
@@ -121,7 +121,7 @@ class Offset():
     m_iCompetitiveWins = int(response["netvars"]["m_iCompetitiveWins"])
     m_iCrosshairId = int(response["netvars"]["m_iCrosshairId"])
     m_iEntityQuality = int(response["netvars"]["m_iEntityQuality"])
-    m_iFOV = int(response["netvars"]["m_iDefaultFOV"])
+    m_iFOV = int(response["netvars"]["m_iFOV"])
     m_iFOVStart = int(response["netvars"]["m_iFOVStart"])
     m_iGlowIndex = int(response["netvars"]["m_iGlowIndex"])
     m_iHealth = int(response["netvars"]["m_iHealth"])
