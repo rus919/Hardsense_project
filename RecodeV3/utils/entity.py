@@ -73,6 +73,18 @@ class Entity():
         getWeaponAddressHandle = csgo.read_i32(csgo_client + Offset.dwEntityList + (getWeaponAddress - 1) * 0x10)
         return csgo.read_i16(getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
     
+    def get_observed_target_handle(self):
+        return csgo.read_i32(self.entityObj + Offset.m_hObserverTarget) & 0xFFF
+    
+    def get_id(self):
+        return csgo.read_i32(self.entityObj + 0x64)
+    
+    @property
+    def get_name(self):
+        radar_base = csgo.read_i32(csgo_client + Offset.dwRadarBase)
+        hud_radar = csgo.read_i32(radar_base + 0x78)
+        return csgo.read_string(hud_radar + 0x300 + (0x174 * (self.get_id() - 1)), 32)
+    
     
 class Engine():
     def get_entity(index):

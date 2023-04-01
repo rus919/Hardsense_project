@@ -42,4 +42,4 @@ def entity_parse():
                 print('entity_parse: ', err)
                 pass
         # print(bombAddr)
-        Windll.k32.Sleep(1000)       
+        Windll.k32.Sleep(2000)       

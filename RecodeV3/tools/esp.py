@@ -7,6 +7,7 @@ from tools.entity_parse import EntityList, bombAddr
 def esp():
     scoped_weapons = [9, 11, 38, 40]
     try:
+        meow.load_font("assets/fonts/ff.ttf", 0)
         C4 = meow.load_texture("assets/images/c4.png")
     except Exception as err:
         print(err)
@@ -84,9 +85,30 @@ def esp():
                             thick = 1.0
                         )
                 
+                # spectators = []
                 for ents in EntityList:
                     try:
-                        entity = Entity(ents)                        
+                        entity = Entity(ents)
+                        # print(entity.get_name)
+                        # if local_player.get_health() <= 0:
+                        #     spectators.clear()
+                        # if entity.get_team() == local_player.get_team():
+                        #     #Entity will be removed from spectator list only when WH can display it, thats why team check should be used until another method is not found
+                        #     spectated = Engine.get_entity(entity.get_observed_target_handle() - 1)
+                        #     if spectated == LocalPlayer.get_local_player():
+                        #         spectators.append(str(entity.get_name))
+                        #         meow.draw_font(
+                        #             fontId = 0,
+                        #             text= '\n'.join(spectators),
+                        #             posX=get_screen_width_x / 100,
+                        #             posY=get_screen_width_y / 1.8,
+                        #             fontSize=25,
+                        #             spacing = 2.0,
+                        #             tint = Colors.white,
+                        #         )
+                        # else:
+                        #     spectators.clear()         
+                                
                         if not entity.get_dormant() and entity.get_health() > 0 and local_player.get_team() != entity.get_team() and ents != local_player:
                             entity_w2s = meow.world_to_screen(view_matrix, entity.get_position(), 1)
                             head_pos = meow.world_to_screen(view_matrix, entity.get_bone_position(8), 1)
@@ -109,6 +131,26 @@ def esp():
                                 centerY = head_pos["y"],
                                 radius = 3,
                                 color = meow.get_color("red"),
+                            )
+                            
+                            meow.draw_text(
+                                text= entity.get_name,
+                                posX=head_pos["x"] - center - 10,
+                                posY=head_pos["y"] - center - 5,
+                                fontSize=5,
+                                color=Colors.white,
+                            )
+                            
+                            meow.gui_progress_bar(
+                                posX=head_pos["x"] - center,
+                                posY=entity_w2s["y"],
+                                width=width,
+                                height=10,
+                                textLeft="HP: ",
+                                textRight=f" {entity.get_health()}",
+                                value=entity.get_health(),
+                                minValue=0,
+                                maxValue=100,
                             )
                             
                     except Exception as err:

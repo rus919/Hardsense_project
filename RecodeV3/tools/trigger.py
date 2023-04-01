@@ -21,7 +21,7 @@ def trigger():
                                 Windll.u32.mouse_event(0x0002, 0, 0, 0, 0)
                                 Windll.k32.Sleep(25)
                                 Windll.u32.mouse_event(0x0004, 0, 0, 0, 0)
-                                Windll.k32.Sleep(350)
+                                Windll.k32.Sleep(150)
                     except Exception as err:
                         print(err)
                         continue
