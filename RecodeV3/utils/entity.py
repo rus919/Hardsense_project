@@ -81,27 +81,30 @@ class Engine():
         z = csgo.read_float(Engine.get_state() + Offset.dwClientState_ViewAngles, 0x2c)
         return vec3(x, y, z)
     
-#     def get_GameRulesProxy():
-#         return csgo.read_uint(csgo_client + Offsets.dwGameRulesProxy)
+    def get_GameRulesProxy():
+        return csgo.read_i32(csgo_client + Offset.dwGameRulesProxy)
     
-#     def get_bomb_planted():
-#         return csgo.read_uint(Engine.get_GameRulesProxy() + Offsets.m_bBombPlanted)
+    def get_bomb_planted():
+        return csgo.read_i32(Engine.get_GameRulesProxy() + Offset.m_bBombPlanted)
     
-#     def get_bomb_ticking(bomb_entity):
-#         return csgo.read_bool(bomb_entity + Offsets.m_bBombTicking)
+    # def get_freeze_period():
+    #     return csgo.read_i8(Engine.get_GameRulesProxy() + Offset.m_bFreezePeriod)
     
-#     def get_bomb_site(bomb_entity):
-#         return csgo.read_short(bomb_entity + Offsets.m_nBombSite)
+    def get_bomb_ticking(bomb_entity):
+        return csgo.read_i8(bomb_entity + 0x2990) # m_bBombTicking
     
-#     def get_curr_time():
-#         return csgo.read_float(csgo_engine + Offsets.dwGlobalVars + 0x10)
+    def get_bomb_site(bomb_entity):
+        return csgo.read_i8(bomb_entity + 0x2994) # m_nBombSite
     
-#     def get_bomb_time(bomb_entity):
-#         return csgo.read_float(bomb_entity + Offsets.m_flC4Blow) - Engine.get_curr_time() #To start countdown 
+    def get_curr_time():
+        return csgo.read_float(csgo_engine + Offset.dwGlobalVars + 0x10)
     
-#     def get_defuse_time(bomb_entity):
-#         return csgo.read_float(bomb_entity + Offsets.m_flDefuseCountDown) - Engine.get_curr_time() #To start countdown 
+    def get_bomb_time(bomb_entity):
+        return csgo.read_float(bomb_entity + 0x29a0) - Engine.get_curr_time() #To start countdown \ m_flC4Blow
     
-#     def is_defusing_bomb(bomb_entity):
-#         return csgo.read_int(bomb_entity + Offsets.m_hBombDefuser)
+    def get_defuse_time(bomb_entity):
+        return csgo.read_float(bomb_entity + Offset.m_flDefuseCountDown) - Engine.get_curr_time() #To start countdown 
+    
+    def is_defusing_bomb(bomb_entity):
+        return csgo.read_i8(bomb_entity + 0x29c4) #m_hBombDefuser
     

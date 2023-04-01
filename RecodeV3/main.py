@@ -223,7 +223,7 @@ if __name__ == "__main__":
     
     try:
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
-        threading.Thread(target=trigger, name='trigger').start()
+        threading.Thread(target=trigger, name='trigger', daemon=True).start()
         # threading.Thread(target=aimbot, name='aimbot').start()
     except Exception as err:
         print(err)

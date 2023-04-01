@@ -13,7 +13,7 @@ g_aimbot_rcs = True
 g_aimbot_head = False
 g_aimbot_fov = 1.0 / 180.0
 g_aimbot_smooth = 5.0
-g_aimbot_key = 1
+g_aimbot_key = 18
 # g_aimbot_key2 = 6
 # g_triggerbot_key = 6 
 
@@ -680,4 +680,3 @@ if __name__ == "__main__":
         else:
             g_previous_tick = 0
             target_set(Player(0))
-

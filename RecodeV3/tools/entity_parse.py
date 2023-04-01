@@ -11,13 +11,14 @@ except Exception as err:
     exit(0)
 
 EntityList = []
+bombAddr = []
 def entity_parse():
     while True:
         if Engine.get_client_state() == 6:
             try:
                 EntityList.clear()
                 
-                for i in range(0, 512):
+                for i in range(1, 512):
                     entity = Engine.get_entity(i)
                     if entity != 0:
                         ents = Entity(entity)
@@ -29,8 +30,16 @@ def entity_parse():
                         if class_id == 40:
                             if not EntityList.__contains__(entity):
                                 EntityList.append(entity)
+                        
+                        if Engine.get_bomb_planted() == 1:
+                            if class_id == 129:
+                                if not bombAddr.__contains__(entity):
+                                    bombAddr.append(entity)
+                        else:
+                            bombAddr.clear()            
+                            
             except Exception as err:
                 print('entity_parse: ', err)
                 pass
-        # print(EntityList)
-        Windll.k32.Sleep(2000)       
+        # print(bombAddr)
+        Windll.k32.Sleep(1000)       
