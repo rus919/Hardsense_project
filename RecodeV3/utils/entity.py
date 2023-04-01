@@ -31,6 +31,9 @@ class Entity():
     def get_team(self):
         return csgo.read_i8(self.entityObj + Offset.m_iTeamNum)
     
+    def is_scoped(self):
+        return csgo.read_i8(self.entityObj + Offset.m_bIsScoped)
+    
     def get_position(self):
         x = csgo.read_float(self.entityObj + Offset.m_vecOrigin)
         y = csgo.read_float(self.entityObj + Offset.m_vecOrigin + 0x4)
@@ -54,10 +57,21 @@ class Entity():
         z = csgo.read_float(self.entityObj + Offset.m_vecViewOffset + 0x2c)
         return vec3(x, y, z)
     
+    def get_vec_punch(self):
+        x = csgo.read_float(self.entityObj + Offset.m_aimPunchAngle)
+        y = csgo.read_float(self.entityObj + Offset.m_aimPunchAngle + 0x4)
+        z = csgo.read_float(self.entityObj + Offset.m_aimPunchAngle + 0x8)
+        return vec3(x, y, z)
+    
     def get_eye_pos(self):
         v = self.get_vec_view()
         o = self.get_position()
         return vec3(v['x'] + o['x'], v['y'] + o['y'], v['z'] + o['z'])
+    
+    def getWeapon(self):
+        getWeaponAddress = csgo.read_i32(self.entityObj + Offset.m_hActiveWeapon) & 0xFFF
+        getWeaponAddressHandle = csgo.read_i32(csgo_client + Offset.dwEntityList + (getWeaponAddress - 1) * 0x10)
+        return csgo.read_i16(getWeaponAddressHandle + Offset.m_iItemDefinitionIndex)
     
     
 class Engine():

@@ -5,7 +5,7 @@ from utils.entity import Entity, LocalPlayer, Engine
 from tools.entity_parse import EntityList, bombAddr
 
 def esp():
-    
+    scoped_weapons = [9, 11, 38, 40]
     try:
         C4 = meow.load_texture("assets/images/c4.png")
     except Exception as err:
@@ -33,6 +33,56 @@ def esp():
                 except Exception as err:
                     print(err)
                     continue
+                
+                if local_player != 0:
+                    try:
+                        local_player_weapon = local_player.getWeapon()
+                        for active_scoped_weapons in scoped_weapons:
+                            if local_player_weapon == active_scoped_weapons:
+                                if not local_player.is_scoped():
+                                    
+                                    meow.draw_line(
+                                        startPosX =get_screen_center_x - 5, 
+                                        startPosY =get_screen_center_y, 
+                                        endPosX =get_screen_center_x + 5, 
+                                        endPosY =get_screen_center_y, 
+                                        color = Colors.crosshair, 
+                                        thick = 1.0
+                                    )
+                                    meow.draw_line(
+                                        startPosX =get_screen_center_x, 
+                                        startPosY =get_screen_center_y - 5, 
+                                        endPosX =get_screen_center_x, 
+                                        endPosY =get_screen_center_y + 5, 
+                                        color = Colors.crosshair, 
+                                        thick = 1.0
+                                    )
+                    except Exception as err:
+                        print('AWP CROSSHAIR ERROR:',err)
+                        continue
+                    
+                if local_player.get_vec_punch()['x'] != 0.0:
+                    player_fov_x = meow.get_screen_width() // 90
+                    player_fov_y = meow.get_screen_height() // 90
+                    crosshair_x = get_screen_center_x - player_fov_x * local_player.get_vec_punch()["y"]
+                    crosshair_y = get_screen_center_y - player_fov_y * -local_player.get_vec_punch()["x"]
+                    if local_player.get_shots_fired() > 1:
+                        meow.draw_line(
+                            startPosX =crosshair_x - 5, 
+                            startPosY =crosshair_y, 
+                            endPosX =crosshair_x + 5, 
+                            endPosY =crosshair_y, 
+                            color = Colors.recoil, 
+                            thick = 1.0
+                        )
+                        meow.draw_line(
+                            startPosX =crosshair_x, 
+                            startPosY =crosshair_y - 5, 
+                            endPosX =crosshair_x, 
+                            endPosY =crosshair_y + 5, 
+                            color = Colors.recoil, 
+                            thick = 1.0
+                        )
                 
                 for ents in EntityList:
                     try:
@@ -74,7 +124,6 @@ def esp():
                                                 
                         bomb_site = ''
                         
-                        print(Engine.get_bomb_site(bomb_index))
                         if Engine.get_bomb_site(bomb_index) == 0: bomb_site = 'A:'
                         if Engine.get_bomb_site(bomb_index) == 1: bomb_site = 'B:'
                         if defuse_time > bomb_time:
