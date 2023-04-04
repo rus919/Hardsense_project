@@ -99,7 +99,7 @@ class Engine():
         return csgo.read_i32(csgo_engine + Offset.dwClientState)
     
     def get_client_state():
-        return csgo.read_i32(Engine.get_state() + Offset.dwClientState_State)
+        return csgo.read_i8(Engine.get_state() + Offset.dwClientState_State)
     
     def get_client_view_angles():
         x = csgo.read_float(Engine.get_state() + Offset.dwClientState_ViewAngles, 0x0c)
@@ -111,7 +111,7 @@ class Engine():
         return csgo.read_i32(csgo_client + Offset.dwGameRulesProxy)
     
     def get_bomb_planted():
-        return csgo.read_i32(Engine.get_GameRulesProxy() + Offset.m_bBombPlanted)
+        return csgo.read_i8(Engine.get_GameRulesProxy() + Offset.m_bBombPlanted)
     
     # def get_freeze_period():
     #     return csgo.read_i8(Engine.get_GameRulesProxy() + Offset.m_bFreezePeriod)
