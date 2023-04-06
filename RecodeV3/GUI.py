@@ -135,15 +135,13 @@ class create_visuals(ct.CTkFrame):
         # self.players_box_color.grid(row=3, column=2, padx=10)
         
         self.players_head_text = ct.CTkLabel(self.player_esp_container, text='Head Esp')
-        self.players_head_text.grid(row=4, column=0, pady=5, padx=10, sticky='w')        
+        self.players_head_text.grid(row=4, column=0, pady=5, padx=10, sticky='w')       
         self.players_head_option = ct.CTkOptionMenu(self.player_esp_container, values=['None', 'Circle', 'Square'], width=o_width, corner_radius=o_corner_radius, fg_color=o_fg_color, button_color=o_button_color, button_hover_color=o_button_hover_color, dropdown_fg_color=o_dropdown_fg_color, dropdown_hover_color=o_dropdown_hover_color, dropdown_text_color=o_dropdown_text_color, text_color=o_text_color, command=self.players_head_e)
-        
         self.players_head_enable_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.players_head_enable_e)
         self.players_head_enable_checkbox.grid(row=4, column=2, pady=0, padx=3, sticky='e')
         
         self.players_names_text = ct.CTkLabel(self.player_esp_container, text='Players Name')
         self.players_names_text.grid(row=5, column=0, pady=5, padx=10, sticky='w')       
-        
         self.players_names_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.players_names_enable_e)
         self.players_names_checkbox.grid(row=5, column=2, pady=0, padx=3, sticky='e')
         
@@ -168,29 +166,29 @@ class create_visuals(ct.CTkFrame):
         self.spectator_text = ct.CTkLabel(self.local_esp_container, text='Specator List')
         self.spectator_text.grid(row=2, column=0, pady=5, padx=10, sticky='w')
         self.separator = ct.CTkLabel(self.local_esp_container, text='').grid(row=2, column=1, pady=5, padx=50) # To make space between itemsR
-        self.spectator_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.spectator_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.spectator_e)
         self.spectator_checkbox.grid(row=2, column=2, pady=0, padx=3, sticky='e')
         
         self.bomb_text = ct.CTkLabel(self.local_esp_container, text='Bomb Info')
         self.bomb_text.grid(row=3, column=0, pady=5, padx=10, sticky='w')
-        self.bomb_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.bomb_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.bomb_info_e)
         self.bomb_checkbox.grid(row=3, column=2, pady=0, padx=3, sticky='e')
         
         self.crosshair_text = ct.CTkLabel(self.local_esp_container, text='Sniper Crosshair')
         self.crosshair_text.grid(row=4, column=0, pady=5, padx=10, sticky='w')
-        self.crosshair_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.crosshair_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.crosshair_e)
         self.crosshair_checkbox.grid(row=4, column=2, pady=0, padx=3, sticky='e')
         
         self.recoil_text = ct.CTkLabel(self.local_esp_container, text='Recoil Crosshair')
         self.recoil_text.grid(row=5, column=0, pady=5, padx=10, sticky='w')
-        self.recoil_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.recoil_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.recoil_e)
         self.recoil_checkbox.grid(row=5, column=2, pady=0, padx=3, sticky='e')
                 
-        self.spectator_text = ct.CTkLabel(self.other_esp_container, text='Weapon ESP')
-        self.spectator_text.grid(row=2, column=0, pady=5, padx=10, sticky='w')
+        self.weapon_esp_text = ct.CTkLabel(self.other_esp_container, text='Weapon ESP')
+        self.weapon_esp_text.grid(row=2, column=0, pady=5, padx=10, sticky='w')
         self.separator = ct.CTkLabel(self.other_esp_container, text='').grid(row=2, column=1, pady=5, padx=50) # To make space between itemsR
-        self.spectator_checkbox = ct.CTkSwitch(self.other_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
-        self.spectator_checkbox.grid(row=2, column=2, pady=0, padx=3, sticky='e')
+        self.weapon_esp_checkbox = ct.CTkSwitch(self.other_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.weapon_esp_checkbox.grid(row=2, column=2, pady=0, padx=3, sticky='e')
 
             
     # def ask_color(self):
@@ -229,17 +227,46 @@ class create_visuals(ct.CTkFrame):
     def players_head_e(self, e):#
         if e == str('None'):
             state.players_head_type = 'None'
-        elif e == str('Normal'):
-            state.players_head_type = 'Normal'
+            
+        elif e == str('Circle'):
+            state.players_head_type = 'Circle'
             
     def players_names_enable_e(self):
-        print('hello')
+        if self.players_names_checkbox.get() == 1:
+            state.players_names_enabled = 1
+        else:
+            state.players_names_enabled = 0
         
     def players_health_enable_e(self):
         if self.players_health_checkbox.get() == 1:
-            self.players_health_option.grid(row=6, column=1, pady=5, padx=3)
+            state.players_health_enabled = 1
         else:
-            self.players_health_option.grid_forget()
+            state.players_health_enabled = 0
+            
+    def spectator_e(self):
+        if self.spectator_checkbox.get() == 1:
+            state.spectator_enabled = 1
+            print(state.spectator_enabled)
+        else:
+            state.spectator_enabled = 0
+            print(state.spectator_enabled)
+            
+    def bomb_info_e(self):
+        if self.bomb_checkbox.get() == 1:
+            state.bomb_info_enabled = 1
+        else:
+            state.bomb_info_enabled = 0
+            
+    def crosshair_e(self):
+        if self.crosshair_checkbox.get() == 1:
+            state.sniper_crosshair_enabled = 1
+        else:
+            state.sniper_crosshair_enabled = 0
+    def recoil_e(self):
+        if self.recoil_checkbox.get() == 1:
+            state.recoil_crosshair_enabled = 1
+        else:
+            state.recoil_crosshair_enabled = 0
 
 def create_players(parent):
     frame = ct.CTkFrame(master = parent, corner_radius=0, fg_color='transparent')
@@ -274,7 +301,7 @@ class App(ct.CTk):
         super().__init__()
         
         # configure window
-        self.title("test") # Random name window to change signatures?
+        self.title("test2") # Random name window to change signatures?
         
         w = 1000
         h = 600
@@ -290,14 +317,6 @@ class App(ct.CTk):
         # set the dimensions of the screen 
         # and where it is placed
         self.geometry('%dx%d+%d+%d' % (w, h, x, y))
-        
-        # start = 0
-        if Windll.u32.GetAsyncKeyState(1):
-            self.hide_menu()
-        # if Windll.u32.GetAsyncKeyState(5) and start == 1:
-        #     start = 0
-        #     self.deiconify()
-        #     self.update()
         
         # self.geometry(f"{1000}x{600}") # Default window size
         self.minsize(width = 1000, height = 600)
@@ -316,14 +335,6 @@ class App(ct.CTk):
         self.misc_tab = create_misc(self)
         self.user_panel_tab = create_user_panel(self)
         self.settinsg_tab = create_settings(self)
-
-    def show_menu(self):
-        self.update()
-        self.deiconify()
-        
-    def hide_menu(self):
-        self.update()
-        self.withdraw()
     
     def nav_aimbot_callback(self):
         self.select_frame_by_name("Aimbot")

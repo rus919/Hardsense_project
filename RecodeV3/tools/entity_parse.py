@@ -1,6 +1,7 @@
 import pyMeow as meow
 from engine.process import Process, Windll
 from utils.entity import Entity, LocalPlayer, Engine
+from utils.offsets import Offset
 
 try:
     csgo = Process('csgo.exe')
@@ -12,6 +13,7 @@ except Exception as err:
 
 EntityList = []
 bombAddr = []
+playersInfo = []
 def entity_parse():
     while True:
         if Engine.get_client_state() == 6:
@@ -43,3 +45,31 @@ def entity_parse():
                 pass
         # print(bombAddr)
         Windll.k32.Sleep(2000)       
+        
+def getPlayerInfo(): # Not returning properly, missing player data when in entity he is there
+    if Engine.get_client_state() == 6:
+        try:
+            playersInfo.clear()
+            for i in range(1, 64):     
+                entity = Engine.get_entity(i)
+                if entity != 0:
+                    playerSteamID = Entity.get_player_steam_id(i).decode('utf-8') # Getting steamID32
+                    id_split = playerSteamID.split(":") #Convert steamID32 to array
+                    steam64id = 76561197960265728 #Base for adding
+                    steam64id += int(id_split[2]) * 2 #Take the player ID in [2] and *2 then add to steam64id, if steamID32 [1] contains 1 then add +1 = steamID64
+                    if id_split[1] == "1":
+                        steam64id += 1
+                    
+                    ents = Entity(entity)
+                    
+                    ent_name = ents.get_name.decode('utf-8')
+                                        
+                    entityCompRank = csgo.read_i32(Engine.get_player_resources() + Offset.m_iCompetitiveRanking + (i+1) * 4)
+                    entityCompWins = csgo.read_i32(Engine.get_player_resources() + Offset.m_iCompetitiveWins + (i+1) * 4)
+                    
+                    if [i, ent_name, ents.get_team(), entityCompRank, entityCompWins, steam64id] not in playersInfo:
+                        playersInfo.append([i, ent_name, ents.get_team(), entityCompRank, entityCompWins, steam64id])
+            print(playersInfo)
+        except Exception as err:
+            print('PLAYERS INFO ERROR: ', err)
+            pass

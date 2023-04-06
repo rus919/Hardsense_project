@@ -85,6 +85,13 @@ class Entity():
         hud_radar = csgo.read_i32(radar_base + 0x78)
         return csgo.read_string(hud_radar + 0x300 + (0x174 * (self.get_id() - 1)), 32)
     
+    def get_player_steam_id(index):
+        player_info = csgo.read_i32(Engine.get_state() + Offset.dwClientState_PlayerInfo)
+        player_items = csgo.read_i32(csgo.read_i32(player_info + 0x40) + 0xC)
+        info = csgo.read_i32(player_items + 0x28 + (index * 0x34))
+        if info != 0:
+            return csgo.read_string(info + 0x94) # 0x94 = steamid32, char 0x10 == name, 
+    
     
 class Engine():
     def get_entity(index):
@@ -133,4 +140,7 @@ class Engine():
     
     def is_defusing_bomb(bomb_entity):
         return csgo.read_i8(bomb_entity + 0x29c4) #m_hBombDefuser
+    
+    def get_player_resources():
+        return csgo.read_i32(csgo_client + Offset.dwPlayerResource)
     
