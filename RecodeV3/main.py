@@ -10,6 +10,8 @@ from tools.trigger import trigger
 from tools.esp import esp
 from tools.entity_parse import entity_parse, EntityList
 
+from GUI import *
+import time
 # class Math:
     
 #     def sin_cos(radians):
@@ -212,6 +214,12 @@ from tools.entity_parse import entity_parse, EntityList
 #                 print(err)
 #                 continue 
 
+def updater():
+    app = App()
+    app.iconbitmap("assets/GUI/icon.ico")
+    while True:
+        app.update()
+
 if __name__ == "__main__":    
     try:
         csgo = Process('csgo.exe')
@@ -224,11 +232,11 @@ if __name__ == "__main__":
     try:
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()
-        # threading.Thread(target=aimbot, name='aimbot').start()
+        threading.Thread(target=updater, name='a', daemon=True).start()
     except Exception as err:
         print(err)
         exit(0)
-        
+    
     meow.overlay_init(fps=144, title='test')
     
     esp()
