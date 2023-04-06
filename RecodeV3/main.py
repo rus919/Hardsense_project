@@ -10,8 +10,13 @@ from tools.trigger import trigger
 from tools.esp import esp
 from tools.entity_parse import entity_parse, EntityList
 
-from GUI import *
+# from GUI import *
 import time
+# import os
+# from PIL import Image
+
+# from GUI import *
+
 # class Math:
     
 #     def sin_cos(radians):
@@ -213,15 +218,17 @@ import time
 #             except Exception as err:
 #                 print(err)
 #                 continue 
-global app
-def updater():
+
+def menu_updater():
     app = App()
     app.iconbitmap("assets/GUI/icon.ico")
-    while 1:
+    while True:
         app.update()
-        # print(state.master_switch)
+        app.mainloop() 
+        # time.sleep(0.0001)
+        
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     try:
         csgo = Process('csgo.exe')
         csgo_client = csgo.get_module("client.dll")
@@ -229,17 +236,23 @@ if __name__ == "__main__":
     except Exception as err:
         print(err)
         exit(0)
+        
+    meow.overlay_init(fps=144, title='test')
     
     try:
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()
-        threading.Thread(target=updater, name='menu').start()
+        # threading.Thread(target=menu_updater, name='menu', daemon=True).start()
+        # threading.Thread(target=esp, name='menu').start()
     except Exception as err:
         print(err)
         exit(0)
     
-    meow.overlay_init(fps=144, title='test')
+    
+    
     esp()
+    
+    
     
 #Make a debug file where all values will be displayed and enable only if its imported so in release the file will be excluded, and also make DEBUG_MODE easier
 # print('[*]VirtualTables')

@@ -4,6 +4,10 @@ from engine.gamedata import Colors, GetWindowText
 from utils.entity import Entity, LocalPlayer, Engine
 from tools.entity_parse import EntityList, bombAddr
 
+from GUI import *
+import keyboard
+import time
+
 from engine.state import state
 
 def esp():
@@ -15,9 +19,33 @@ def esp():
     except Exception as err:
         print(err)
         exit(0)
-    
+
+    # Menu
+    app = App()
+    app.iconbitmap("assets/GUI/icon.ico")
+    app.overrideredirect(True)
+    app.attributes("-alpha",1.0)
+    active = 0
     while meow.overlay_loop():
+    
+        app.update() # Update menu, but brakes the menu when moving mouse
         
+        menu_key = 'home'
+        
+        if keyboard.is_pressed(menu_key) and active == 0:
+            active = 1
+            app.update()
+            app.withdraw()
+            print('pressed')
+            time.sleep(0.3)
+        
+        if keyboard.is_pressed(menu_key) and active == 1:
+            active = 0
+            app.update()
+            app.deiconify()
+            print('press')
+            time.sleep(0.5)
+
         meow.begin_drawing()
         
         get_screen_width_x = meow.get_screen_width()
@@ -27,7 +55,7 @@ def esp():
         get_screen_center_y = meow.get_screen_height() // 2
                                 
         if GetWindowText( Windll.u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
-            if Engine.get_client_state() == 6 and state.master_switch == 1:
+            if Engine.get_client_state() == 6 :
                 # meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.get_color("red"))
                 meow.draw_fps(5, 5)
                 
@@ -119,23 +147,21 @@ def esp():
                             width = head / 2
                             center = width / 2
                             
-                            if state.players_box == 1:
-                                meow.draw_rectangle_lines(
-                                    posX=head_pos['x'] - center,
-                                    posY=head_pos['y'] - center / 2,
-                                    width=width * 1.0,
-                                    height=head + center / 2,
-                                    color=Colors.black,
-                                    lineThick=1.0,
-                                )
+                            meow.draw_rectangle_lines(
+                                posX=head_pos['x'] - center,
+                                posY=head_pos['y'] - center / 2,
+                                width=width * 1.0,
+                                height=head + center / 2,
+                                color=Colors.black,
+                                lineThick=1.0,
+                            )
                             
-                            if state.head_esp == 1:
-                                meow.draw_circle(
-                                    centerX = head_pos['x'],
-                                    centerY = head_pos['y'],
-                                    radius = 3,
-                                    color = meow.get_color("red"),
-                                )
+                            meow.draw_circle(
+                                centerX = head_pos['x'],
+                                centerY = head_pos['y'],
+                                radius = 3,
+                                color = meow.get_color("red"),
+                            )
                             
                             meow.draw_text(
                                 text= entity.get_name.decode('utf-8'),
@@ -214,5 +240,4 @@ def esp():
                         if not "out of" in repr(err):
                             print(err)
                         continue
-                
-        meow.end_drawing()        
+        meow.end_drawing()

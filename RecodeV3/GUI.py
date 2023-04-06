@@ -3,6 +3,7 @@ from CTkColorPicker import AskColor
 import os
 from PIL import Image
 from engine.state import state
+from engine.process import  Windll
 
 ct.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ct.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -213,9 +214,9 @@ class create_visuals(ct.CTkFrame):
             
     def players_box_e(self, e):#
         if e == str('None'):
-            state.players_box = 'None'
+            state.players_box_type = 'None'
         elif e == str('Normal'):
-            state.players_box = 'Normal'
+            state.players_box_type = 'Normal'
             
     def players_head_enable_e(self):
         if self.players_head_enable_checkbox.get() == 1:
@@ -274,7 +275,31 @@ class App(ct.CTk):
         
         # configure window
         self.title("test") # Random name window to change signatures?
-        self.geometry(f"{1000}x{600}") # Default window size
+        
+        w = 1000
+        h = 600
+
+        # get screen width and height
+        ws = self.winfo_screenwidth() # width of the screen
+        hs = self.winfo_screenheight() # height of the screen
+
+        # calculate x and y coordinates for the Tk root window
+        x = (ws/2) - (w/2)
+        y = (hs/2) - (h/2)
+
+        # set the dimensions of the screen 
+        # and where it is placed
+        self.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        
+        # start = 0
+        if Windll.u32.GetAsyncKeyState(1):
+            self.hide_menu()
+        # if Windll.u32.GetAsyncKeyState(5) and start == 1:
+        #     start = 0
+        #     self.deiconify()
+        #     self.update()
+        
+        # self.geometry(f"{1000}x{600}") # Default window size
         self.minsize(width = 1000, height = 600)
         
         # set grid layout 1x2 -> nav on left main content on the right
@@ -292,6 +317,14 @@ class App(ct.CTk):
         self.user_panel_tab = create_user_panel(self)
         self.settinsg_tab = create_settings(self)
 
+    def show_menu(self):
+        self.update()
+        self.deiconify()
+        
+    def hide_menu(self):
+        self.update()
+        self.withdraw()
+    
     def nav_aimbot_callback(self):
         self.select_frame_by_name("Aimbot")
     def nav_triggerbot_callback(self):
