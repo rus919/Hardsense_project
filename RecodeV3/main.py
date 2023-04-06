@@ -213,12 +213,15 @@ import time
 #             except Exception as err:
 #                 print(err)
 #                 continue 
-
+global app
 def updater():
     app = App()
     app.iconbitmap("assets/GUI/icon.ico")
     while True:
-        app.update()
+        app.mainloop()
+        
+        time.sleep(0.001)
+        
 
 if __name__ == "__main__":    
     try:
@@ -232,7 +235,7 @@ if __name__ == "__main__":
     try:
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()
-        threading.Thread(target=updater, name='a', daemon=True).start()
+        threading.Thread(target=updater, name='a').start()
     except Exception as err:
         print(err)
         exit(0)
