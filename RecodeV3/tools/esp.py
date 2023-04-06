@@ -4,7 +4,7 @@ from engine.gamedata import Colors, GetWindowText
 from utils.entity import Entity, LocalPlayer, Engine
 from tools.entity_parse import EntityList, bombAddr
 
-from GUI import state
+from engine.state import state
 
 def esp():
     scoped_weapons = [9, 11, 38, 40]
@@ -25,9 +25,9 @@ def esp():
         
         get_screen_center_x =meow.get_screen_width() // 2
         get_screen_center_y = meow.get_screen_height() // 2
-        
+                                
         if GetWindowText( Windll.u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
-            if Engine.get_client_state() == 6:
+            if Engine.get_client_state() == 6 and state.master_switch == 1:
                 # meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.get_color("red"))
                 meow.draw_fps(5, 5)
                 
@@ -119,20 +119,23 @@ def esp():
                             width = head / 2
                             center = width / 2
                             
-                            # meow.draw_rectangle_lines(
-                            #     posX=head_pos['x'] - center,
-                            #     posY=head_pos['y'] - center / 2,
-                            #     width=width * 1.0,
-                            #     height=head + center / 2,
-                            #     color=Colors.black,
-                            #     lineThick=1.0,
-                            # )
-                            meow.draw_circle(
-                                centerX = head_pos['x'],
-                                centerY = head_pos['y'],
-                                radius = 3,
-                                color = meow.get_color("red"),
-                            )
+                            if state.players_box == 1:
+                                meow.draw_rectangle_lines(
+                                    posX=head_pos['x'] - center,
+                                    posY=head_pos['y'] - center / 2,
+                                    width=width * 1.0,
+                                    height=head + center / 2,
+                                    color=Colors.black,
+                                    lineThick=1.0,
+                                )
+                            
+                            if state.head_esp == 1:
+                                meow.draw_circle(
+                                    centerX = head_pos['x'],
+                                    centerY = head_pos['y'],
+                                    radius = 3,
+                                    color = meow.get_color("red"),
+                                )
                             
                             meow.draw_text(
                                 text= entity.get_name.decode('utf-8'),

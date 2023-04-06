@@ -217,11 +217,9 @@ global app
 def updater():
     app = App()
     app.iconbitmap("assets/GUI/icon.ico")
-    while True:
-        app.mainloop()
-        
-        time.sleep(0.001)
-        
+    while 1:
+        app.update()
+        # print(state.master_switch)
 
 if __name__ == "__main__":    
     try:
@@ -235,13 +233,12 @@ if __name__ == "__main__":
     try:
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()
-        threading.Thread(target=updater, name='a').start()
+        threading.Thread(target=updater, name='menu').start()
     except Exception as err:
         print(err)
         exit(0)
     
     meow.overlay_init(fps=144, title='test')
-    
     esp()
     
 #Make a debug file where all values will be displayed and enable only if its imported so in release the file will be excluded, and also make DEBUG_MODE easier

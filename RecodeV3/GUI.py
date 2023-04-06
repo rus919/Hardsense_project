@@ -2,15 +2,13 @@ import customtkinter as ct
 from CTkColorPicker import AskColor
 import os
 from PIL import Image
+from engine.state import state
+
 ct.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ct.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
 ct.deactivate_automatic_dpi_awareness() # Make sure DPI scale is alwaya 100%, but test later
 
 # sticky = S = south N = north W = west S = south
-
-
-class state:
-    master_switch = 0
 
 def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players_callback, misc_callback, panel_callback, settings_callback):
     frame = ct.CTkFrame(master = parent, corner_radius=0)
@@ -73,8 +71,25 @@ class create_visuals(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color='transparent')
         
-        self.container = ct.CTkFrame(self, corner_radius=5, fg_color='#3d3d3d', border_color='#4a4a4a', border_width=2)
-        self.container.grid(row=0, column=0, pady=10, padx=10)
+        # container
+        f_fg_color = '#3d3d3d'
+        f_border_color = '#4a4a4a'
+        
+        self.player_esp_container = ct.CTkFrame(self, corner_radius=5, fg_color=f_fg_color, border_color=f_border_color, border_width=2, width=250)
+        self.player_esp_container.grid(row=1, column=0, pady=0, padx=10)
+        self.player_esp_label = ct.CTkLabel(self, text='Player ESP')
+        self.player_esp_label.grid(row=0, column=0, pady=5, padx=10)
+        
+        self.local_esp_container = ct.CTkFrame(self, corner_radius=5, fg_color=f_fg_color, border_color=f_border_color, border_width=2, width=250)
+        self.local_esp_container.grid(row=1, column=1, pady=0, padx=0, sticky='n')
+        self.local_esp_label = ct.CTkLabel(self, text='Local ESP')
+        self.local_esp_label.grid(row=0, column=1, pady=5, padx=10)
+        
+        self.other_esp_container = ct.CTkFrame(self, corner_radius=5, fg_color=f_fg_color, border_color=f_border_color, border_width=2, width=250)
+        self.other_esp_container.grid(row=1, column=2, pady=0, padx=10, sticky='n')
+        self.other_esp_label = ct.CTkLabel(self, text='Other ESP')
+        self.other_esp_label.grid(row=0, column=2, pady=5, padx=10)
+        
         
         # Switch vars
         switch_width = 40
@@ -101,23 +116,81 @@ class create_visuals(ct.CTkFrame):
         c_corner_radius = 1
         c_hover_color = '#808080'
         
-        self.master_switch_text = ct.CTkLabel(self.container, text='Master Switch')
+        # Players ESP
+        
+        self.master_switch_text = ct.CTkLabel(self.player_esp_container, text='Master Switch')
         self.master_switch_text.grid(row=2, column=0, pady=5, padx=10, sticky='w')
-        self.master_switch_separator = ct.CTkLabel(self.container, text='').grid(row=2, column=1, pady=5, padx=50)
-        self.master_switch_checkbox = ct.CTkSwitch(self.container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.separator = ct.CTkLabel(self.player_esp_container, text='').grid(row=2, column=1, pady=5, padx=50) # To make space between items
+        self.master_switch_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
         self.master_switch_checkbox.grid(row=2, column=2, pady=0, padx=3, sticky='e')
         
-        self.players_box_text = ct.CTkLabel(self.container, text='Players Box')
-        self.players_box_text.grid(row=3, column=0, pady=5, padx=10, sticky='w')       
-        self.players_box_option = ct.CTkOptionMenu(self.container, values=['-', '1'], width=o_width, corner_radius=o_corner_radius, fg_color=o_fg_color, button_color=o_button_color, button_hover_color=o_button_hover_color, dropdown_fg_color=o_dropdown_fg_color, dropdown_hover_color=o_dropdown_hover_color, dropdown_text_color=o_dropdown_text_color, text_color=o_text_color)
-        self.players_box_option.grid(row=3, column=2, pady=5, padx=3)
+        self.players_box_text = ct.CTkLabel(self.player_esp_container, text='Players Box')
+        self.players_box_text.grid(row=3, column=0, pady=5, padx=10, sticky='w')      
+        self.players_box_option = ct.CTkOptionMenu(self.player_esp_container, values=['None', 'Normal', 'Large', 'Corner'], width=o_width, corner_radius=o_corner_radius, fg_color=o_fg_color, button_color=o_button_color, button_hover_color=o_button_hover_color, dropdown_fg_color=o_dropdown_fg_color, dropdown_hover_color=o_dropdown_hover_color, dropdown_text_color=o_dropdown_text_color, text_color=o_text_color, command=self.players_box_e)
+        self.players_box_enable_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.players_box_enable_e)
+        self.players_box_enable_checkbox.grid(row=3, column=2, pady=0, padx=3, sticky='e')
         
         # self.players_box_color = ct.CTkButton(self.container, text='', width=c_width, height=c_height, corner_radius=c_corner_radius, hover_color=c_hover_color, command=self.ask_color)
         # self.players_box_color.grid(row=3, column=2, padx=10)
         
-        self.players_head_text = ct.CTkLabel(self.container, text='Head Esp')
+        self.players_head_text = ct.CTkLabel(self.player_esp_container, text='Head Esp')
         self.players_head_text.grid(row=4, column=0, pady=5, padx=10, sticky='w')        
-        self.players_head_option = ct.CTkOptionMenu(self.container, values=['-', '1'], width=o_width, corner_radius=o_corner_radius, fg_color=o_fg_color, button_color=o_button_color, button_hover_color=o_button_hover_color, dropdown_fg_color=o_dropdown_fg_color, dropdown_hover_color=o_dropdown_hover_color, dropdown_text_color=o_dropdown_text_color, text_color=o_text_color).grid(row=4, column=2, pady=5, padx=3)
+        self.players_head_option = ct.CTkOptionMenu(self.player_esp_container, values=['None', 'Circle', 'Square'], width=o_width, corner_radius=o_corner_radius, fg_color=o_fg_color, button_color=o_button_color, button_hover_color=o_button_hover_color, dropdown_fg_color=o_dropdown_fg_color, dropdown_hover_color=o_dropdown_hover_color, dropdown_text_color=o_dropdown_text_color, text_color=o_text_color, command=self.players_head_e)
+        
+        self.players_head_enable_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.players_head_enable_e)
+        self.players_head_enable_checkbox.grid(row=4, column=2, pady=0, padx=3, sticky='e')
+        
+        self.players_names_text = ct.CTkLabel(self.player_esp_container, text='Players Name')
+        self.players_names_text.grid(row=5, column=0, pady=5, padx=10, sticky='w')       
+        
+        self.players_names_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.players_names_enable_e)
+        self.players_names_checkbox.grid(row=5, column=2, pady=0, padx=3, sticky='e')
+        
+        self.players_health_text = ct.CTkLabel(self.player_esp_container, text='Players Health')
+        self.players_health_text.grid(row=6, column=0, pady=5, padx=10, sticky='w')
+        
+        self.players_health_option = ct.CTkOptionMenu(self.player_esp_container, values=['None', 'Image', 'Text'], width=o_width, corner_radius=o_corner_radius, fg_color=o_fg_color, button_color=o_button_color, button_hover_color=o_button_hover_color, dropdown_fg_color=o_dropdown_fg_color, dropdown_hover_color=o_dropdown_hover_color, dropdown_text_color=o_dropdown_text_color, text_color=o_text_color, command=self.players_head_e)
+        
+        self.players_health_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.players_health_enable_e)
+        self.players_health_checkbox.grid(row=6, column=2, pady=0, padx=3, sticky='e')
+        
+        self.players_weapon_text = ct.CTkLabel(self.player_esp_container, text='Players Weapon')
+        self.players_weapon_text.grid(row=7, column=0, pady=5, padx=10, sticky='w')
+        
+        self.players_weapon_option = ct.CTkOptionMenu(self.player_esp_container, values=['None', 'Image', 'Text'], width=o_width, corner_radius=o_corner_radius, fg_color=o_fg_color, button_color=o_button_color, button_hover_color=o_button_hover_color, dropdown_fg_color=o_dropdown_fg_color, dropdown_hover_color=o_dropdown_hover_color, dropdown_text_color=o_dropdown_text_color, text_color=o_text_color, command=self.players_head_e)
+        
+        self.players_weapon_checkbox = ct.CTkSwitch(self.player_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.players_health_enable_e)
+        self.players_weapon_checkbox.grid(row=7, column=2, pady=0, padx=3, sticky='e')
+        
+        # Others ESP
+        
+        self.spectator_text = ct.CTkLabel(self.local_esp_container, text='Specator List')
+        self.spectator_text.grid(row=2, column=0, pady=5, padx=10, sticky='w')
+        self.separator = ct.CTkLabel(self.local_esp_container, text='').grid(row=2, column=1, pady=5, padx=50) # To make space between itemsR
+        self.spectator_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.spectator_checkbox.grid(row=2, column=2, pady=0, padx=3, sticky='e')
+        
+        self.bomb_text = ct.CTkLabel(self.local_esp_container, text='Bomb Info')
+        self.bomb_text.grid(row=3, column=0, pady=5, padx=10, sticky='w')
+        self.bomb_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.bomb_checkbox.grid(row=3, column=2, pady=0, padx=3, sticky='e')
+        
+        self.crosshair_text = ct.CTkLabel(self.local_esp_container, text='Sniper Crosshair')
+        self.crosshair_text.grid(row=4, column=0, pady=5, padx=10, sticky='w')
+        self.crosshair_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.crosshair_checkbox.grid(row=4, column=2, pady=0, padx=3, sticky='e')
+        
+        self.recoil_text = ct.CTkLabel(self.local_esp_container, text='Recoil Crosshair')
+        self.recoil_text.grid(row=5, column=0, pady=5, padx=10, sticky='w')
+        self.recoil_checkbox = ct.CTkSwitch(self.local_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.recoil_checkbox.grid(row=5, column=2, pady=0, padx=3, sticky='e')
+                
+        self.spectator_text = ct.CTkLabel(self.other_esp_container, text='Weapon ESP')
+        self.spectator_text.grid(row=2, column=0, pady=5, padx=10, sticky='w')
+        self.separator = ct.CTkLabel(self.other_esp_container, text='').grid(row=2, column=1, pady=5, padx=50) # To make space between itemsR
+        self.spectator_checkbox = ct.CTkSwitch(self.other_esp_container, text='', width=2, switch_width=switch_width, border_width=4, border_color='transparent', corner_radius=corner_radius, button_hover_color=button_hover_color, fg_color=fg_color, progress_color=progress_color, button_color=button_color, command = self.master_switch_e)
+        self.spectator_checkbox.grid(row=2, column=2, pady=0, padx=3, sticky='e')
+
             
     # def ask_color(self):
     #     pick_color = AskColor(width=300) # Open the Color Picker, size of the window can be changed by adjusting width parameter
@@ -129,6 +202,43 @@ class create_visuals(ct.CTkFrame):
             state.master_switch = 1
         else:
             state.master_switch = 0
+    
+    def players_box_enable_e(self):
+        if self.players_box_enable_checkbox.get() == 1:
+            self.players_box_option.grid(row=3, column=1, pady=5, padx=3)
+            state.players_box_enabled = 1
+        else:
+            self.players_box_option.grid_forget()
+            state.players_box_enabled = 0
+            
+    def players_box_e(self, e):#
+        if e == str('None'):
+            state.players_box = 'None'
+        elif e == str('Normal'):
+            state.players_box = 'Normal'
+            
+    def players_head_enable_e(self):
+        if self.players_head_enable_checkbox.get() == 1:
+            self.players_head_option.grid(row=4, column=1, pady=5, padx=3)
+            state.players_head_enabled = 1
+        else:
+            self.players_head_option.grid_forget()
+            state.players_head_enabled = 0
+            
+    def players_head_e(self, e):#
+        if e == str('None'):
+            state.players_head_type = 'None'
+        elif e == str('Normal'):
+            state.players_head_type = 'Normal'
+            
+    def players_names_enable_e(self):
+        print('hello')
+        
+    def players_health_enable_e(self):
+        if self.players_health_checkbox.get() == 1:
+            self.players_health_option.grid(row=6, column=1, pady=5, padx=3)
+        else:
+            self.players_health_option.grid_forget()
 
 def create_players(parent):
     frame = ct.CTkFrame(master = parent, corner_radius=0, fg_color='transparent')
@@ -229,3 +339,9 @@ class App(ct.CTk):
             self.settinsg_tab.grid(row=0, column=1, sticky="nsew")
         else:
             self.settinsg_tab.grid_forget()
+
+
+# if __name__ == "__main__":
+#     app = App()
+#     app.iconbitmap("assets/GUI/icon.ico")
+#     app.mainloop()
