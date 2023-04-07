@@ -318,14 +318,12 @@ class create_players(ct.CTkFrame):
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         self.grid_rowconfigure(1, weight=1)
         
-        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["General", "-", "--"], height=30, fg_color=h_fg_color, border_width=1, corner_radius=5, unselected_color=h_unselected, selected_color=h_selected, selected_hover_color=h_hover_clr, unselected_hover_color=h_hover_clr)
+        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["General", "-", "--"], height=30, fg_color=h_fg_color, border_width=1, corner_radius=5, unselected_color=h_unselected, selected_color=h_selected, selected_hover_color=h_selected, unselected_hover_color=h_hover_clr, command=self.player_header_btn_e)
         self.player_header_btn_general.grid(row=0, column=0, pady=5, padx=10, sticky="news")
         
         self.player_main_container = ct.CTkFrame(self, corner_radius=5, fg_color=frame_fg_color, border_color=frame_border_color, border_width=1, width=250)
-        self.player_main_container.grid(row=1, column=0, pady=10, padx=10, sticky="news")
         
         self.player_main_container.grid_columnconfigure((0,1,2,3), weight=1) # Push header items right and left
-        
         
         self.player_name_text = ct.CTkLabel(self.player_main_container, text='NAME', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
         self.player_name_text.grid(row=1, column=0, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
@@ -339,7 +337,12 @@ class create_players(ct.CTkFrame):
         self.player_wins_text = ct.CTkLabel(self.player_main_container, text='FACEIT', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
         self.player_wins_text.grid(row=1, column=3, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
         
-        
+    def player_header_btn_e(self, e):
+        if e == 'General':
+            self.player_main_container.grid(row=1, column=0, pady=10, padx=10, sticky="news")
+        else:
+            self.player_main_container.grid_forget()
+            
             
 def create_misc(parent):
     frame = ct.CTkFrame(master = parent, corner_radius=0, fg_color='transparent')
