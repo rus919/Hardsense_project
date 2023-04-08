@@ -54,12 +54,15 @@ def getPlayerInfo(): # Not returning properly, missing player data when in entit
                 entity = Engine.get_entity(i)
                 if entity != 0:
                     playerSteamID = Entity.get_player_steam_id(i).decode('utf-8') # Getting steamID32
-                    id_split = playerSteamID.split(":") #Convert steamID32 to array
-                    steam64id = 76561197960265728 #Base for adding
-                    steam64id += int(id_split[2]) * 2 #Take the player ID in [2] and *2 then add to steam64id, if steamID32 [1] contains 1 then add +1 = steamID64
-                    if id_split[1] == "1":
-                        steam64id += 1
-                    
+                    if playerSteamID != 'BOT':
+                        id_split = playerSteamID.split(":") #Convert steamID32 to array
+                        steam64id = 76561197960265728 #Base for adding
+                        steam64id += int(id_split[2]) * 2 #Take the player ID in [2] and *2 then add to steam64id, if steamID32 [1] contains 1 then add +1 = steamID64
+                        if id_split[1] == "1":
+                            steam64id += 1
+                    else:
+                        steam64id = 'BOT'
+                                        
                     ents = Entity(entity)
                     
                     ent_name = ents.get_name.decode('utf-8')
@@ -67,9 +70,10 @@ def getPlayerInfo(): # Not returning properly, missing player data when in entit
                     entityCompRank = csgo.read_i32(Engine.get_player_resources() + Offset.m_iCompetitiveRanking + (i+1) * 4)
                     entityCompWins = csgo.read_i32(Engine.get_player_resources() + Offset.m_iCompetitiveWins + (i+1) * 4)
                     
+
                     if [i, ent_name, ents.get_team(), entityCompRank, entityCompWins, steam64id] not in playersInfo:
-                        playersInfo.append([i, ent_name, ents.get_team(), entityCompRank, entityCompWins, steam64id])
-            print(playersInfo)
+                        playersInfo.append([i, ent_name , ents.get_team(), entityCompRank, entityCompWins, steam64id])
+                    # print(playersInfo, playerSteamID, steam64id)
         except Exception as err:
             print('PLAYERS INFO ERROR: ', err)
             pass

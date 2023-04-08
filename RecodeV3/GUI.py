@@ -4,6 +4,7 @@ import os
 from PIL import Image
 from engine.state import state
 from engine.process import  Windll
+from tools.entity_parse import getPlayerInfo, playersInfo
 
 ct.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ct.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -318,10 +319,10 @@ class create_players(ct.CTkFrame):
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         self.grid_rowconfigure(1, weight=1)
         
-        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["General", "-", "--"], height=30, fg_color=h_fg_color, border_width=1, corner_radius=5, unselected_color=h_unselected, selected_color=h_selected, selected_hover_color=h_selected, unselected_hover_color=h_hover_clr, command=self.player_header_btn_e)
+        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["Main", "Advanced", "Stats"], height=30, fg_color=h_fg_color, border_width=1, corner_radius=5, unselected_color=h_unselected, selected_color=h_selected, selected_hover_color=h_selected, unselected_hover_color=h_hover_clr, command=self.player_header_btn_e)
         self.player_header_btn_general.grid(row=0, column=0, pady=5, padx=10, sticky="news")
         
-        self.player_main_container = ct.CTkFrame(self, corner_radius=5, fg_color=frame_fg_color, border_color=frame_border_color, border_width=1, width=250)
+        self.player_main_container = ct.CTkScrollableFrame(self, corner_radius=5, fg_color=frame_fg_color, border_color=frame_border_color, border_width=1, width=250)
         
         self.player_main_container.grid_columnconfigure((0,1,2,3), weight=1) # Push header items right and left
         
@@ -337,8 +338,67 @@ class create_players(ct.CTkFrame):
         self.player_wins_text = ct.CTkLabel(self.player_main_container, text='FACEIT', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
         self.player_wins_text.grid(row=1, column=3, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
         
+        self.checkbox_list = []
+        self.rank_list = []
+        self.wins_list = []
+        self.faceit_list = []
+        # namesss = [['1', 'name1', 'team1', 'rank1', 'wins1', 'steamid1'], ['2', 'name2', 'team2', 'rank2', 'wins2', 'steamid2'], ['3', 'name3', 'team3', 'rank3', 'wins3', 'steamid3']]
+        # namesss = [['1', 'name1', 2, '18', '123', 'steamid1'], ['2', 'name2', 2, '17', '454', 'steamid2'], ['3', 'name3', 1, '10', '999', 'steamid3']]
+        
+        sort_players_info = lambda arr_item: (arr_item[2]) # Create a function that will sort the item 2 which is teams in order
+        sorted_players_info = sorted(playersInfo, key=sort_players_info) # Create our shadow copy of the main array and use this sorted array
+        
+        # print(playersInfo)
+        # for i in range(0,len(playersInfo)):
+        #     self.add_player_names(playersInfo[i][1])
+        #     self.add_player_rank('GLOBAL')
+        #     self.add_player_wins('999')
+        #     self.add_player_faceit('10')
+        for i in range(0,len(sorted_players_info)):
+            if sorted_players_info[i][2] == 3:
+                print('true')
+            else:
+                print('true1')
+            self.add_player_names(sorted_players_info[i][1])
+            self.add_player_rank('GLOBAL')
+            self.add_player_wins('999')
+            self.add_player_faceit('10')
+        
+    def add_player_names(self, names):
+        name = ct.CTkLabel(self.player_main_container, text=names)
+        for i in range(1,3): # To start the array with 2
+            self.checkbox_list.append(i)
+        name.grid(row=len(self.checkbox_list), column=0, pady=10)
+        # print(self.checkbox_list)
+
+    # def get_player_team(players_info):
+    #     return players_info.get(3)
+        
+        
+    def add_player_rank(self, names):
+        rank = ct.CTkLabel(self.player_main_container, text=names)
+        for i in range(1,3): # To start the array with 2
+            self.rank_list.append(i)
+        rank.grid(row=len(self.rank_list), column=1, pady=10)
+        # print(self.checkbox_list)
+        
+    def add_player_wins(self, names):
+        wins = ct.CTkLabel(self.player_main_container, text=names)
+        for i in range(1,3): # To start the array with 2
+            self.wins_list.append(i)
+        wins.grid(row=len(self.wins_list), column=2, pady=10)
+        # print(self.checkbox_list)
+        
+    def add_player_faceit(self, names):
+        faceit = ct.CTkLabel(self.player_main_container, text=names)
+        for i in range(1,3): # To start the array with 2
+            self.faceit_list.append(i)
+        faceit.grid(row=len(self.faceit_list), column=3, pady=10)
+        # print(self.checkbox_list)
+        
+        
     def player_header_btn_e(self, e):
-        if e == 'General':
+        if e == 'Main':
             self.player_main_container.grid(row=1, column=0, pady=10, padx=10, sticky="news")
         else:
             self.player_main_container.grid_forget()
@@ -393,6 +453,9 @@ class App(ct.CTk):
         # set grid layout 1x2 -> nav on left main content on the right
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
+        
+        getPlayerInfo() # Execute our function to gather players info
+        print(getPlayerInfo)
         
         # Create navigation menu
         create_nav(self, self.nav_aimbot_callback, self.nav_triggerbot_callback, self.nav_visuals_callback, self.nav_players_callback, self.nav_misc_callhack, self.nav_panel_callback, self.nav_settings_callback)

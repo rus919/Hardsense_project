@@ -2,7 +2,7 @@ import pyMeow as meow
 from engine.process import Process, Windll
 from engine.gamedata import Colors, GetWindowText
 from utils.entity import Entity, LocalPlayer, Engine
-from tools.entity_parse import EntityList, bombAddr, getPlayerInfo, playersInfo
+from tools.entity_parse import EntityList, bombAddr, playersInfo
 
 from GUI import *
 import keyboard
@@ -148,7 +148,6 @@ def esp():
                                 center = width / 2
                                 
                                 if state.players_box_enabled == 1:
-                                    getPlayerInfo()
                                     if state.players_box_type == 'Normal':
                                         meow.draw_rectangle_lines(
                                             posX=head_pos['x'] - center,
