@@ -5,6 +5,9 @@ from PIL import Image
 from engine.state import state
 from engine.process import  Windll
 from tools.entity_parse import getPlayerInfo, playersInfo
+import requests
+
+import webbrowser as web
 
 ct.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ct.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -348,26 +351,29 @@ class create_players(ct.CTkFrame):
 
         for i in range(0,len(sorted_players_info)): # For each element in playersInfo
             # [0] = Player ID - [1] = Player name - [2] = Player team - [3] = Player rank - [4] = Player wins - [5] = Player steam ID
-            self.add_player_names(self.player_main_container, sorted_players_info[i][1], sorted_players_info[i][2], sorted_players_info[i][5]) # [1] = Player name
+            self.add_player_names(self.player_main_container, sorted_players_info[i][1], sorted_players_info[i][2], sorted_players_info[i][5])
             self.add_player_rank(self.player_main_container, sorted_players_info[i][3])
             self.add_player_wins(sorted_players_info[i][4])
-            self.add_player_faceit('10')
+            self.add_player_faceit(self.player_main_container, sorted_players_info[i][5])
         
     def add_player_names(self, container, text, team, steam_ID):
-        if team == 2:
+        if team == 2: # T
             name_text_color = 'red'
-        elif team == 3:
+        elif team == 3: # CT
             name_text_color = 'blue'
-        else:
+        else: # Spectators
             name_text_color = '#666666'
         
-        if steam_ID == 'BOT':    
+        if steam_ID == 'BOT': # If player is a bot
             name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color='black')
         else:
-            name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color=name_text_color)
+            name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color=name_text_color, command=lambda: self.player_names_e(steam_ID)) # Anonymous in-line function to pass steam_ID to player_names_e
         for i in range(1,3): # To start the array with 2
             self.checkbox_list.append(i)
         name.grid(row=len(self.checkbox_list), column=0, pady=10, sticky='news')        
+    
+    def player_names_e(self, steam_ID):
+        web.open(f'https://steamcommunity.com/profiles/{steam_ID}', new=2)
         
     def add_player_rank(self, container, rank_num):
         rank_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Ranks")
@@ -388,12 +394,27 @@ class create_players(ct.CTkFrame):
         wins.grid(row=len(self.wins_list), column=2, pady=10)
         # print(self.checkbox_list)
         
-    def add_player_faceit(self, text):
-        faceit = ct.CTkLabel(self.player_main_container, text=text)
+    def add_player_faceit(self, container, steam_ID):
+        
+        faceit_url = f'https://api.faceit.com/search/v1/?limit=1&query={steam_ID}'
+        faceit_json = requests.get(faceit_url).json()
+        print(faceit_json, steam_ID)
+        if len(faceit_json["payload"]['players']['results']) > 0:
+            faceit_lvl = faceit_json["payload"]['players']['results'][0]['games'][0]['skill_level'] # Future update - when someone doesn't have faceit, display that instead of blank field
+        else:
+            faceit_lvl = '0'
+        faceit_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Faceit")
+        faceit_lvl_img = ct.CTkImage(Image.open(os.path.join(faceit_path, f'{faceit_lvl}.png')), size=(35, 35)) # Dynamically getting correct rank image depending on rank
+        faceit = ct.CTkButton(container, text='', fg_color='#202020', hover_color='#202020', command=lambda: self.player_faceit_e(steam_ID), image=faceit_lvl_img, corner_radius=0, border_spacing=0)
         for i in range(1,3): # To start the array with 2
             self.faceit_list.append(i)
-        faceit.grid(row=len(self.faceit_list), column=3, pady=10)
+        faceit.grid(row=len(self.faceit_list), column=3, pady=0, sticky='news')     
+        
+        
         # print(self.checkbox_list)
+    
+    def player_faceit_e(self, steam_ID):
+        web.open(f'https://faceitfinder.com/stats/{steam_ID}', new=2)
         
         
     def player_header_btn_e(self, e):

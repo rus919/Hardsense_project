@@ -65,7 +65,7 @@ def getPlayerInfo(): # Not returning properly, missing player data when in entit
                                         
                     ents = Entity(entity)
                     
-                    ent_name = ents.get_name.decode('utf-8')
+                    ent_name = ents.get_name.decode('utf-8', errors="ignore")
                                         
                     entityCompRank = csgo.read_i32(Engine.get_player_resources() + Offset.m_iCompetitiveRanking + (i+1) * 4)
                     entityCompWins = csgo.read_i32(Engine.get_player_resources() + Offset.m_iCompetitiveWins + (i+1) * 4)
