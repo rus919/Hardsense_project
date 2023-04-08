@@ -348,13 +348,23 @@ class create_players(ct.CTkFrame):
 
         for i in range(0,len(sorted_players_info)): # For each element in playersInfo
             # [0] = Player ID - [1] = Player name - [2] = Player team - [3] = Player rank - [4] = Player wins - [5] = Player steam ID
-            self.add_player_names(sorted_players_info[i][1]) # [1] = Player name
+            self.add_player_names(self.player_main_container, sorted_players_info[i][1], sorted_players_info[i][2], sorted_players_info[i][5]) # [1] = Player name
             self.add_player_rank(self.player_main_container, sorted_players_info[i][3])
             self.add_player_wins(sorted_players_info[i][4])
             self.add_player_faceit('10')
         
-    def add_player_names(self, text):
-        name = ct.CTkLabel(self.player_main_container, text=text)
+    def add_player_names(self, container, text, team, steam_ID):
+        if team == 2:
+            name_text_color = 'red'
+        elif team == 3:
+            name_text_color = 'blue'
+        else:
+            name_text_color = '#666666'
+        
+        if steam_ID == 'BOT':    
+            name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color='black')
+        else:
+            name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color=name_text_color)
         for i in range(1,3): # To start the array with 2
             self.checkbox_list.append(i)
         name.grid(row=len(self.checkbox_list), column=0, pady=10, sticky='news')        
@@ -366,7 +376,7 @@ class create_players(ct.CTkFrame):
             rank = ct.CTkLabel(container, text='-')
         else:
             rank_img = ct.CTkImage(Image.open(os.path.join(rank_path, f'{rank_num}.png')), size=(60, 25)) # Dynamically getting correct rank image depending on rank
-            rank = ct.CTkButton(container, text='', image = rank_img, fg_color='#202020', hover_color='#202020')
+            rank = ct.CTkButton(container, text='', image = rank_img, fg_color='#202020', hover_color='#202020', state="disabled")
         for i in range(1,3): # To start the array with 2
             self.rank_list.append(i)
         rank.grid(row=len(self.rank_list), column=1, pady=10, sticky='news')
