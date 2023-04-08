@@ -73,7 +73,7 @@ def getPlayerInfo(): # Not returning properly, missing player data when in entit
 
                     if [i, ent_name, ents.get_team(), entityCompRank, entityCompWins, steam64id] not in playersInfo:
                         playersInfo.append([i, ent_name , ents.get_team(), entityCompRank, entityCompWins, steam64id])
-                    # print(playersInfo, playerSteamID, steam64id)
+                    # print(entityCompRank)
         except Exception as err:
             print('PLAYERS INFO ERROR: ', err)
             pass
