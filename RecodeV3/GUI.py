@@ -49,7 +49,8 @@ def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players
     nav_aimbot = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Aimbot", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor, image = aimbot_img, command = aim_callback).grid(row=1, column=0, sticky= sticky)
     nav_trigger = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Triggerbot", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = trigger_img, command = trigger_callback).grid(row=2, column=0, sticky = sticky)
     nav_visuals = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Visuals", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = visuals_img, command = visuals_callback).grid(row=3, column=0, sticky = sticky)
-    nav_players = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Players", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = players_img, command = players_callback).grid(row=4, column=0, sticky = sticky)
+    nav_players = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Players", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = players_img, command = players_callback)
+    nav_players.grid(row=4, column=0, sticky = sticky)
     nav_misc = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Misc", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = misc_img, command = misc_callback).grid(row=5, column=0, sticky = sticky)
     nav_user = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="User Panel", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = user_img, command = panel_callback).grid(row=7, column=0, sticky = sticky)
     nav_settings = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Settings", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = settings_img, command = settings_callback).grid(row=8, column=0, sticky = sticky)
@@ -300,24 +301,11 @@ class create_players(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color='transparent')
         
-        # Main frame
-        frame_fg_color = '#202020'
-        frame_border_color = '#4a4a4a'
-        
         # header btns
         h_unselected = '#202020'
         h_selected = '#39314A'
         h_fg_color = '#4a4a4a'
         h_hover_clr = '#282828'
-        
-        # Main frame header
-        mfh_pady = 5
-        mfh_padx = 5
-        mfh_sticky = 'ew'
-        mfh_fg_color = '#202020'
-        mfh_corner_radius = 5
-        mfh_font_size = 12
-        mfh_font_weight = 'bold'
         
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         self.grid_rowconfigure(1, weight=1)
@@ -325,37 +313,59 @@ class create_players(ct.CTkFrame):
         self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["Main", "Advanced", "Stats"], height=30, fg_color=h_fg_color, border_width=1, corner_radius=5, unselected_color=h_unselected, selected_color=h_selected, selected_hover_color=h_selected, unselected_hover_color=h_hover_clr, command=self.player_header_btn_e)
         self.player_header_btn_general.grid(row=0, column=0, pady=5, padx=10, sticky="news")
         
-        self.player_main_container = ct.CTkScrollableFrame(self, corner_radius=5, fg_color=frame_fg_color, border_color=frame_border_color, border_width=1, width=250)
-        
-        self.player_main_container.grid_columnconfigure((0,1,2,3), weight=1) # Push header items right and left
-        
-        self.player_name_text = ct.CTkLabel(self.player_main_container, text='NAME', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-        self.player_name_text.grid(row=1, column=0, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
-        
-        self.player_rank_text = ct.CTkLabel(self.player_main_container, text='RANK', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-        self.player_rank_text.grid(row=1, column=1, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
-        
-        self.player_wins_text = ct.CTkLabel(self.player_main_container, text='WINS', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-        self.player_wins_text.grid(row=1, column=2, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
-        
-        self.player_wins_text = ct.CTkLabel(self.player_main_container, text='FACEIT', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-        self.player_wins_text.grid(row=1, column=3, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
-        
-        self.checkbox_list = []
-        self.rank_list = []
-        self.wins_list = []
-        self.faceit_list = []
+    def player_header_btn_e(self, e):
+        if e == 'Main':
+            # Main frame
+            frame_fg_color = '#202020'
+            frame_border_color = '#4a4a4a'
+            
+            # Main frame header
+            mfh_pady = 5
+            mfh_padx = 5
+            mfh_sticky = 'ew'
+            mfh_fg_color = '#202020'
+            mfh_corner_radius = 5
+            mfh_font_size = 12
+            mfh_font_weight = 'bold'
+            
+            
+            self.player_main_container = ct.CTkScrollableFrame(self, corner_radius=5, fg_color=frame_fg_color, border_color=frame_border_color, border_width=1, width=250)
+            self.player_main_container.grid_columnconfigure((0,1,2,3), weight=1) # Push header items right and left
+            
+            self.player_name_text = ct.CTkLabel(self.player_main_container, text='NAME', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
+            self.player_name_text.grid(row=1, column=0, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
+            
+            self.player_rank_text = ct.CTkLabel(self.player_main_container, text='RANK', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
+            self.player_rank_text.grid(row=1, column=1, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
+            
+            self.player_wins_text = ct.CTkLabel(self.player_main_container, text='WINS', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
+            self.player_wins_text.grid(row=1, column=2, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
+            
+            self.player_wins_text = ct.CTkLabel(self.player_main_container, text='FACEIT', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
+            self.player_wins_text.grid(row=1, column=3, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
+            
+            getPlayerInfo()
+            
+            self.name_list = [0,1]
+            self.rank_list = [0,1]
+            self.wins_list = [0,1]
+            self.faceit_list = [0,1]    
 
-        sort_players_info = lambda arr_item: (arr_item[2]) # Create a function that will sort the item 2 which is teams in order
-        sorted_players_info = sorted(playersInfo, key=sort_players_info) # Create our shadow copy of the main array and use this sorted array
-
-        for i in range(0,len(sorted_players_info)): # For each element in playersInfo
-            # [0] = Player ID - [1] = Player name - [2] = Player team - [3] = Player rank - [4] = Player wins - [5] = Player steam ID
-            self.add_player_names(self.player_main_container, sorted_players_info[i][1], sorted_players_info[i][2], sorted_players_info[i][5])
-            self.add_player_rank(self.player_main_container, sorted_players_info[i][3])
-            self.add_player_wins(sorted_players_info[i][4])
-            self.add_player_faceit(self.player_main_container, sorted_players_info[i][5])
+            sort_players_info = lambda arr_item: (arr_item[2]) # Create a function that will sort the item 2 which is teams in order
+            sorted_players_info = sorted(playersInfo, key=sort_players_info) # Create our shadow copy of the main array and use this sorted array
         
+            for i in range(0,len(sorted_players_info)): # For each element in playersInfo
+                # [0] = Player ID - [1] = Player name - [2] = Player team - [3] = Player rank - [4] = Player wins - [5] = Player steam ID
+                self.add_player_names(self.player_main_container, sorted_players_info[i][1], sorted_players_info[i][2], sorted_players_info[i][5])
+                self.add_player_rank(self.player_main_container, sorted_players_info[i][3])
+                self.add_player_wins(sorted_players_info[i][4])
+                self.add_player_faceit(self.player_main_container, sorted_players_info[i][5])
+                self.player_main_container.update()
+            
+            self.player_main_container.grid(row=1, column=0, pady=10, padx=10, sticky="news")
+        else:
+            self.player_main_container.grid_forget()
+
     def add_player_names(self, container, text, team, steam_ID):
         if team == 2: # T
             name_text_color = 'red'
@@ -368,9 +378,9 @@ class create_players(ct.CTkFrame):
             name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color='black')
         else:
             name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color=name_text_color, command=lambda: self.player_names_e(steam_ID)) # Anonymous in-line function to pass steam_ID to player_names_e
-        for i in range(1,3): # To start the array with 2
-            self.checkbox_list.append(i)
-        name.grid(row=len(self.checkbox_list), column=0, pady=10, sticky='news')        
+        # for i in range(1,3): # To start the array with 2
+        name.grid(row=len(self.name_list), column=0, pady=10, sticky='news')        
+        self.name_list.append(name)
     
     def player_names_e(self, steam_ID):
         web.open(f'https://steamcommunity.com/profiles/{steam_ID}', new=2)
@@ -383,22 +393,21 @@ class create_players(ct.CTkFrame):
         else:
             rank_img = ct.CTkImage(Image.open(os.path.join(rank_path, f'{rank_num}.png')), size=(60, 25)) # Dynamically getting correct rank image depending on rank
             rank = ct.CTkButton(container, text='', image = rank_img, fg_color='#202020', hover_color='#202020', state="disabled")
-        for i in range(1,3): # To start the array with 2
-            self.rank_list.append(i)
+        # for i in range(1,3): # To start the array with 2
         rank.grid(row=len(self.rank_list), column=1, pady=10, sticky='news')
+        self.rank_list.append(rank)
 
     def add_player_wins(self, text):
         wins = ct.CTkLabel(self.player_main_container, text=text)
-        for i in range(1,3): # To start the array with 2
-            self.wins_list.append(i)
+        # for i in range(1,3): # To start the array with 2
         wins.grid(row=len(self.wins_list), column=2, pady=10)
+        self.wins_list.append(wins)
         # print(self.checkbox_list)
         
     def add_player_faceit(self, container, steam_ID):
         
         faceit_url = f'https://api.faceit.com/search/v1/?limit=1&query={steam_ID}'
         faceit_json = requests.get(faceit_url).json()
-        print(faceit_json, steam_ID)
         if len(faceit_json["payload"]['players']['results']) > 0:
             faceit_lvl = faceit_json["payload"]['players']['results'][0]['games'][0]['skill_level'] # Future update - when someone doesn't have faceit, display that instead of blank field
         else:
@@ -406,9 +415,9 @@ class create_players(ct.CTkFrame):
         faceit_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Faceit")
         faceit_lvl_img = ct.CTkImage(Image.open(os.path.join(faceit_path, f'{faceit_lvl}.png')), size=(35, 35)) # Dynamically getting correct rank image depending on rank
         faceit = ct.CTkButton(container, text='', fg_color='#202020', hover_color='#202020', command=lambda: self.player_faceit_e(steam_ID), image=faceit_lvl_img, corner_radius=0, border_spacing=0)
-        for i in range(1,3): # To start the array with 2
-            self.faceit_list.append(i)
+        # for i in range(1,3): # To start the array with 2
         faceit.grid(row=len(self.faceit_list), column=3, pady=0, sticky='news')     
+        self.faceit_list.append(faceit)
         
         
         # print(self.checkbox_list)
@@ -417,11 +426,7 @@ class create_players(ct.CTkFrame):
         web.open(f'https://faceitfinder.com/stats/{steam_ID}', new=2)
         
         
-    def player_header_btn_e(self, e):
-        if e == 'Main':
-            self.player_main_container.grid(row=1, column=0, pady=10, padx=10, sticky="news")
-        else:
-            self.player_main_container.grid_forget()
+
             
             
 def create_misc(parent):
@@ -474,7 +479,7 @@ class App(ct.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
               
-        getPlayerInfo() # Execute our function to gather players info  
+        # getPlayerInfo() # Execute our function to gather players info  
         # Create navigation menu
         create_nav(self, self.nav_aimbot_callback, self.nav_triggerbot_callback, self.nav_visuals_callback, self.nav_players_callback, self.nav_misc_callhack, self.nav_panel_callback, self.nav_settings_callback)
         

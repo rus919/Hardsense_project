@@ -47,9 +47,9 @@ def entity_parse():
         Windll.k32.Sleep(2000)       
         
 def getPlayerInfo(): # Not returning properly, missing player data when in entity he is there
+    playersInfo.clear()
     if Engine.get_client_state() == 6:
         try:
-            playersInfo.clear()
             for i in range(1, 64):     
                 entity = Engine.get_entity(i)
                 if entity != 0:
@@ -71,7 +71,7 @@ def getPlayerInfo(): # Not returning properly, missing player data when in entit
                     entityCompWins = csgo.read_i32(Engine.get_player_resources() + Offset.m_iCompetitiveWins + (i+1) * 4)
                     
 
-                    if [i, ent_name, ents.get_team(), entityCompRank, entityCompWins, steam64id] not in playersInfo:
+                    if not playersInfo.__contains__([i, ent_name, ents.get_team(), entityCompRank, entityCompWins, steam64id]):
                         playersInfo.append([i, ent_name , ents.get_team(), entityCompRank, entityCompWins, steam64id])
                     # print(steam64id)
         except Exception as err:
