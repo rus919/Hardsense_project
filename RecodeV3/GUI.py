@@ -405,19 +405,21 @@ class create_players(ct.CTkFrame):
         # print(self.checkbox_list)
         
     def add_player_faceit(self, container, steam_ID):
+        faceit_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Faceit")
+        
+        faceit_lvl = '0'
         
         faceit_url = f'https://api.faceit.com/search/v1/?query={steam_ID}'
         faceit_json = requests.get(faceit_url).json()
         if len(faceit_json["payload"]['players']['results']) > 0: # Checking if player has faceit acc
-            if len(faceit_json["payload"]['players']['results'][0]['games']) != 0: # Checking if player has any game on faceit acc
+            if len(faceit_json["payload"]['players']['results'][0]['games']) > 0: # Checking if player has any game on faceit acc
                 game = faceit_json["payload"]['players']['results'][0]['games']
                 # print(steam_ID,game)
                 for games in game:
                     if games['name'] == 'csgo':
                         faceit_lvl = games['skill_level']
                         print(faceit_lvl)
-        else:
-            faceit_lvl = '0'
+                        
             
                 #     print(games)
                 #     # if games['name'] == 'csgo':
@@ -427,8 +429,6 @@ class create_players(ct.CTkFrame):
         #     
         # else:
         #     faceit_lvl = '0'
-        
-        faceit_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Faceit")
         faceit_lvl_img = ct.CTkImage(Image.open(os.path.join(faceit_path, f'{faceit_lvl}.png')), size=(35, 35)) # Dynamically getting correct rank image depending on rank
         faceit = ct.CTkButton(container, text='', fg_color='#202020', hover_color='#202020', command=lambda: self.player_faceit_e(steam_ID), image=faceit_lvl_img, corner_radius=0, border_spacing=0)
         faceit.grid(row=len(self.faceit_list), column=3, pady=0, sticky='news')     
