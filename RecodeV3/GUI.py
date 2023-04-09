@@ -8,12 +8,44 @@ from tools.entity_parse import getPlayerInfo, playersInfo
 import requests
 
 import webbrowser as web
+import json
 
-ct.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
+ct.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 ct.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
 ct.deactivate_automatic_dpi_awareness() # Make sure DPI scale is alwaya 100%, but test later
 
-# sticky = S = south N = north W = west S = south
+# sticky = N = north E = East W = west S = south
+
+app_colors = {
+    'nav': {
+        'bg_clr': 'transparent'
+    },
+    'players': {
+        'bg_clr': '#1a1a1a',
+        'header_btn': {
+            'bg_clr': '#4a4a4a',
+            'selected': '#39314A',
+            'unselected': '#202020',
+            'hover': '#282828' # Add border color too
+            },
+        'container': {
+            'bg_clr': '#202020',
+            'border_clr': '#4a4a4a',
+            'header_text': {
+                'bg_clr': '#202020',
+                'f_size': 12,
+                'f_weight': 'bold'
+            },
+            'content': {
+                'bg_clr': '#202020',
+                't_clr': 'red',
+                'ct_clr': 'blue',
+                'spec_clr': 'gray',
+                'bot_clr': 'black',
+            }
+        }
+    }
+}
 
 def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players_callback, misc_callback, panel_callback, settings_callback):
     frame = ct.CTkFrame(master = parent, corner_radius=0)
@@ -21,7 +53,7 @@ def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players
     height = 60
     border_spacing = 10
     corner_radius = 0
-    fg_color = 'transparent'
+    fg_color = app_colors['nav']['bg_clr']
     text_color = ('gray10', 'gray90')
     hover_color = ('gray10')
     anchor = 'w'
@@ -299,54 +331,75 @@ class create_visuals(ct.CTkFrame):
 
 class create_players(ct.CTkFrame):
     def __init__(self, parent):
-        super().__init__(master = parent, fg_color='transparent')
+        super().__init__(master = parent, fg_color=app_colors['players']['bg_clr'])
         
-        # header btns
-        h_unselected = '#202020'
-        h_selected = '#39314A'
-        h_fg_color = '#4a4a4a'
-        h_hover_clr = '#282828'
+        # header btns 
+        # colors
+        self.header_btn_fg_color = app_colors['players']['header_btn']['bg_clr']
+        self.header_btn_selected = app_colors['players']['header_btn']['selected']
+        self.header_btn_unselected = app_colors['players']['header_btn']['unselected']
+        self.header_btn_hover_clr = app_colors['players']['header_btn']['hover']
+        # Dimensions
+        self.header_btn_height = 30
+        self.header_btn_border_width = 1
+        self.header_btn_corner_radius = 5
+        # Grid
+        self.header_btn_pady = 5
+        self.header_btn_padx = 10
+        self.header_btn_sticky = 'news'
+        
+        # Container frame
+        # Colors
+        self.frame_fg_color = app_colors['players']['container']['bg_clr']
+        self.frame_border_color = app_colors['players']['container']['border_clr']
+        # Dimensions
+        self.frame_corner_radius = 5
+        self.frame_border_width = 1
+        # Grid
+        self.frame_pady = 10
+        self.frame_padx = 10
+        self.frame_sticky = 'news'
+        # header text
+        self.frame_header_text_fg_color = app_colors['players']['container']['header_text']['bg_clr']
+        self.frame_header_text_f_size = app_colors['players']['container']['header_text']['f_size']
+        self.frame_header_text_f_weight = app_colors['players']['container']['header_text']['f_weight']
+        # header grid
+        self.frame_header_text_pady = 5
+        self.frame_header_text_padx = 5
+        self.frame_header_text_sticky = 'ew'
+        # Main content
+        self.frame_content_t_color = app_colors['players']['container']['content']['t_clr']
+        self.frame_content_ct_color = app_colors['players']['container']['content']['ct_clr']
+        self.frame_content_spectator_color = app_colors['players']['container']['content']['spec_clr']
+        self.frame_content_bot_color = app_colors['players']['container']['content']['bot_clr']
+        self.frame_content_fg_color = app_colors['players']['container']['content']['bg_clr']
+        # Dimensions
+        self.frame_content_rank_img_size = (60, 25)
+        self.frame_content_faceit_img_size = (35, 35)
+        # Grid
+        self.frame_content_fg_pady = 4
+        self.frame_content_fg_sticky = 'news'
         
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         self.grid_rowconfigure(1, weight=1)
         
-        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["Main", "Advanced", "Stats"], height=30, fg_color=h_fg_color, border_width=1, corner_radius=5, unselected_color=h_unselected, selected_color=h_selected, selected_hover_color=h_selected, unselected_hover_color=h_hover_clr, command=self.player_header_btn_e)
-        self.player_header_btn_general.grid(row=0, column=0, pady=5, padx=10, sticky="news")
+        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["Main", "Advanced", "Stats"], height=self.header_btn_height, fg_color=self.header_btn_fg_color, border_width=self.header_btn_border_width, corner_radius=self.header_btn_corner_radius, unselected_color=self.header_btn_unselected, selected_color=self.header_btn_selected, selected_hover_color=self.header_btn_selected, unselected_hover_color=self.header_btn_hover_clr, command=self.player_header_btn_e)
+        self.player_header_btn_general.grid(row=0, column=0, pady=self.header_btn_pady, padx=self.header_btn_padx, sticky=self.header_btn_sticky)
         
     def player_header_btn_e(self, e):
         if e == 'Main':
-            # Main frame
-            frame_fg_color = '#202020'
-            frame_border_color = '#4a4a4a'
-            
-            # Main frame header
-            mfh_pady = 5
-            mfh_padx = 5
-            mfh_sticky = 'ew'
-            mfh_fg_color = '#202020'
-            mfh_corner_radius = 5
-            mfh_font_size = 12
-            mfh_font_weight = 'bold'
-            
-            
-            self.player_main_container = ct.CTkScrollableFrame(self, corner_radius=5, fg_color=frame_fg_color, border_color=frame_border_color, border_width=1, width=250)
+            self.player_main_container = ct.CTkScrollableFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
             self.player_main_container.grid_columnconfigure((0,1,2,3), weight=1) # Push header items right and left
+
+            # Create container header text
+            self.header_name = self.create_headar_text('NAME', 0)
+            self.header_rank = self.create_headar_text('RANK', 1)
+            self.header_wins = self.create_headar_text('WINS', 2)
+            self.header_faceit = self.create_headar_text('FACEIT', 3)
             
-            self.player_name_text = ct.CTkLabel(self.player_main_container, text='NAME', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-            self.player_name_text.grid(row=1, column=0, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
+            getPlayerInfo() # Get and update array of data
             
-            self.player_rank_text = ct.CTkLabel(self.player_main_container, text='RANK', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-            self.player_rank_text.grid(row=1, column=1, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
-            
-            self.player_wins_text = ct.CTkLabel(self.player_main_container, text='WINS', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-            self.player_wins_text.grid(row=1, column=2, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
-            
-            self.player_wins_text = ct.CTkLabel(self.player_main_container, text='FACEIT', fg_color=mfh_fg_color, corner_radius=mfh_corner_radius, font=ct.CTkFont(size= mfh_font_size, weight=mfh_font_weight))
-            self.player_wins_text.grid(row=1, column=3, pady=mfh_pady, padx=mfh_padx, sticky=mfh_sticky)
-            
-            getPlayerInfo()
-            
-            self.name_list = [0,1]
+            self.name_list = [0,1] # start from 3rd row
             self.rank_list = [0,1]
             self.wins_list = [0,1]
             self.faceit_list = [0,1]    
@@ -362,24 +415,28 @@ class create_players(ct.CTkFrame):
                 self.add_player_faceit(self.player_main_container, sorted_players_info[i][5])
                 self.player_main_container.update()
             
-            self.player_main_container.grid(row=1, column=0, pady=10, padx=10, sticky="news")
+            self.player_main_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
             self.player_main_container.grid_forget()
-
+            
+    def create_headar_text(self, text, column):
+        header_text = ct.CTkLabel(self.player_main_container, text=text, fg_color=self.frame_header_text_fg_color, font=ct.CTkFont(size= self.frame_header_text_f_size, weight=self.frame_header_text_f_weight), corner_radius=0,)
+        header_text.grid(row=1, column=column, pady=self.frame_header_text_pady, padx=self.frame_header_text_padx, sticky=self.frame_header_text_sticky)
+        
     def add_player_names(self, container, text, team, steam_ID):
         if team == 2: # T
-            name_text_color = 'red'
+            name_text_color = self.frame_content_t_color
         elif team == 3: # CT
-            name_text_color = 'blue'
+            name_text_color = self.frame_content_ct_color
         else: # Spectators
-            name_text_color = '#666666'
+            name_text_color = self.frame_content_spectator_color
         
         if steam_ID == 'BOT': # If player is a bot
-            name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color='black')
+            name = ct.CTkButton(container, text=text, fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, text_color=self.frame_content_bot_color)
         else:
-            name = ct.CTkButton(container, text=text, fg_color='#202020', hover_color='#202020', text_color=name_text_color, command=lambda: self.player_names_e(steam_ID)) # Anonymous in-line function to pass steam_ID to player_names_e
-        # for i in range(1,3): # To start the array with 2
-        name.grid(row=len(self.name_list), column=0, pady=10, sticky='news')        
+            name = ct.CTkButton(container, text=text, fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, text_color=name_text_color, command=lambda: self.player_names_e(steam_ID)) # Anonymous in-line function to pass steam_ID to player_names_e
+
+        name.grid(row=len(self.name_list), column=0, pady=self.frame_content_fg_pady, sticky=self.frame_content_fg_sticky)        
         self.name_list.append(name)
     
     def player_names_e(self, steam_ID):
@@ -387,63 +444,45 @@ class create_players(ct.CTkFrame):
         
     def add_player_rank(self, container, rank_num):
         rank_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Ranks")
+        rank_show = rank_num
         
         if rank_num != 0 and rank_num > 18:
-            rank = ct.CTkLabel(container, text='-')
-        else:
-            rank_img = ct.CTkImage(Image.open(os.path.join(rank_path, f'{rank_num}.png')), size=(60, 25)) # Dynamically getting correct rank image depending on rank
-            rank = ct.CTkButton(container, text='', image = rank_img, fg_color='#202020', hover_color='#202020', state="disabled")
-        # for i in range(1,3): # To start the array with 2
-        rank.grid(row=len(self.rank_list), column=1, pady=10, sticky='news')
+            rank_show = 0
+            
+        rank_img = ct.CTkImage(Image.open(os.path.join(rank_path, f'{rank_num}.png')), size=self.frame_content_rank_img_size) # Dynamically getting correct rank image depending on rank
+        rank = ct.CTkButton(container, text='', image = rank_img, fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, state="disabled", corner_radius=0, border_spacing=0)
+        rank.grid(row=len(self.rank_list), column=1, pady=self.frame_content_fg_pady, sticky=self.frame_content_fg_sticky)
         self.rank_list.append(rank)
 
     def add_player_wins(self, text):
         wins = ct.CTkLabel(self.player_main_container, text=text)
-        # for i in range(1,3): # To start the array with 2
-        wins.grid(row=len(self.wins_list), column=2, pady=10)
+        wins.grid(row=len(self.wins_list), column=2, pady=self.frame_content_fg_pady, sticky=self.frame_content_fg_sticky)
         self.wins_list.append(wins)
-        # print(self.checkbox_list)
         
     def add_player_faceit(self, container, steam_ID):
         faceit_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Faceit")
         
         faceit_lvl = '0'
         
-        faceit_url = f'https://api.faceit.com/search/v1/?query={steam_ID}'
+        faceit_url = f'https://api.faceit.com/search/v1/?query={steam_ID}' # get Json faceit data
         faceit_json = requests.get(faceit_url).json()
         if len(faceit_json["payload"]['players']['results']) > 0: # Checking if player has faceit acc
             if len(faceit_json["payload"]['players']['results'][0]['games']) > 0: # Checking if player has any game on faceit acc
                 game = faceit_json["payload"]['players']['results'][0]['games']
-                # print(steam_ID,game)
                 for games in game:
                     if games['name'] == 'csgo':
                         faceit_lvl = games['skill_level']
-                        print(faceit_lvl)
-                        
-            
-                #     print(games)
-                #     # if games['name'] == 'csgo':
-                #         print(lvl)
-                        
-                        # faceit_lvl = faceit_json["payload"]['players']['results'][0]['games'][0]['skill_level'] # Future update - when someone doesn't have faceit, display that instead of blank field
-        #     
-        # else:
-        #     faceit_lvl = '0'
-        faceit_lvl_img = ct.CTkImage(Image.open(os.path.join(faceit_path, f'{faceit_lvl}.png')), size=(35, 35)) # Dynamically getting correct rank image depending on rank
-        faceit = ct.CTkButton(container, text='', fg_color='#202020', hover_color='#202020', command=lambda: self.player_faceit_e(steam_ID), image=faceit_lvl_img, corner_radius=0, border_spacing=0)
-        faceit.grid(row=len(self.faceit_list), column=3, pady=0, sticky='news')     
+        faceit_lvl_img = ct.CTkImage(Image.open(os.path.join(faceit_path, f'{faceit_lvl}.png')), size=self.frame_content_faceit_img_size) # Dynamically getting correct rank image depending on rank
+        faceit = ct.CTkButton(container, text='', fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, command=lambda: self.player_faceit_e(steam_ID, faceit_lvl), image=faceit_lvl_img, corner_radius=0, border_spacing=0)
+        faceit.grid(row=len(self.faceit_list), column=3, pady=self.frame_content_fg_pady, sticky=self.frame_content_fg_sticky)     
         self.faceit_list.append(faceit)
-        
-        
-        # print(self.checkbox_list)
-    
-    def player_faceit_e(self, steam_ID):
-        web.open(f'https://www.faceitfinder.app/user?id={steam_ID}', new=2)
-        
-        
-
             
-            
+    def player_faceit_e(self, steam_ID, faceit_lvl):
+        if steam_ID == 'BOT' or faceit_lvl == 0:
+            pass
+        else:
+            web.open(f'https://www.faceitfinder.app/user?id={steam_ID}', new=2)
+         
 def create_misc(parent):
     frame = ct.CTkFrame(master = parent, corner_radius=0, fg_color='transparent')
         
@@ -472,29 +511,26 @@ class App(ct.CTk):
         # configure window
         self.title("test2") # Random name window to change signatures?
         
-        w = 1000
-        h = 600
+        w = 1000 # apps width
+        h = 600 # apps height
 
         # get screen width and height
         ws = self.winfo_screenwidth() # width of the screen
         hs = self.winfo_screenheight() # height of the screen
 
-        # calculate x and y coordinates for the Tk root window
+        # calculate x and y coordinates for the CTk root window
         x = (ws/2) - (w/2)
         y = (hs/2) - (h/2)
 
-        # set the dimensions of the screen 
-        # and where it is placed
+        # set the dimensions of the screen and where it is placed
         self.geometry('%dx%d+%d+%d' % (w, h, x, y))
         
-        # self.geometry(f"{1000}x{600}") # Default window size
-        self.minsize(width = 1000, height = 600)
+        self.minsize(width = 1000, height = 600) # Minimum size of the window
         
         # set grid layout 1x2 -> nav on left main content on the right
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
               
-        # getPlayerInfo() # Execute our function to gather players info  
         # Create navigation menu
         create_nav(self, self.nav_aimbot_callback, self.nav_triggerbot_callback, self.nav_visuals_callback, self.nav_players_callback, self.nav_misc_callhack, self.nav_panel_callback, self.nav_settings_callback)
         
@@ -535,7 +571,6 @@ class App(ct.CTk):
         else:
             self.visuals_tab.grid_forget()
             #Change navigation frame color when selected
-            # create_nav.nav_aimbot.configure(fg_color=("gray20"))
             # print(create_nav.nav_misc)
         if name == 'Players':
             self.players_tab.grid(row=0, column=1, sticky="nsew")
