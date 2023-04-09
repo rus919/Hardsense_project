@@ -438,7 +438,7 @@ class create_players(ct.CTkFrame):
         # print(self.checkbox_list)
     
     def player_faceit_e(self, steam_ID):
-        web.open(f'https://faceitfinder.com/stats/{steam_ID}', new=2)
+        web.open(f'https://www.faceitfinder.app/user?id={steam_ID}', new=2)
         
         
 
