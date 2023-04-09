@@ -383,7 +383,7 @@ class create_players(ct.CTkFrame):
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         self.grid_rowconfigure(1, weight=1)
         
-        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["Main", "Advanced", "Stats"], height=self.header_btn_height, fg_color=self.header_btn_fg_color, border_width=self.header_btn_border_width, corner_radius=self.header_btn_corner_radius, unselected_color=self.header_btn_unselected, selected_color=self.header_btn_selected, selected_hover_color=self.header_btn_selected, unselected_hover_color=self.header_btn_hover_clr, command=self.player_header_btn_e)
+        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["Main", "-"], height=self.header_btn_height, fg_color=self.header_btn_fg_color, border_width=self.header_btn_border_width, corner_radius=self.header_btn_corner_radius, unselected_color=self.header_btn_unselected, selected_color=self.header_btn_selected, selected_hover_color=self.header_btn_selected, unselected_hover_color=self.header_btn_hover_clr, command=self.player_header_btn_e)
         self.player_header_btn_general.grid(row=0, column=0, pady=self.header_btn_pady, padx=self.header_btn_padx, sticky=self.header_btn_sticky)
         
     def player_header_btn_e(self, e):
@@ -410,7 +410,7 @@ class create_players(ct.CTkFrame):
             for i in range(0,len(sorted_players_info)): # For each element in playersInfo
                 # [0] = Player ID - [1] = Player name - [2] = Player team - [3] = Player rank - [4] = Player wins - [5] = Player steam ID
                 self.add_player_names(self.player_main_container, sorted_players_info[i][1], sorted_players_info[i][2], sorted_players_info[i][5])
-                self.add_player_rank(self.player_main_container, sorted_players_info[i][3])
+                self.add_player_ranks(self.player_main_container, sorted_players_info[i][3], sorted_players_info[i][5])
                 self.add_player_wins(sorted_players_info[i][4])
                 self.add_player_faceit(self.player_main_container, sorted_players_info[i][5])
                 self.player_main_container.update()
@@ -442,18 +442,22 @@ class create_players(ct.CTkFrame):
     def player_names_e(self, steam_ID):
         web.open(f'https://steamcommunity.com/profiles/{steam_ID}', new=2)
         
-    def add_player_rank(self, container, rank_num):
+    def add_player_ranks(self, container, rank_num, steam_ID):
         rank_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/Ranks")
         rank_show = rank_num
         
         if rank_num != 0 and rank_num > 18:
             rank_show = 0
             
-        rank_img = ct.CTkImage(Image.open(os.path.join(rank_path, f'{rank_num}.png')), size=self.frame_content_rank_img_size) # Dynamically getting correct rank image depending on rank
-        rank = ct.CTkButton(container, text='', image = rank_img, fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, state="disabled", corner_radius=0, border_spacing=0)
+        rank_img = ct.CTkImage(Image.open(os.path.join(rank_path, f'{rank_show}.png')), size=self.frame_content_rank_img_size) # Dynamically getting correct rank image depending on rank
+        rank = ct.CTkButton(container, text='', image = rank_img, fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, command= lambda: self.player_ranks_e(steam_ID), corner_radius=0, border_spacing=0)
         rank.grid(row=len(self.rank_list), column=1, pady=self.frame_content_fg_pady, sticky=self.frame_content_fg_sticky)
         self.rank_list.append(rank)
 
+    def player_ranks_e(self, steam_ID):
+        if not steam_ID == 'BOT':
+            web.open(f'https://csgostats.gg/player/{steam_ID}', new=2)
+    
     def add_player_wins(self, text):
         wins = ct.CTkLabel(self.player_main_container, text=text)
         wins.grid(row=len(self.wins_list), column=2, pady=self.frame_content_fg_pady, sticky=self.frame_content_fg_sticky)
@@ -473,11 +477,12 @@ class create_players(ct.CTkFrame):
                     if games['name'] == 'csgo':
                         faceit_lvl = games['skill_level']
         faceit_lvl_img = ct.CTkImage(Image.open(os.path.join(faceit_path, f'{faceit_lvl}.png')), size=self.frame_content_faceit_img_size) # Dynamically getting correct rank image depending on rank
-        faceit = ct.CTkButton(container, text='', fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, command=lambda: self.player_faceit_e(steam_ID, faceit_lvl), image=faceit_lvl_img, corner_radius=0, border_spacing=0)
+        faceit = ct.CTkButton(container, text='', fg_color=self.frame_content_fg_color, hover_color=self.frame_content_fg_color, command=lambda: self.player_faceit_e(steam_ID, int(faceit_lvl)), image=faceit_lvl_img, corner_radius=0, border_spacing=0)
         faceit.grid(row=len(self.faceit_list), column=3, pady=self.frame_content_fg_pady, sticky=self.frame_content_fg_sticky)     
         self.faceit_list.append(faceit)
             
     def player_faceit_e(self, steam_ID, faceit_lvl):
+        print(type(faceit_lvl))
         if steam_ID == 'BOT' or faceit_lvl == 0:
             pass
         else:
