@@ -23,7 +23,7 @@ def esp():
     # Menu
     app = App()
     app.iconbitmap("assets/GUI/icon.ico")
-    app.overrideredirect(True) # Disables top menu
+    # app.overrideredirect(True) # Disables top menu
     app.attributes("-alpha",1.0)
     active = 0
     while meow.overlay_loop():

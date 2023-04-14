@@ -480,7 +480,7 @@ class create_settings(ct.CTkFrame):
         self.test_buton = ct.CTkButton(self.config_container, text='load', command=self.test_button_e)
         self.test_buton.grid(row=1, column=0, pady=10, padx=10)
         
-        self.test_buton2 = ct.CTkButton(self.config_container, text='save')
+        self.test_buton2 = ct.CTkButton(self.config_container, text='save', command=self.test_button2_e)
         self.test_buton2.grid(row=1, column=1, pady=10, padx=10)
         
         # Reading our config file 
@@ -492,9 +492,13 @@ class create_settings(ct.CTkFrame):
     
     def update_from_config(self):
         # Getting values from the config file
-        if self.config.getboolean('VISUALS GLOBAL', 'Enabled', fallback=False) == True:
+        if self.config['VISUALS GLOBAL']['Enabled'] == '1':
             # Triggering the command in self.checkbox by using toggle() so we can change the state in checkbox_e
-            self.checkbox.toggle()
+            self.checkbox.select()
+            self.checkbox_e()
+        else:
+            self.checkbox.deselect()
+            self.checkbox_e()
     
     def checkbox_e(self):
         # Getting checkbox value 1 or 0
@@ -503,7 +507,7 @@ class create_settings(ct.CTkFrame):
             # Setting our state from where our main ESP file reads the values and sets esp on or off
             state.players_box_enabled = 1
         else:
-            print('OFf')
+            print('OFF')
             state.players_box_enabled = 0
     
     def header_btn_e(self, e):
@@ -515,6 +519,13 @@ class create_settings(ct.CTkFrame):
     def test_button_e(self):
         self.config.read(CONFIG_FILE)
         self.update_from_config()
+        
+    def test_button2_e(self):
+        print(str(self.checkbox.get()))
+        self.config['VISUALS GLOBAL']['Enabled'] = f'{self.checkbox.get()}'
+        
+        with open(CONFIG_FILE, 'w') as f:
+            self.config.write(f)
 
 class App(ct.CTk):
     def __init__(self):
