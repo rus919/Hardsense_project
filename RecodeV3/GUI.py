@@ -483,18 +483,24 @@ class create_settings(ct.CTkFrame):
         self.test_buton2 = ct.CTkButton(self.config_container, text='save')
         self.test_buton2.grid(row=1, column=1, pady=10, padx=10)
         
+        # Reading our config file 
         self.config = cp.ConfigParser()
         self.config.read(CONFIG_FILE)
+        # Calling our update function once when the app is loaded
         self.update_from_config()
         
     
     def update_from_config(self):
+        # Getting values from the config file
         if self.config.getboolean('VISUALS GLOBAL', 'Enabled', fallback=False) == True:
+            # Triggering the command in self.checkbox by using toggle() so we can change the state in checkbox_e
             self.checkbox.toggle()
     
     def checkbox_e(self):
+        # Getting checkbox value 1 or 0
         if self.checkbox.get() == 1:
             print('ON')
+            # Setting our state from where our main ESP file reads the values and sets esp on or off
             state.players_box_enabled = 1
         else:
             print('OFf')
