@@ -62,9 +62,18 @@ if not os.path.exists(CONFIG_FILE):
     # If the configuration file doesn't exist, create it with default values
     config = cp.ConfigParser()
     
-    config["VISUALS GLOBAL"] = {
+    config["VISUALS"] = {
         'enabled': 1,
-        'box enabled': 1
+        'watermark': 1,
+        'box': 1,
+        'head esp': 1,
+        'health': 1,
+        'name': 1,
+        'weapon': 1,
+        'sniper crosshair': 1,
+        'recoil crosshair': 1,
+        'spectator list': 1,
+        'bomb info': 1,
     }
     
     with open(CONFIG_FILE, 'w') as f:
@@ -185,54 +194,51 @@ class create_visuals(ct.CTkFrame):
         self.global_container.grid_columnconfigure(1, pad=25)
         self.global_container.grid_columnconfigure(2, pad=25)
         
-        global_master = self.item_checkbox(self.global_container, 0, 1, 'Enable',)
-        global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark')
+        self.global_master = self.item_checkbox(self.global_container, 0, 1, 'Enable', self.global_master_e)
+        self.global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark', self.global_watermark_e)
         
         self.player_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.player_container.grid_columnconfigure(1, pad=25)
         self.player_container.grid_columnconfigure(2, pad=25)
         
-        player_box_esp_name = self.item_checkbox(self.player_container, 1, 0, 'Box')
-        player_box_esp = self.item_comboBox(self.player_container, 1, 1, ['Normal'])
+        self.player_box_esp_name = self.item_checkbox(self.player_container, 1, 0, 'Box', self.player_box_esp_name_e)
+        self.player_box_esp = self.item_comboBox(self.player_container, 1, 1, ['Normal', 'Filled'])
         # player_box_esp_color =
         
-        player_head_esp_name = self.item_checkbox(self.player_container, 2, 0, 'Filled Box')
-        player_head_esp = self.item_comboBox(self.player_container, 2, 1, ['Normal'])
+        self.player_head_esp_name = self.item_checkbox(self.player_container, 3, 0, 'Head ESP', self.player_head_esp_name_e)
+        self.player_head_esp = self.item_comboBox(self.player_container, 3, 1, ['Circle'])
         
-        player_filled_box_esp_name = self.item_checkbox(self.player_container, 3, 0, 'Head ESP')
-        player_filled_box_esp = self.item_comboBox(self.player_container, 3, 1, ['Circle'])
+        self.player_health_esp_name = self.item_checkbox(self.player_container, 4, 0, 'Health', self.player_health_esp_name_e)
+        self.player_health_esp = self.item_comboBox(self.player_container, 4, 1, ['Simple', 'Advanced'])
         
-        player_health_esp_name = self.item_checkbox(self.player_container, 4, 0, 'Health')
-        player_health_esp = self.item_comboBox(self.player_container, 4, 1, ['Simple', 'Advanced'])
+        self.player_name_esp_name = self.item_checkbox(self.player_container, 5, 0, 'Name', self.player_name_esp_name_e)
         
-        player_name_esp_name = self.item_checkbox(self.player_container, 5, 0, 'Name')
-        
-        player_weapon_esp_name = self.item_checkbox(self.player_container, 6, 0, 'Weapon')
-        player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, ['Text', 'Icon'])
+        self.player_weapon_esp_name = self.item_checkbox(self.player_container, 6, 0, 'Weapon', self.test_e)
+        self.player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, ['Text', 'Icon'])
         
         self.local_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.local_container.grid_columnconfigure(1, pad=25)
         self.local_container.grid_columnconfigure(2, pad=25)
         
-        local_crosshair_name = self.item_checkbox(self.local_container, 1, 0, 'Sniper Crosshair')
-        local_crosshair = self.item_comboBox(self.local_container, 1, 1, ['Cross'])
+        self.local_crosshair_name = self.item_checkbox(self.local_container, 1, 0, 'Sniper Crosshair', self.local_crosshair_name_e)
+        self.local_crosshair = self.item_comboBox(self.local_container, 1, 1, ['Cross'])
         
-        local_recoil_name = self.item_checkbox(self.local_container, 2, 0, 'Recoil Crosshair')
-        local_recoil = self.item_comboBox(self.local_container, 2, 1, ['Cross'])
+        self.local_recoil_name = self.item_checkbox(self.local_container, 2, 0, 'Recoil Crosshair', self.local_recoil_name_e)
+        self.local_recoil = self.item_comboBox(self.local_container, 2, 1, ['Cross'])
         
-        local_spectator_name = self.item_checkbox(self.local_container, 3, 0, 'Spectator List')
+        self.local_spectator_name = self.item_checkbox(self.local_container, 3, 0, 'Spectator List', self.local_spectator_name_e)
         
         self.other_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.other_container.grid_columnconfigure(1, pad=25)
         self.other_container.grid_columnconfigure(2, pad=25)
         
-        other_bomb_info_name = self.item_checkbox(self.other_container, 1, 0, 'Bomb Info')
+        self.other_bomb_info_name = self.item_checkbox(self.other_container, 1, 0, 'Bomb Info', self.other_bomb_info_name_e)
         
-        # # Reading our config file 
-        # self.config = cp.ConfigParser()
-        # self.config.read(CONFIG_FILE)
-        # # Calling our update function once when the app is loaded
-        # self.update_from_config()
+        # Reading our config file 
+        self.config = cp.ConfigParser()
+        self.config.read(CONFIG_FILE)
+        # Calling our update function once when the app is loaded
+        self.update_from_config()
         
     def header_btn_e(self, e):
         if e == 'Global':
@@ -252,11 +258,11 @@ class create_visuals(ct.CTkFrame):
         else:
             self.other_container.grid_forget()
 
-    def item_checkbox(self, container, row, column, text):
-        checkbox = ct.CTkCheckBox(container, text=text, checkbox_width=25, checkbox_height=25, corner_radius=5, border_width=1, border_color='#4a4a4a', hover_color='#30293D', checkmark_color='white', fg_color='#39314A', font=ct.CTkFont(size=13))
+    def item_checkbox(self, container, row, column, text, callback):
+        checkbox = ct.CTkCheckBox(container, text=text, checkbox_width=25, checkbox_height=25, corner_radius=5, border_width=1, border_color='#4a4a4a', hover_color='#30293D', checkmark_color='white', fg_color='#39314A', font=ct.CTkFont(size=13), command=callback)
         checkbox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
             
-        return checkbox.get() # get current state of object
+        return checkbox
     
     def item_comboBox(self, container, row, column, text):
         comboBox = ct.CTkComboBox(container, values=text, border_width=1, border_color='#4a4a4a' ,corner_radius=5, fg_color='#202020', width=111, height=25, button_color='#39314A', button_hover_color='#30293D', dropdown_fg_color='#202020', dropdown_hover_color='#1C1C1C', dropdown_font=ct.CTkFont(size=14))
@@ -266,30 +272,141 @@ class create_visuals(ct.CTkFrame):
     def color_picker(self, container, row, column):
         button = ct.CTkButton(container, text='', corner_radius=5, width=25, height=25)
         button.grid(row=row, column=column + 2, pady=10, padx=10)
-    
-    def test(self):
-        print('hello111')
-             
-    # def update_from_config(self):
-    #     # Getting values from the config file
-    #     if self.config['VISUALS GLOBAL']['Enabled'] == '1':
-    #         # Triggering the command in self.checkbox by using toggle() so we can change the state in checkbox_e
-    #         self.checkbox.select()
-    #         self.checkbox_e()
-    #     else:
-    #         self.checkbox.deselect()
-    #         self.checkbox_e()
-    
-    # def checkbox_e(self):
-    #     # Getting checkbox value 1 or 0
-    #     if self.checkbox.get() == 1:
-    #         print('ON')
-    #         # Setting our state from where our main ESP file reads the values and sets esp on or off
-    #         state.master_switch = 1
-    #     else:
-    #         print('OFF')
-    #         state.master_switch = 0
             
+    def update_from_config(self):
+        if self.config['VISUALS']['enabled'] == '1':
+            self.global_master.select()
+            self.global_master_e()
+        else:
+            self.global_master.deselect()
+            self.global_master_e()
+            
+        if self.config['VISUALS']['watermark'] == '1':
+            self.global_watermark.select()
+            self.global_watermark_e()
+        else:
+            self.global_watermark.deselect()
+            self.global_watermark_e()
+            
+        if self.config['VISUALS']['box'] == '1':
+            self.player_box_esp_name.select()
+            self.player_box_esp_name_e()
+        else:
+            self.player_box_esp_name.deselect()
+            self.player_box_esp_name_e()
+            
+        if self.config['VISUALS']['head esp'] == '1':
+            self.player_head_esp_name.select()
+            self.player_head_esp_name_e()
+        else:
+            self.player_head_esp_name.deselect()
+            self.player_head_esp_name_e()
+    
+        if self.config['VISUALS']['health'] == '1':
+            self.player_health_esp_name.select()
+            self.player_health_esp_name_e()
+        else:
+            self.player_health_esp_name.deselect()
+            self.player_health_esp_name_e()
+            
+        if self.config['VISUALS']['name'] == '1':
+            self.player_name_esp_name.select()
+            self.player_name_esp_name_e()
+        else:
+            self.player_name_esp_name.deselect()
+            self.player_name_esp_name_e()
+        
+        if self.config['VISUALS']['sniper crosshair'] == '1':
+            self.local_crosshair_name.select()
+            self.local_crosshair_name_e()
+        else:
+            self.local_crosshair_name.deselect()
+            self.local_crosshair_name_e()
+            
+        if self.config['VISUALS']['recoil crosshair'] == '1':
+            self.local_recoil_name.select()
+            self.local_recoil_name_e()
+        else:
+            self.local_recoil_name.deselect()
+            self.local_recoil_name_e()
+            
+        if self.config['VISUALS']['spectator list'] == '1':
+            self.local_spectator_name.select()
+            self.local_spectator_name_e()
+        else:
+            self.local_spectator_name.deselect()
+            self.local_spectator_name_e()
+            
+        if self.config['VISUALS']['bomb info'] == '1':
+            self.other_bomb_info_name.select()
+            self.other_bomb_info_name_e()
+        else:
+            self.other_bomb_info_name.deselect()
+            self.other_bomb_info_name_e()
+    
+    def global_master_e(self):
+        if self.global_master.get() == 1:
+            state.master_switch = 1
+        else:
+            state.master_switch = 0
+            
+    def global_watermark_e(self):
+        if self.global_watermark.get() == 1:
+            state.watermark = 1
+        else:
+            state.watermark = 0
+            
+    def player_box_esp_name_e(self):
+        if self.player_box_esp_name.get() == 1:
+            state.players_box_enabled = 1
+        else:
+            state.players_box_enabled = 0
+            
+    def player_head_esp_name_e(self):
+        if self.player_head_esp_name.get() == 1:
+            state.players_head_enabled = 1
+        else:
+            state.players_head_enabled = 0
+            
+    def player_health_esp_name_e(self):
+        if self.player_health_esp_name.get() == 1:
+            state.players_health_enabled = 1
+        else:
+            state.players_health_enabled = 0
+            
+    def player_name_esp_name_e(self):
+        if self.player_name_esp_name.get() == 1:
+            state.players_names_enabled = 1
+        else:
+            state.players_names_enabled = 0
+            
+    def local_crosshair_name_e(self):
+        if self.local_crosshair_name.get() == 1:
+            state.sniper_crosshair_enabled = 1
+        else:
+            state.sniper_crosshair_enabled = 0
+            
+    def local_recoil_name_e(self):
+        if self.local_recoil_name.get() == 1:
+            state.recoil_crosshair_enabled = 1
+        else:
+            state.recoil_crosshair_enabled = 0
+            
+    def local_spectator_name_e(self):
+        if self.local_spectator_name.get() == 1:
+            state.spectator_enabled = 1
+        else:
+            state.spectator_enabled = 0
+            
+    def other_bomb_info_name_e(self):
+        if self.other_bomb_info_name.get() == 1:
+            state.bomb_info_enabled = 1
+        else:
+            state.bomb_info_enabled = 0
+    
+    def test_e(self):
+        print('hello')
+        
 class create_players(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'], corner_radius=10)
@@ -526,22 +643,22 @@ class create_settings(ct.CTkFrame):
         self.test_buton2 = ct.CTkButton(self.config_container, text='save', command=self.test_button2_e)
         self.test_buton2.grid(row=1, column=1, pady=10, padx=10)
         
-        # Reading our config file 
-        self.config = cp.ConfigParser()
-        self.config.read(CONFIG_FILE)
-        # Calling our update function once when the app is loaded
-        self.update_from_config()
+    #     # Reading our config file 
+    #     self.config = cp.ConfigParser()
+    #     self.config.read(CONFIG_FILE)
+    #     # Calling our update function once when the app is loaded
+    #     self.update_from_config()
         
     
-    def update_from_config(self):
-        # Getting values from the config file
-        if self.config['VISUALS GLOBAL']['Enabled'] == '1':
-            # Triggering the command in self.checkbox by using toggle() so we can change the state in checkbox_e
-            self.checkbox.select()
-            self.checkbox_e()
-        else:
-            self.checkbox.deselect()
-            self.checkbox_e()
+    # def update_from_config(self):
+    #     # Getting values from the config file
+    #     if self.config['VISUALS GLOBAL']['Enabled'] == '1':
+    #         # Triggering the command in self.checkbox by using toggle() so we can change the state in checkbox_e
+    #         self.checkbox.select()
+    #         self.checkbox_e()
+    #     else:
+    #         self.checkbox.deselect()
+    #         self.checkbox_e()
     
     def checkbox_e(self):
         # Getting checkbox value 1 or 0

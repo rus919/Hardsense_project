@@ -54,8 +54,10 @@ def esp():
         if state.master_switch == 1:                        
             if GetWindowText( Windll.u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
                 if Engine.get_client_state() == 6:
-                    # meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.get_color("red"))
-                    meow.draw_fps(5, 5)
+                    if state.watermark == 1:
+                        meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.get_color("red"))
+                        
+                    meow.draw_fps(15, 15)
                     
                     try:
                         local_player = Entity(LocalPlayer.get_local_player())
@@ -91,6 +93,7 @@ def esp():
                             except Exception as err:
                                 print('AWP CROSSHAIR ERROR:',err)
                                 continue
+                            
                     if state.recoil_crosshair_enabled == 1:
                         if local_player.get_vec_punch()['x'] != 0.0:
                             player_fov_x = meow.get_screen_width() // 90
@@ -167,15 +170,6 @@ def esp():
                                             color = meow.get_color("red"),
                                         )
                                 
-                                if state.players_names_enabled == 1:
-                                    meow.draw_text(
-                                        text= entity.get_name.decode('utf-8'),
-                                        posX=head_pos["x"] - center - 10,
-                                        posY=head_pos["y"] - center - 5,
-                                        fontSize=5,
-                                        color=Colors.white,
-                                    )
-                                
                                 if state.players_health_enabled == 1:
                                     meow.gui_progress_bar(
                                         posX=head_pos["x"] - center,
@@ -187,6 +181,15 @@ def esp():
                                         value=entity.get_health(),
                                         minValue=0,
                                         maxValue=100,
+                                    )
+                                    
+                                if state.players_names_enabled == 1:
+                                    meow.draw_text(
+                                        text= entity.get_name.decode('utf-8'),
+                                        posX=head_pos["x"] - center - 10,
+                                        posY=head_pos["y"] - center - 5,
+                                        fontSize=5,
+                                        color=Colors.white,
                                     )
                                 
                         except Exception as err:
