@@ -1,3 +1,5 @@
+import pyMeow as meow
+
 class state:
     master_switch = 1
     watermark = 0
@@ -12,3 +14,6 @@ class state:
     bomb_info_enabled = 0
     sniper_crosshair_enabled = 0
     recoil_crosshair_enabled = 0
+    
+class colors:
+    watermark = meow.new_color(255, 255, 255, 255)

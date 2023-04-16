@@ -8,10 +8,12 @@ from GUI import *
 import keyboard
 import time
 
-from engine.state import state
+from engine.state import state, colors
 
 def esp():
     scoped_weapons = [9, 11, 38, 40]
+    knife_weapons = [42, 59, 500, 503, 505, 506, 507, 508, 509, 512, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 525]
+    
     try:
         meow.load_font("assets/fonts/ff.ttf", 0)
         meow.load_font("assets/fonts/ff2.ttf", 1)
@@ -55,7 +57,7 @@ def esp():
             if GetWindowText( Windll.u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
                 if Engine.get_client_state() == 6:
                     if state.watermark == 1:
-                        meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.get_color("red"))
+                        meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = colors.watermark)
                         
                     meow.draw_fps(15, 15)
                     
@@ -185,12 +187,22 @@ def esp():
                                     
                                 if state.players_names_enabled == 1:
                                     meow.draw_text(
-                                        text= entity.get_name.decode('utf-8'),
+                                        text= entity.get_name,
                                         posX=head_pos["x"] - center - 10,
                                         posY=head_pos["y"] - center - 5,
                                         fontSize=5,
                                         color=Colors.white,
                                     )
+                                
+                                if state.players_weapon == 1:
+                                    get_entity_weapon = entity.getWeapon()
+
+                                    if get_entity_weapon in knife_weapons:
+                                        meow.draw_texture(texture = meow.load_texture("assets/images/knife.png"), posX = head_pos["x"] - center / 1.1, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('red'))
+                                    
+                                    for i in range(1,64):
+                                        if get_entity_weapon == i:
+                                            meow.draw_texture(texture = meow.load_texture(f"assets/images/{i}.png"), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('purple'))
                                 
                         except Exception as err:
                             if not "out of" in repr(err):

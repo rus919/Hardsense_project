@@ -2,7 +2,7 @@ import customtkinter as ct
 from CTkColorPicker import AskColor
 import os
 from PIL import Image
-from engine.state import state
+from engine.state import state, colors
 from engine.process import  Windll
 from tools.entity_parse import getPlayerInfo, playersInfo
 import requests
@@ -195,7 +195,9 @@ class create_visuals(ct.CTkFrame):
         self.global_container.grid_columnconfigure(2, pad=25)
         
         self.global_master = self.item_checkbox(self.global_container, 0, 1, 'Enable', self.global_master_e)
+        
         self.global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark', self.global_watermark_e)
+        self.watermark_color = self.color_picker(self.global_container, 1, 2, self.watermark_color_e)
         
         self.player_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.player_container.grid_columnconfigure(1, pad=25)
@@ -213,7 +215,7 @@ class create_visuals(ct.CTkFrame):
         
         self.player_name_esp_name = self.item_checkbox(self.player_container, 5, 0, 'Name', self.player_name_esp_name_e)
         
-        self.player_weapon_esp_name = self.item_checkbox(self.player_container, 6, 0, 'Weapon', self.test_e)
+        self.player_weapon_esp_name = self.item_checkbox(self.player_container, 6, 0, 'Weapon', self.player_weapon_esp_name_e)
         self.player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, ['Text', 'Icon'])
         
         self.local_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
@@ -269,9 +271,9 @@ class create_visuals(ct.CTkFrame):
         
         comboBox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
     
-    def color_picker(self, container, row, column):
-        button = ct.CTkButton(container, text='', corner_radius=5, width=25, height=25)
-        button.grid(row=row, column=column + 2, pady=10, padx=10)
+    def color_picker(self, container, row, column, callback):
+        button = ct.CTkButton(container, text='', corner_radius=5, width=25, height=25, command=callback, fg_color='white')
+        button.grid(row=row, column=column, pady=10, padx=10)
             
     def update_from_config(self):
         if self.config['VISUALS']['enabled'] == '1':
@@ -315,6 +317,13 @@ class create_visuals(ct.CTkFrame):
         else:
             self.player_name_esp_name.deselect()
             self.player_name_esp_name_e()
+            
+        if self.config['VISUALS']['weapon'] == '1':
+            self.player_weapon_esp_name.select()
+            self.player_weapon_esp_name_e()
+        else:
+            self.player_weapon_esp_name.deselect()
+            self.player_weapon_esp_name_e()
         
         if self.config['VISUALS']['sniper crosshair'] == '1':
             self.local_crosshair_name.select()
@@ -355,6 +364,11 @@ class create_visuals(ct.CTkFrame):
             state.watermark = 1
         else:
             state.watermark = 0
+    
+    def watermark_color_e(self):
+        pick_color = AskColor()
+        color = pick_color.get()
+        colors.watermark = f'{color}'
             
     def player_box_esp_name_e(self):
         if self.player_box_esp_name.get() == 1:
@@ -379,6 +393,12 @@ class create_visuals(ct.CTkFrame):
             state.players_names_enabled = 1
         else:
             state.players_names_enabled = 0
+            
+    def player_weapon_esp_name_e(self):
+        if self.player_weapon_esp_name.get() == 1:
+            state.players_weapon = 1
+        else:
+            state.players_weapon = 0
             
     def local_crosshair_name_e(self):
         if self.local_crosshair_name.get() == 1:
