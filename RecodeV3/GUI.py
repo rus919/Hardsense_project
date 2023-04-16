@@ -14,7 +14,7 @@ import tkinter as tk
 
 ct.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 ct.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
-ct.deactivate_automatic_dpi_awareness() # Make sure DPI scale is alwaya 100%, but test later
+# ct.deactivate_automatic_dpi_awareness() # Make sure DPI scale is alwaya 100%, but test later
 
 # sticky = N = north E = East W = west S = south
 
@@ -63,7 +63,8 @@ if not os.path.exists(CONFIG_FILE):
     config = cp.ConfigParser()
     
     config["VISUALS GLOBAL"] = {
-        'Enabled': 1
+        'enabled': 1,
+        'box enabled': 1
     }
     
     with open(CONFIG_FILE, 'w') as f:
@@ -183,34 +184,56 @@ class create_visuals(ct.CTkFrame):
         self.global_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.global_container.grid_columnconfigure(1, pad=25)
         self.global_container.grid_columnconfigure(2, pad=25)
-        global_master = self.item_checkbox(self.global_container, 0, 1, 'Enable', 0)
-        global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark', 1)
-        global_test = self.item_comboBox(self.global_container, 2, 1, 'test', ['test'])
+        
+        global_master = self.item_checkbox(self.global_container, 0, 1, 'Enable',)
+        global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark')
         
         self.player_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.player_container.grid_columnconfigure(1, pad=25)
         self.player_container.grid_columnconfigure(2, pad=25)
-        player_box_esp = self.item_comboBox(self.player_container, 1, 1, 'Box', ['Normal'])
-        player_box_esp = self.item_comboBox(self.player_container, 2, 1, 'Filled Box', ['Normal'])
-        player_head_esp = self.item_comboBox(self.player_container, 3, 1, 'Head ESP', ['Circle'])
-        player_health_esp = self.item_comboBox(self.player_container, 4, 1, 'Health', ['Simple', 'Advanced'])
-        player_name_esp = self.item_checkbox(self.player_container, 5, 1, 'Name', 1)
-        player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, 'Weapon', ['Text', 'Icon'])
+        
+        player_box_esp_name = self.item_checkbox(self.player_container, 1, 0, 'Box')
+        player_box_esp = self.item_comboBox(self.player_container, 1, 1, ['Normal'])
+        # player_box_esp_color =
+        
+        player_head_esp_name = self.item_checkbox(self.player_container, 2, 0, 'Filled Box')
+        player_head_esp = self.item_comboBox(self.player_container, 2, 1, ['Normal'])
+        
+        player_filled_box_esp_name = self.item_checkbox(self.player_container, 3, 0, 'Head ESP')
+        player_filled_box_esp = self.item_comboBox(self.player_container, 3, 1, ['Circle'])
+        
+        player_health_esp_name = self.item_checkbox(self.player_container, 4, 0, 'Health')
+        player_health_esp = self.item_comboBox(self.player_container, 4, 1, ['Simple', 'Advanced'])
+        
+        player_name_esp_name = self.item_checkbox(self.player_container, 5, 0, 'Name')
+        
+        player_weapon_esp_name = self.item_checkbox(self.player_container, 6, 0, 'Weapon')
+        player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, ['Text', 'Icon'])
         
         self.local_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.local_container.grid_columnconfigure(1, pad=25)
         self.local_container.grid_columnconfigure(2, pad=25)
-        local_crosshair = self.item_comboBox(self.local_container, 1, 1, 'Sniper Crosshair', ['Cross'])
-        local_recoil = self.item_comboBox(self.local_container, 2, 1, 'Recoil Crosshair', ['Cross'])
-        local_spectator = self.item_checkbox(self.local_container, 5, 1, 'Spectator List', 1)
+        
+        local_crosshair_name = self.item_checkbox(self.local_container, 1, 0, 'Sniper Crosshair')
+        local_crosshair = self.item_comboBox(self.local_container, 1, 1, ['Cross'])
+        
+        local_recoil_name = self.item_checkbox(self.local_container, 2, 0, 'Recoil Crosshair')
+        local_recoil = self.item_comboBox(self.local_container, 2, 1, ['Cross'])
+        
+        local_spectator_name = self.item_checkbox(self.local_container, 3, 0, 'Spectator List')
         
         self.other_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.other_container.grid_columnconfigure(1, pad=25)
         self.other_container.grid_columnconfigure(2, pad=25)
-        other_bomb_info = self.item_checkbox(self.other_container, 1, 1, 'Bomb Info', 1)
         
+        other_bomb_info_name = self.item_checkbox(self.other_container, 1, 0, 'Bomb Info')
         
-    
+        # # Reading our config file 
+        # self.config = cp.ConfigParser()
+        # self.config.read(CONFIG_FILE)
+        # # Calling our update function once when the app is loaded
+        # self.update_from_config()
+        
     def header_btn_e(self, e):
         if e == 'Global':
             self.global_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
@@ -229,24 +252,44 @@ class create_visuals(ct.CTkFrame):
         else:
             self.other_container.grid_forget()
 
-    def item_checkbox(self, container, row, column, text, color_picker):
+    def item_checkbox(self, container, row, column, text):
         checkbox = ct.CTkCheckBox(container, text=text, checkbox_width=25, checkbox_height=25, corner_radius=5, border_width=1, border_color='#4a4a4a', hover_color='#30293D', checkmark_color='white', fg_color='#39314A', font=ct.CTkFont(size=13))
         checkbox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
-        
-        if color_picker == 1:
-            self.color_picker(container, row, column)
+            
+        return checkbox.get() # get current state of object
     
-    def item_comboBox(self, container, row, column, checkbox_text, text):
-        self.item_checkbox(container, row, column, checkbox_text, 0)
+    def item_comboBox(self, container, row, column, text):
         comboBox = ct.CTkComboBox(container, values=text, border_width=1, border_color='#4a4a4a' ,corner_radius=5, fg_color='#202020', width=111, height=25, button_color='#39314A', button_hover_color='#30293D', dropdown_fg_color='#202020', dropdown_hover_color='#1C1C1C', dropdown_font=ct.CTkFont(size=14))
-        self.color_picker(container, row, column)
         
-        comboBox.grid(row=row, column=column + 1, pady=10, padx=10, sticky='w')
+        comboBox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
     
     def color_picker(self, container, row, column):
         button = ct.CTkButton(container, text='', corner_radius=5, width=25, height=25)
         button.grid(row=row, column=column + 2, pady=10, padx=10)
-         
+    
+    def test(self):
+        print('hello111')
+             
+    # def update_from_config(self):
+    #     # Getting values from the config file
+    #     if self.config['VISUALS GLOBAL']['Enabled'] == '1':
+    #         # Triggering the command in self.checkbox by using toggle() so we can change the state in checkbox_e
+    #         self.checkbox.select()
+    #         self.checkbox_e()
+    #     else:
+    #         self.checkbox.deselect()
+    #         self.checkbox_e()
+    
+    # def checkbox_e(self):
+    #     # Getting checkbox value 1 or 0
+    #     if self.checkbox.get() == 1:
+    #         print('ON')
+    #         # Setting our state from where our main ESP file reads the values and sets esp on or off
+    #         state.master_switch = 1
+    #     else:
+    #         print('OFF')
+    #         state.master_switch = 0
+            
 class create_players(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'], corner_radius=10)
@@ -519,6 +562,8 @@ class create_settings(ct.CTkFrame):
     def test_button_e(self):
         self.config.read(CONFIG_FILE)
         self.update_from_config()
+        
+        create_visuals.test(self) # Call from another class
         
     def test_button2_e(self):
         print(str(self.checkbox.get()))

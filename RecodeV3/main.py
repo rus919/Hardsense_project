@@ -221,6 +221,7 @@ if __name__ == "__main__":
         print(err)
         exit(0)
         
+    # meow.overlay_init("Counter-Strike: Global Offensive - Direct3D 9", fps=144, title='test')
     meow.overlay_init(fps=144, title='test')
     
     try:
