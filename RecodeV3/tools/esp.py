@@ -3,12 +3,12 @@ from engine.process import Process, Windll
 from engine.gamedata import Colors, GetWindowText
 from utils.entity import Entity, LocalPlayer, Engine
 from tools.entity_parse import EntityList, bombAddr, playersInfo
+from engine.gui_communication import state, colors
 
 from GUI import *
 import keyboard
 import time
 
-from engine.state import state, colors
 
 def esp():
     scoped_weapons = [9, 11, 38, 40]

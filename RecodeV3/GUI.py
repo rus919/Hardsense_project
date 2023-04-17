@@ -1,20 +1,14 @@
+import os, requests
 import customtkinter as ct
-from CTkColorPicker import AskColor
-import os
-from PIL import Image
-from engine.state import state, colors
-from engine.process import  Windll
-from tools.entity_parse import getPlayerInfo, playersInfo
-import requests
-
-import webbrowser as web
-# import json
 import configparser as cp
-import tkinter as tk
+import webbrowser as web
+from CTkColorPicker import AskColor
+from PIL import Image
+from engine.gui_communication import *
+from tools.entity_parse import getPlayerInfo, playersInfo
 
-ct.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
-ct.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
-# ct.deactivate_automatic_dpi_awareness() # Make sure DPI scale is alwaya 100%, but test later
+ct.set_appearance_mode("Dark")
+ct.set_default_color_theme("dark-blue")
 
 # sticky = N = north E = East W = west S = south
 
@@ -56,8 +50,24 @@ app_colors = {
     },
 }
 
-CONFIG_FILE = 'config/test.ini'
+THEME_CFG = 'config/theme.ini'
+if not os.path.exists(THEME_CFG):
+    theme_cfg = cp.ConfigParser()
+    
+    theme_cfg["APP"] = {
+        'bg_clr': '#1a1a1a',
+        'bg_clr_accent': '#212121',
+    }
+    
+    with open(THEME_CFG, 'w') as f:
+        theme_cfg.write(f)
+else:
+    theme_cfg = cp.ConfigParser()
+    theme_cfg.read(THEME_CFG)
 
+
+
+CONFIG_FILE = 'config/default.ini'
 if not os.path.exists(CONFIG_FILE):
     # If the configuration file doesn't exist, create it with default values
     config = cp.ConfigParser()
@@ -82,15 +92,14 @@ else:
     # If the configuration file exists, read the values from it
     config = cp.ConfigParser()
     config.read(CONFIG_FILE)
-    
 
 def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players_callback, misc_callback, panel_callback, settings_callback):
     frame = ct.CTkFrame(master = parent, corner_radius=0)
-    
+        
     height = 60
     border_spacing = 10
     corner_radius = 0
-    fg_color = app_colors['nav']['bg_clr']
+    fg_color = theme_cfg["APP"]['bg_clr_accent']
     text_color = ('gray10', 'gray90')
     hover_color = ('gray10')
     anchor = 'w'
@@ -427,8 +436,7 @@ class create_visuals(ct.CTkFrame):
             
     def config_return(self):
         return self.global_master.get()
-        
-        
+              
 class create_players(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'], corner_radius=10)
@@ -655,61 +663,12 @@ class create_settings(ct.CTkFrame):
         self.config_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.config_container.grid_columnconfigure(1, pad=25)
         self.config_container.grid_columnconfigure(2, pad=25)
-        
-        self.checkbox = ct.CTkCheckBox(self.config_container, text="Enable", command=self.checkbox_e)
-        self.checkbox.grid(row=0, column=0, pady=10, padx=10)
-        
-        # self.test_buton = ct.CTkButton(self.config_container, text='load', command=self.test_button_e)
-        # self.test_buton.grid(row=1, column=0, pady=10, padx=10)
-        
-        # self.test_buton2 = ct.CTkButton(self.config_container, text='save', command=self.test_button2_e)
-        # self.test_buton2.grid(row=1, column=1, pady=10, padx=10)
-        
-    #     # Reading our config file 
-    #     self.config = cp.ConfigParser()
-    #     self.config.read(CONFIG_FILE)
-    #     # Calling our update function once when the app is loaded
-    #     self.update_from_config()
-        
-    
-    # def update_from_config(self):
-    #     # Getting values from the config file
-    #     if self.config['VISUALS GLOBAL']['Enabled'] == '1':
-    #         # Triggering the command in self.checkbox by using toggle() so we can change the state in checkbox_e
-    #         self.checkbox.select()
-    #         self.checkbox_e()
-    #     else:
-    #         self.checkbox.deselect()
-    #         self.checkbox_e()
-    
-    def checkbox_e(self):
-        # Getting checkbox value 1 or 0
-        if self.checkbox.get() == 1:
-            print('ON')
-            # Setting our state from where our main ESP file reads the values and sets esp on or off
-            state.players_box_enabled = 1
-        else:
-            print('OFF')
-            state.players_box_enabled = 0
     
     def header_btn_e(self, e):
         if e == 'Config':
             self.config_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
             self.config_container.grid_forget()
-            
-    def test_button_e(self):
-        self.config.read(CONFIG_FILE)
-        self.update_from_config()
-        
-        create_visuals.test(self) # Call from another class
-        
-    # def test_button2_e(self):
-    #     print(create_visuals.config_return(ct.CTk))
-    #     # self.config['VISUALS GLOBAL']['Enabled'] = f'{}'
-        
-    #     # with open(CONFIG_FILE, 'w') as f:
-    #     #     self.config.write(f)
 
 class App(ct.CTk):
     def __init__(self):
