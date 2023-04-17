@@ -57,6 +57,13 @@ if not os.path.exists(THEME_CFG):
     theme_cfg["APP"] = {
         'bg_clr': '#1a1a1a',
         'bg_clr_accent': '#212121',
+        'border_clr': '#4a4a4a',
+        'nav_text_clr': '#c1c1c1',
+        'nav_hover_clr': '#1a1a1a',
+        'header_btn_clr': '#4a4a4a',
+        'header_btn_selected_clr': '#39314A',
+        'header_btn_unselected_clr': '#202020',
+        'header_btn_hover_clr': '#282828',
     }
     
     with open(THEME_CFG, 'w') as f:
@@ -64,8 +71,6 @@ if not os.path.exists(THEME_CFG):
 else:
     theme_cfg = cp.ConfigParser()
     theme_cfg.read(THEME_CFG)
-
-
 
 CONFIG_FILE = 'config/default.ini'
 if not os.path.exists(CONFIG_FILE):
@@ -75,7 +80,7 @@ if not os.path.exists(CONFIG_FILE):
     config["VISUALS"] = {
         'enabled': 1,
         'watermark': 1,
-        'box': 1,
+        'box': 1, 
         'head esp': 1,
         'health': 1,
         'name': 1,
@@ -93,15 +98,41 @@ else:
     config = cp.ConfigParser()
     config.read(CONFIG_FILE)
 
+class app_config:
+    fg_color = theme_cfg["APP"]['bg_clr_accent']
+    
+    nav_text_color = theme_cfg["APP"]['nav_text_clr']
+    nav_hover_color = theme_cfg["APP"]['nav_hover_clr']
+    
+    header_btn_fg_color = theme_cfg["APP"]['header_btn_clr']
+    header_btn_selected = theme_cfg["APP"]['header_btn_selected_clr']
+    header_btn_unselected = theme_cfg["APP"]['header_btn_unselected_clr']
+    header_btn_hover_clr = theme_cfg["APP"]['header_btn_hover_clr']
+
+def header_btn(self, row, column, values, callback):
+    
+    self.header_btn = ct.CTkSegmentedButton(
+        self, 
+        values = values, 
+        height = 30,
+        fg_color =app_config.header_btn_fg_color, 
+        border_width = 1, 
+        corner_radius = 5, 
+        unselected_color = app_config.header_btn_unselected, 
+        selected_color = app_config.header_btn_selected, 
+        selected_hover_color = app_config.header_btn_selected, 
+        unselected_hover_color = app_config.header_btn_hover_clr, 
+        command = callback
+    )
+    
+    self.header_btn.grid(row = row, column = column, pady = 5, padx = 10, sticky = 'news')
+
 def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players_callback, misc_callback, panel_callback, settings_callback):
     frame = ct.CTkFrame(master = parent, corner_radius=0)
         
     height = 60
     border_spacing = 10
     corner_radius = 0
-    fg_color = theme_cfg["APP"]['bg_clr_accent']
-    text_color = ('gray10', 'gray90')
-    hover_color = ('gray10')
     anchor = 'w'
     sticky = 'ew'
     image_size = (25, 25)
@@ -124,14 +155,14 @@ def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players
     nav_logo = ct.CTkLabel(frame, text = "", image=logo_img, compound="left")    
     nav_logo.grid(row=0, column=0, pady=10) 
 
-    nav_aimbot = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Aimbot", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor, image = aimbot_img, command = aim_callback).grid(row=1, column=0, sticky= sticky)
-    nav_trigger = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Triggerbot", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = trigger_img, command = trigger_callback).grid(row=2, column=0, sticky = sticky)
-    nav_visuals = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Visuals", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = visuals_img, command = visuals_callback).grid(row=3, column=0, sticky = sticky)
-    nav_players = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Players", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = players_img, command = players_callback)
+    nav_aimbot = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Aimbot", fg_color = app_config.fg_color, text_color = app_config.nav_text_color, hover_color = app_config.nav_hover_color, anchor = anchor, image = aimbot_img, command = aim_callback).grid(row=1, column=0, sticky= sticky)
+    nav_trigger = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Triggerbot", fg_color = app_config.fg_color, text_color = app_config.nav_text_color, hover_color = app_config.nav_hover_color, anchor = anchor,image = trigger_img, command = trigger_callback).grid(row=2, column=0, sticky = sticky)
+    nav_visuals = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Visuals", fg_color = app_config.fg_color, text_color = app_config.nav_text_color, hover_color = app_config.nav_hover_color, anchor = anchor,image = visuals_img, command = visuals_callback).grid(row=3, column=0, sticky = sticky)
+    nav_players = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Players", fg_color = app_config.fg_color, text_color = app_config.nav_text_color, hover_color = app_config.nav_hover_color, anchor = anchor,image = players_img, command = players_callback)
     nav_players.grid(row=4, column=0, sticky = sticky)
-    nav_misc = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Misc", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = misc_img, command = misc_callback).grid(row=5, column=0, sticky = sticky)
-    nav_user = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="User Panel", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = user_img, command = panel_callback).grid(row=7, column=0, sticky = sticky)
-    nav_settings = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Settings", fg_color = fg_color, text_color = text_color, hover_color = hover_color, anchor = anchor,image = settings_img, command = settings_callback).grid(row=8, column=0, sticky = sticky)
+    nav_misc = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Misc", fg_color = app_config.fg_color, text_color = app_config.nav_text_color, hover_color = app_config.nav_hover_color, anchor = anchor,image = misc_img, command = misc_callback).grid(row=5, column=0, sticky = sticky)
+    nav_user = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="User Panel", fg_color = app_config.fg_color, text_color = app_config.nav_text_color, hover_color = app_config.nav_hover_color, anchor = anchor,image = user_img, command = panel_callback).grid(row=7, column=0, sticky = sticky)
+    nav_settings = ct.CTkButton(frame, corner_radius = corner_radius, height = height, border_spacing = border_spacing, text="Settings", fg_color = app_config.fg_color, text_color = app_config.nav_text_color, hover_color = app_config.nav_hover_color, anchor = anchor,image = settings_img, command = settings_callback).grid(row=8, column=0, sticky = sticky)
     
     return frame
 
@@ -154,25 +185,10 @@ def create_triggerbot(parent):
 class create_visuals(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'])
-        # header btns 
-        # colors
-        self.header_btn_fg_color = app_colors['header_btn']['bg_clr']
-        self.header_btn_selected = app_colors['header_btn']['selected']
-        self.header_btn_unselected = app_colors['header_btn']['unselected']
-        self.header_btn_hover_clr = app_colors['header_btn']['hover']
-        # Dimensions
-        self.header_btn_height = 30
-        self.header_btn_border_width = 1
-        self.header_btn_corner_radius = 5
-        # Grid
-        self.header_btn_pady = 5
-        self.header_btn_padx = 10
-        self.header_btn_sticky = 'news'
         
-        # Container frame
         # Colors
-        self.frame_fg_color = app_colors['app']['frame_bg_clr']
-        self.frame_border_color = app_colors['app']['border_clr']
+        self.frame_fg_color = theme_cfg["APP"]['bg_clr_accent']
+        self.frame_border_color = theme_cfg["APP"]['border_clr']
         # Dimensions
         self.frame_corner_radius = 5
         self.frame_border_width = 1
@@ -180,24 +196,10 @@ class create_visuals(ct.CTkFrame):
         self.frame_pady = 10
         self.frame_padx = 10
         self.frame_sticky = 'w'
-
-        # Main content
-        self.frame_content_t_color = app_colors['players']['container']['content']['t_clr']
-        self.frame_content_ct_color = app_colors['players']['container']['content']['ct_clr']
-        self.frame_content_spectator_color = app_colors['players']['container']['content']['spec_clr']
-        self.frame_content_bot_color = app_colors['players']['container']['content']['bot_clr']
-        self.frame_content_fg_color = app_colors['players']['container']['content']['bg_clr']
-        # Dimensions
-        self.frame_content_rank_img_size = (60, 25)
-        self.frame_content_faceit_img_size = (35, 35)
-        # Grid
-        self.frame_content_fg_pady = 4
-        self.frame_content_fg_sticky = 'news'
         
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         
-        self.header_btn = ct.CTkSegmentedButton(self, values=["Global", "Player", "Local", "Other"], height=self.header_btn_height, fg_color=self.header_btn_fg_color, border_width=self.header_btn_border_width, corner_radius=self.header_btn_corner_radius, unselected_color=self.header_btn_unselected, selected_color=self.header_btn_selected, selected_hover_color=self.header_btn_selected, unselected_hover_color=self.header_btn_hover_clr, command=self.header_btn_e)
-        self.header_btn.grid(row=0, column=0, pady=self.header_btn_pady, padx=self.header_btn_padx, sticky=self.header_btn_sticky)
+        self.header_btn = header_btn(self, 0, 0, ["Global", "Player", "Local", "Other"], self.header_btn_e)
         
         self.global_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.global_container.grid_columnconfigure(1, pad=25)
@@ -441,21 +443,6 @@ class create_players(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'], corner_radius=10)
         
-        # header btns 
-        # colors
-        self.header_btn_fg_color = app_colors['header_btn']['bg_clr']
-        self.header_btn_selected = app_colors['header_btn']['selected']
-        self.header_btn_unselected = app_colors['header_btn']['unselected']
-        self.header_btn_hover_clr = app_colors['header_btn']['hover']
-        # Dimensions
-        self.header_btn_height = 30
-        self.header_btn_border_width = 1
-        self.header_btn_corner_radius = 5
-        # Grid
-        self.header_btn_pady = 5
-        self.header_btn_padx = 10
-        self.header_btn_sticky = 'news'
-        
         # Container frame
         # Colors
         self.frame_fg_color = app_colors['players']['container']['bg_clr']
@@ -491,8 +478,8 @@ class create_players(ct.CTkFrame):
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         self.grid_rowconfigure(1, weight=1)
         
-        self.player_header_btn_general = ct.CTkSegmentedButton(self, values=["Main", "-"], height=self.header_btn_height, fg_color=self.header_btn_fg_color, border_width=self.header_btn_border_width, corner_radius=self.header_btn_corner_radius, unselected_color=self.header_btn_unselected, selected_color=self.header_btn_selected, selected_hover_color=self.header_btn_selected, unselected_hover_color=self.header_btn_hover_clr, command=self.player_header_btn_e)
-        self.player_header_btn_general.grid(row=0, column=0, pady=self.header_btn_pady, padx=self.header_btn_padx, sticky=self.header_btn_sticky)
+        self.header_btn = header_btn(self, 0, 0, ["Main", "-"], self.player_header_btn_e)
+
         
     def player_header_btn_e(self, e):
         if e == 'Main':
@@ -614,21 +601,6 @@ class create_settings(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'])
         
-        # header btns 
-        # colors
-        self.header_btn_fg_color = app_colors['header_btn']['bg_clr']
-        self.header_btn_selected = app_colors['header_btn']['selected']
-        self.header_btn_unselected = app_colors['header_btn']['unselected']
-        self.header_btn_hover_clr = app_colors['header_btn']['hover']
-        # Dimensions
-        self.header_btn_height = 30
-        self.header_btn_border_width = 1
-        self.header_btn_corner_radius = 5
-        # Grid
-        self.header_btn_pady = 5
-        self.header_btn_padx = 10
-        self.header_btn_sticky = 'news'
-        
         # Container frame
         # Colors
         self.frame_fg_color = app_colors['app']['frame_bg_clr']
@@ -640,25 +612,10 @@ class create_settings(ct.CTkFrame):
         self.frame_pady = 10
         self.frame_padx = 10
         self.frame_sticky = 'w'
-
-        # Main content
-        self.frame_content_t_color = app_colors['players']['container']['content']['t_clr']
-        self.frame_content_ct_color = app_colors['players']['container']['content']['ct_clr']
-        self.frame_content_spectator_color = app_colors['players']['container']['content']['spec_clr']
-        self.frame_content_bot_color = app_colors['players']['container']['content']['bot_clr']
-        self.frame_content_fg_color = app_colors['players']['container']['content']['bg_clr']
-        # Dimensions
-        self.frame_content_rank_img_size = (60, 25)
-        self.frame_content_faceit_img_size = (35, 35)
-        # Grid
-        self.frame_content_fg_pady = 4
-        self.frame_content_fg_sticky = 'news'
         
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         
-        self.header_btn = ct.CTkSegmentedButton(self, values=["Config", "-"], height=self.header_btn_height, fg_color=self.header_btn_fg_color, border_width=self.header_btn_border_width, corner_radius=self.header_btn_corner_radius, unselected_color=self.header_btn_unselected, selected_color=self.header_btn_selected, selected_hover_color=self.header_btn_selected, unselected_hover_color=self.header_btn_hover_clr, command=self.header_btn_e)
-        self.header_btn.grid(row=0, column=0, pady=self.header_btn_pady, padx=self.header_btn_padx, sticky=self.header_btn_sticky)
-        
+        self.header_btn = header_btn(self, 0, 0, ["Config", "-"], self.header_btn_e)
         
         self.config_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.config_container.grid_columnconfigure(1, pad=25)
