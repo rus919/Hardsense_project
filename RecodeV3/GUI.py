@@ -276,6 +276,7 @@ class create_visuals(ct.CTkFrame):
         button.grid(row=row, column=column, pady=10, padx=10)
             
     def update_from_config(self):
+        self.config.read(CONFIG_FILE)
         if self.config['VISUALS']['enabled'] == '1':
             self.global_master.select()
             self.global_master_e()
@@ -423,9 +424,10 @@ class create_visuals(ct.CTkFrame):
             state.bomb_info_enabled = 1
         else:
             state.bomb_info_enabled = 0
-    
-    def test_e(self):
-        print('hello')
+            
+    def config_return(self):
+        return self.global_master.get()
+        
         
 class create_players(ct.CTkFrame):
     def __init__(self, parent):
@@ -657,11 +659,11 @@ class create_settings(ct.CTkFrame):
         self.checkbox = ct.CTkCheckBox(self.config_container, text="Enable", command=self.checkbox_e)
         self.checkbox.grid(row=0, column=0, pady=10, padx=10)
         
-        self.test_buton = ct.CTkButton(self.config_container, text='load', command=self.test_button_e)
-        self.test_buton.grid(row=1, column=0, pady=10, padx=10)
+        # self.test_buton = ct.CTkButton(self.config_container, text='load', command=self.test_button_e)
+        # self.test_buton.grid(row=1, column=0, pady=10, padx=10)
         
-        self.test_buton2 = ct.CTkButton(self.config_container, text='save', command=self.test_button2_e)
-        self.test_buton2.grid(row=1, column=1, pady=10, padx=10)
+        # self.test_buton2 = ct.CTkButton(self.config_container, text='save', command=self.test_button2_e)
+        # self.test_buton2.grid(row=1, column=1, pady=10, padx=10)
         
     #     # Reading our config file 
     #     self.config = cp.ConfigParser()
@@ -702,12 +704,12 @@ class create_settings(ct.CTkFrame):
         
         create_visuals.test(self) # Call from another class
         
-    def test_button2_e(self):
-        print(str(self.checkbox.get()))
-        self.config['VISUALS GLOBAL']['Enabled'] = f'{self.checkbox.get()}'
+    # def test_button2_e(self):
+    #     print(create_visuals.config_return(ct.CTk))
+    #     # self.config['VISUALS GLOBAL']['Enabled'] = f'{}'
         
-        with open(CONFIG_FILE, 'w') as f:
-            self.config.write(f)
+    #     # with open(CONFIG_FILE, 'w') as f:
+    #     #     self.config.write(f)
 
 class App(ct.CTk):
     def __init__(self):
@@ -738,7 +740,7 @@ class App(ct.CTk):
               
         # Create navigation menu
         create_nav(self, self.nav_aimbot_callback, self.nav_triggerbot_callback, self.nav_visuals_callback, self.nav_players_callback, self.nav_misc_callhack, self.nav_panel_callback, self.nav_settings_callback)
-        
+                
         self.aimbot_tab = create_aimbot(self)
         self.triggerbot_tab = create_triggerbot(self)
         self.visuals_tab = create_visuals(self)
@@ -746,6 +748,17 @@ class App(ct.CTk):
         self.misc_tab = create_misc(self)
         self.user_panel_tab = create_user_panel(self)
         self.settinsg_tab = create_settings(self)
+        
+        # Reading our config file
+        self.config = cp.ConfigParser()
+        self.config.read(CONFIG_FILE)
+        
+        # Create buttons inside settings_tab
+        self.load_config_btn = ct.CTkButton(self.settinsg_tab.config_container, text='load', command=self.load_config_btn_e)
+        self.load_config_btn.grid(row=1, column=0, pady=10, padx=10)
+        
+        self.save_config_btn = ct.CTkButton(self.settinsg_tab.config_container, text='save', command=self.save_config_btn_e)
+        self.save_config_btn.grid(row=1, column=1, pady=10, padx=10)
     
     def nav_aimbot_callback(self):
         self.select_frame_by_name("Aimbot")
@@ -792,7 +805,17 @@ class App(ct.CTk):
         else:
             self.settinsg_tab.grid_forget()
 
+    def load_config_btn_e(self):
+        self.config.read(CONFIG_FILE)
+        self.visuals_tab.update_from_config()
 
+    # Make our function to save config. This is done here because the App can communicate with other classes
+    def save_config_btn_e(self):
+        self.config['VISUALS']['enabled'] = f'{self.visuals_tab.global_master.get()}'
+        
+        with open(CONFIG_FILE, 'w') as f:
+            self.config.write(f)
+        
 if __name__ == "__main__":
     app = App()
     app.iconbitmap("assets/GUI/icon.ico")
