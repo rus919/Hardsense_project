@@ -9,6 +9,7 @@ from GUI import *
 import keyboard
 import time
 
+import os, sys
 
 def esp():
     scoped_weapons = [9, 11, 38, 40]
@@ -18,14 +19,15 @@ def esp():
         meow.load_font("assets/fonts/ff.ttf", 0)
         meow.load_font("assets/fonts/ff2.ttf", 1)
         C4 = meow.load_texture("assets/images/c4.png")
+        # C4 = resource_path("assets/images/c4.png")
     except Exception as err:
         print(err)
         exit(0)
 
     # Menu
     app = App()
-    app.iconbitmap("assets/GUI/icon.ico")
-    # app.overrideredirect(True) # Disables top menu
+    # app.iconbitmap("assets/GUI/icon.ico")
+    app.overrideredirect(True) # Disables top menu
     app.attributes("-alpha",1.0)
     active = 0
     while meow.overlay_loop():
@@ -53,6 +55,7 @@ def esp():
         
         get_screen_center_x =meow.get_screen_width() // 2
         get_screen_center_y = meow.get_screen_height() // 2
+                
         if state.master_switch == 1:                        
             if GetWindowText( Windll.u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
                 if Engine.get_client_state() == 6:
@@ -198,11 +201,11 @@ def esp():
                                     get_entity_weapon = entity.getWeapon()
 
                                     if get_entity_weapon in knife_weapons:
-                                        meow.draw_texture(texture = meow.load_texture("assets/images/knife.png"), posX = head_pos["x"] - center / 1.1, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('red'))
+                                        meow.draw_texture(texture = resource_path("assets/images/knife.png"), posX = head_pos["x"] - center / 1.1, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('red'))
                                     
                                     for i in range(1,64):
                                         if get_entity_weapon == i:
-                                            meow.draw_texture(texture = meow.load_texture(f"assets/images/{i}.png"), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('purple'))
+                                            meow.draw_texture(texture = resource_path(f"assets/images/{i}.png"), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('purple'))
                                 
                         except Exception as err:
                             if not "out of" in repr(err):

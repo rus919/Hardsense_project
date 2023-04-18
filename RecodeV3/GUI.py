@@ -12,6 +12,13 @@ ct.set_default_color_theme("dark-blue")
 
 # sticky = N = north E = East W = west S = south
 
+def resource_path(relative_path):
+    base_path = getattr(
+        sys,
+        '_MEIPASS',
+        os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
 app_colors = {
     'app': {
         'bg_clr': '#1a1a1a',
@@ -727,12 +734,35 @@ class App(ct.CTk):
 
     # Make our function to save config. This is done here because the App can communicate with other classes
     def save_config_btn_e(self):
+        config["VISUALS"] = {
+        'enabled': 1,
+        'watermark': 1,
+        'box': 1, 
+        'head esp': 1,
+        'health': 1,
+        'name': 1,
+        'weapon': 1,
+        'sniper crosshair': 1,
+        'recoil crosshair': 1,
+        'spectator list': 1,
+        'bomb info': 1,
+    }
         self.config['VISUALS']['enabled'] = f'{self.visuals_tab.global_master.get()}'
+        self.config['VISUALS']['watermark'] = f'{self.visuals_tab.global_watermark.get()}'
+        self.config['VISUALS']['box'] = f'{self.visuals_tab.player_box_esp_name.get()}'
+        self.config['VISUALS']['head esp'] = f'{self.visuals_tab.player_head_esp_name.get()}'
+        self.config['VISUALS']['health'] = f'{self.visuals_tab.player_health_esp_name.get()}'
+        self.config['VISUALS']['name'] = f'{self.visuals_tab.player_name_esp_name.get()}'
+        self.config['VISUALS']['weapon'] = f'{self.visuals_tab.player_weapon_esp_name.get()}'
+        self.config['VISUALS']['sniper crosshair'] = f'{self.visuals_tab.local_crosshair_name.get()}'
+        self.config['VISUALS']['recoil crosshair'] = f'{self.visuals_tab.local_recoil_name.get()}'
+        self.config['VISUALS']['spectator list'] = f'{self.visuals_tab.local_spectator_name.get()}'
+        self.config['VISUALS']['bomb info'] = f'{self.visuals_tab.other_bomb_info_name.get()}'
         
         with open(CONFIG_FILE, 'w') as f:
             self.config.write(f)
         
 if __name__ == "__main__":
     app = App()
-    app.iconbitmap("assets/GUI/icon.ico")
+    # app.iconbitmap("assets/GUI/icon.ico")
     app.mainloop()
