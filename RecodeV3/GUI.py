@@ -2,7 +2,6 @@ import os, requests
 import customtkinter as ct
 import configparser as cp
 import webbrowser as web
-from CTkColorPicker import AskColor
 from PIL import Image
 from engine.gui_communication import *
 from tools.entity_parse import getPlayerInfo, playersInfo
@@ -202,13 +201,18 @@ class create_visuals(ct.CTkFrame):
         # Grid
         self.frame_pady = 10
         self.frame_padx = 10
-        self.frame_sticky = 'w'
+        self.frame_sticky = 'n'
         
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
+        self.grid_rowconfigure(1, weight=1) # Make the first column width 100%
         
         self.header_btn = header_btn(self, 0, 0, ["Global", "Player", "Local", "Other"], self.header_btn_e)
         
-        self.global_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
+        # To place items inside global frame, this will make the header on its own and addint columns to items will not bother header
+        self.global_frame = ct.CTkFrame(self, corner_radius=0, fg_color=app_colors['app']['bg_clr'])
+        self.global_frame.grid(row=1, column=0, sticky='news')
+        
+        self.global_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.global_container.grid_columnconfigure(1, pad=25)
         self.global_container.grid_columnconfigure(2, pad=25)
         
@@ -217,7 +221,7 @@ class create_visuals(ct.CTkFrame):
         self.global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark', self.global_watermark_e)
         self.watermark_color = self.color_picker(self.global_container, 1, 2, self.watermark_color_e)
         
-        self.player_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
+        self.player_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.player_container.grid_columnconfigure(1, pad=25)
         self.player_container.grid_columnconfigure(2, pad=25)
         
@@ -236,7 +240,7 @@ class create_visuals(ct.CTkFrame):
         self.player_weapon_esp_name = self.item_checkbox(self.player_container, 6, 0, 'Weapon', self.player_weapon_esp_name_e)
         self.player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, ['Text', 'Icon'])
         
-        self.local_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
+        self.local_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.local_container.grid_columnconfigure(1, pad=25)
         self.local_container.grid_columnconfigure(2, pad=25)
         
@@ -248,7 +252,7 @@ class create_visuals(ct.CTkFrame):
         
         self.local_spectator_name = self.item_checkbox(self.local_container, 3, 0, 'Spectator List', self.local_spectator_name_e)
         
-        self.other_container = ct.CTkFrame(self, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
+        self.other_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.other_container.grid_columnconfigure(1, pad=25)
         self.other_container.grid_columnconfigure(2, pad=25)
         
@@ -259,6 +263,8 @@ class create_visuals(ct.CTkFrame):
         self.config.read(CONFIG_FILE)
         # Calling our update function once when the app is loaded
         self.update_from_config()
+        
+        self.color_choose = None
         
     def header_btn_e(self, e):
         if e == 'Global':
@@ -384,10 +390,36 @@ class create_visuals(ct.CTkFrame):
         else:
             state.watermark = 0
     
+    def display_color_e(self, value):
+        r = int(self.red_scale.get())
+        g = int(self.green_scale.get())
+        b = int(self.blue_scale.get())
+
+        rgb = f'{r},{g},{b}'
+        
+        code = "#%02x%02x%02x" % (r, g, b)
+        self.apply_btn.configure(fg_color=code)
+    
     def watermark_color_e(self):
-        pick_color = AskColor()
-        color = pick_color.get()
-        colors.watermark = f'{color}'
+        if self.color_choose is None:
+            self.color_choose = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
+            self.color_choose.grid(row = 1, column=2, padx=5, pady=10, sticky='n')
+            self.color_choose.columnconfigure(1, weight=1)
+            
+            self.red_scale = ct.CTkSlider(self.color_choose, from_=0, to=255, number_of_steps=255, command=self.display_color_e, border_width=3, button_color='#ff1100', button_hover_color='#9c0d03')
+            self.red_scale.grid(row = 1, column=1, padx=5, pady=10)
+            
+            self.green_scale = ct.CTkSlider(self.color_choose, from_=0, to=255, number_of_steps=255, command=self.display_color_e, border_width=3, button_color='#03fc2c', button_hover_color='#018f19')
+            self.green_scale.grid(row = 2, column=1, padx=5, pady=10)
+            
+            self.blue_scale = ct.CTkSlider(self.color_choose, from_=0, to=255, number_of_steps=255, command=self.display_color_e, border_width=3, button_color='#0213fa', button_hover_color='#00098a')
+            self.blue_scale.grid(row = 3, column=1, padx=5, pady=10)
+            
+            self.apply_btn = ct.CTkButton(self.color_choose, text='Apply', fg_color='black')
+            self.apply_btn.grid(row=4, column=1, pady=5)
+        else:
+            self.color_choose.grid_forget()
+            self.color_choose = None
             
     def player_box_esp_name_e(self):
         if self.player_box_esp_name.get() == 1:

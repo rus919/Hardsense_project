@@ -11,6 +11,13 @@ import time
 
 import os, sys
 
+def resource_path(relative_path):
+    base_path = getattr(
+        sys,
+        '_MEIPASS',
+        os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
 def esp():
     scoped_weapons = [9, 11, 38, 40]
     knife_weapons = [42, 59, 500, 503, 505, 506, 507, 508, 509, 512, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 525]
@@ -19,14 +26,13 @@ def esp():
         meow.load_font("assets/fonts/ff.ttf", 0)
         meow.load_font("assets/fonts/ff2.ttf", 1)
         C4 = meow.load_texture("assets/images/c4.png")
-        # C4 = resource_path("assets/images/c4.png")
     except Exception as err:
         print(err)
         exit(0)
 
     # Menu
     app = App()
-    # app.iconbitmap("assets/GUI/icon.ico")
+    app.iconbitmap(resource_path("assets/icon.ico"))
     app.overrideredirect(True) # Disables top menu
     app.attributes("-alpha",1.0)
     active = 0
