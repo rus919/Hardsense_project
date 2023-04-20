@@ -88,12 +88,25 @@ if not os.path.exists(CONFIG_FILE):
         'watermark': 1,
         'watermark clr': [255,255,255,255],
     }
-    config["VISUALS"] = {
-        'box': 1, 
+    
+    config["VISUALS PLAYER"] = {
+        'box': 1,
+        'box type': 'normal',
+        'box clr': [255,255,255,255],
         'head esp': 1,
+        'head esp type': 'circle',
+        'head esp clr': [255,255,255,255],
         'health': 1,
+        'health type': 'icon',
+        'health clr': [255,255,255,255],
         'name': 1,
+        'name clr': [255,255,255,255],
         'weapon': 1,
+        'weapon type': 'icon',
+        'weapon clr': [255,255,255,255],
+    }
+    
+    config["VISUALS"] = {
         'sniper crosshair': 1,
         'recoil crosshair': 1,
         'spectator list': 1,
@@ -222,36 +235,43 @@ class create_visuals(ct.CTkFrame):
         self.global_master = self.item_checkbox(self.global_container, 0, 1, 'Enable', self.global_master_e)
         
         self.global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark', self.global_watermark_e)
-        self.watermark_color = self.color_picker(self.global_container, 1, 2, self.watermark_color_e)
+        self.watermark_color = self.color_picker(self.global_container, 1, 3, self.watermark_color_e)
         
         self.player_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.player_container.grid_columnconfigure(1, pad=25)
-        self.player_container.grid_columnconfigure(2, pad=25)
         
-        self.player_box_esp_name = self.item_checkbox(self.player_container, 1, 0, 'Box', self.player_box_esp_name_e)
-        self.player_box_esp = self.item_comboBox(self.player_container, 1, 1, ['Normal', 'Filled'])
-        # player_box_esp_color =
+        self.player_box_esp_name = self.item_checkbox(self.player_container, 2, 0, 'Box', self.player_box_esp_name_e)
+        self.player_box_esp = self.item_comboBox(self.player_container, 2, 1, ['normal', 'filled'], self.player_box_esp_e)
+        self.player_box_esp_color = self.color_picker(self.player_container, 2, 2, self.player_box_esp_color_e)
         
         self.player_head_esp_name = self.item_checkbox(self.player_container, 3, 0, 'Head ESP', self.player_head_esp_name_e)
-        self.player_head_esp = self.item_comboBox(self.player_container, 3, 1, ['Circle'])
+        self.player_head_esp = self.item_comboBox(self.player_container, 3, 1, ['circle'], self.player_head_esp_e)
+        self.player_head_esp_color = self.color_picker(self.player_container, 3, 2, self.player_head_esp_color_e)
+        
         
         self.player_health_esp_name = self.item_checkbox(self.player_container, 4, 0, 'Health', self.player_health_esp_name_e)
-        self.player_health_esp = self.item_comboBox(self.player_container, 4, 1, ['Simple', 'Advanced'])
+        self.player_health_esp = self.item_comboBox(self.player_container, 4, 1, ['icon', '-'], self.player_health_esp_e)
+        self.player_health_esp_color = self.color_picker(self.player_container, 4, 2, self.player_health_esp_color_e)
+        
         
         self.player_name_esp_name = self.item_checkbox(self.player_container, 5, 0, 'Name', self.player_name_esp_name_e)
+        self.player_name_esp_color = self.color_picker(self.player_container, 5, 2, self.player_name_esp_color_e)
+        
         
         self.player_weapon_esp_name = self.item_checkbox(self.player_container, 6, 0, 'Weapon', self.player_weapon_esp_name_e)
-        self.player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, ['Text', 'Icon'])
+        self.player_weapon_esp = self.item_comboBox(self.player_container, 6, 1, ['icon', '-'], self.player_weapon_esp_e)
+        self.player_weapon_esp_color = self.color_picker(self.player_container, 6, 2, self.player_weapon_esp_color_e)
+        
         
         self.local_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.local_container.grid_columnconfigure(1, pad=25)
         self.local_container.grid_columnconfigure(2, pad=25)
         
         self.local_crosshair_name = self.item_checkbox(self.local_container, 1, 0, 'Sniper Crosshair', self.local_crosshair_name_e)
-        self.local_crosshair = self.item_comboBox(self.local_container, 1, 1, ['Cross'])
+        self.local_crosshair = self.item_comboBox(self.local_container, 1, 1, ['cross'], self.player_box_esp_e)
         
         self.local_recoil_name = self.item_checkbox(self.local_container, 2, 0, 'Recoil Crosshair', self.local_recoil_name_e)
-        self.local_recoil = self.item_comboBox(self.local_container, 2, 1, ['Cross'])
+        self.local_recoil = self.item_comboBox(self.local_container, 2, 1, ['cross'], self.player_box_esp_e)
         
         self.local_spectator_name = self.item_checkbox(self.local_container, 3, 0, 'Spectator List', self.local_spectator_name_e)
         
@@ -306,16 +326,36 @@ class create_visuals(ct.CTkFrame):
             
         return checkbox
     
-    def item_comboBox(self, container, row, column, text):
-        comboBox = ct.CTkComboBox(container, values=text, border_width=1, border_color='#4a4a4a' ,corner_radius=5, fg_color='#202020', width=111, height=25, button_color='#39314A', button_hover_color='#30293D', dropdown_fg_color='#202020', dropdown_hover_color='#1C1C1C', dropdown_font=ct.CTkFont(size=14))
+    def item_comboBox(self, container, row, column, text, callback):
+        comboBox = ct.CTkComboBox(container, values=text, border_width=1, border_color='#4a4a4a' ,corner_radius=5, fg_color='#202020', width=111, height=25, button_color='#39314A', button_hover_color='#30293D', dropdown_fg_color='#202020', dropdown_hover_color='#1C1C1C', dropdown_font=ct.CTkFont(size=14), command=callback)
         
         comboBox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
+        
+        return comboBox
     
     def color_picker(self, container, row, column, callback):
         button = ct.CTkButton(container, text='', corner_radius=5, width=25, height=25, command=callback, fg_color='#242424')
         button.grid(row=row, column=column, pady=10, padx=10)
         return button
+
+    def player_box_esp_e(self, e):
+        if e == 'normal':
+            state.players_box_type = 'normal'
+        if e == 'filled':
+            state.players_box_type = 'filled'
             
+    def player_head_esp_e(self, e):
+        if e == 'circle':
+            state.players_head_type = 'circle'
+            
+    def player_health_esp_e(self, e):
+        if e == 'icon':
+            state.players_health_type = 'icon'
+            
+    def player_weapon_esp_e(self, e):
+        if e == 'icon':
+            state.players_weapon_type = 'icon'
+
     def update_from_config(self):
         self.config.read(CONFIG_FILE)
         if self.config['VISUALS GLOBAL']['enabled'] == '1':
@@ -331,41 +371,82 @@ class create_visuals(ct.CTkFrame):
         else:
             self.global_watermark.deselect()
             self.global_watermark_e()
-            
-        if self.config['VISUALS']['box'] == '1':
+
+
+        # BOX 
+        if self.config['VISUALS PLAYER']['box'] == '1':
             self.player_box_esp_name.select()
             self.player_box_esp_name_e()
         else:
             self.player_box_esp_name.deselect()
             self.player_box_esp_name_e()
-            
-        if self.config['VISUALS']['head esp'] == '1':
+        
+        if self.config['VISUALS PLAYER']['box type'] == 'normal':
+            state.players_box_type = 'normal'
+            self.player_box_esp.set('normal')
+        elif self.config['VISUALS PLAYER']['box type'] == 'filled':
+            state.players_box_type = 'filled'
+            self.player_box_esp.set('filled')
+
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['box clr'], item_clr.box_esp, self.player_box_esp_color)
+        
+        
+        # head esp 
+        if self.config['VISUALS PLAYER']['head esp'] == '1':
             self.player_head_esp_name.select()
             self.player_head_esp_name_e()
         else:
             self.player_head_esp_name.deselect()
             self.player_head_esp_name_e()
     
-        if self.config['VISUALS']['health'] == '1':
+        if self.config['VISUALS PLAYER']['head esp type'] == 'circle':
+            state.players_head_type = 'circle'
+            self.player_head_esp.set('circle')
+
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['head esp clr'], item_clr.head_esp, self.player_head_esp_color)
+        
+
+        # Health ESP
+        if self.config['VISUALS PLAYER']['health'] == '1':
             self.player_health_esp_name.select()
             self.player_health_esp_name_e()
         else:
             self.player_health_esp_name.deselect()
             self.player_health_esp_name_e()
+        
+        if self.config['VISUALS PLAYER']['head esp type'] == 'icon':
+            state.players_health_type = 'icon'
+            self.player_head_esp.set('icon')
+
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['head esp clr'], item_clr.health_esp, self.player_health_esp_color)
             
-        if self.config['VISUALS']['name'] == '1':
+            
+        # Name ESP
+        if self.config['VISUALS PLAYER']['name'] == '1':
             self.player_name_esp_name.select()
             self.player_name_esp_name_e()
         else:
             self.player_name_esp_name.deselect()
             self.player_name_esp_name_e()
+
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['name clr'], item_clr.name_esp, self.player_name_esp_color)
             
-        if self.config['VISUALS']['weapon'] == '1':
+            
+        # Weapon ESP
+        if self.config['VISUALS PLAYER']['weapon'] == '1':
             self.player_weapon_esp_name.select()
             self.player_weapon_esp_name_e()
         else:
             self.player_weapon_esp_name.deselect()
             self.player_weapon_esp_name_e()
+            
+        if self.config['VISUALS PLAYER']['weapon type'] == 'icon':
+            state.players_weapon_type = 'icon'
+            self.player_weapon_esp.set('icon')
+            
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['weapon clr'], item_clr.weapon_esp, self.player_weapon_esp_color)
+        
+        
         
         if self.config['VISUALS']['sniper crosshair'] == '1':
             self.local_crosshair_name.select()
@@ -396,7 +477,7 @@ class create_visuals(ct.CTkFrame):
             self.other_bomb_info_name_e()
         
         self.get_clr_from_config(self.config['VISUALS GLOBAL']['watermark clr'], item_clr.watermark, self.watermark_color)
-        
+                
     def global_master_e(self):
         if self.global_master.get() == 1:
             state.master_switch = 1
@@ -412,14 +493,23 @@ class create_visuals(ct.CTkFrame):
     def hex_to_rgb(self, hex):
         return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
 
-    def get_clr_from_item(self, red, green, blue, btn):
-        r = int(red.get())
-        g = int(green.get())
-        b = int(blue.get())
+    def get_clr_from_item(self, btn):
+        r = int(self.red_scale.get())
+        g = int(self.green_scale.get())
+        b = int(self.blue_scale.get())
 
         rgb = f'{r},{g},{b}'
         code = "#%02x%02x%02x" % (r, g, b)
         btn.configure(fg_color=code)
+
+    def set_gui_comm_clr(self, gui_comm_clr):
+        r = int(self.red_scale.get())
+        g = int(self.green_scale.get())
+        b = int(self.blue_scale.get())
+        
+        gui_comm_clr[0] = r
+        gui_comm_clr[1] = g
+        gui_comm_clr[2] = b
 
     def get_clr_from_config(self, config_clr, gui_comm_clr, btn):
         clr = config_clr.replace('[', '').replace(']', '').replace(',', '').split()
@@ -432,7 +522,7 @@ class create_visuals(ct.CTkFrame):
         code = "#%02x%02x%02x" % (r, g, b)
         btn.configure(fg_color=code)
     
-    def display_clr_frame(self, get_btn_clr):
+    def display_clr_frame(self, get_btn_clr, apply_btn_callback):
         if self.color_choose is None:
             btn_clr = get_btn_clr.cget('fg_color')
             btn_clr_hex = btn_clr.replace('#', '')
@@ -454,69 +544,115 @@ class create_visuals(ct.CTkFrame):
             self.blue_scale.grid(row = 3, column=1, padx=5, pady=10)
             self.blue_scale.set(btn_clr_rbg[2])
             
-            r = int(self.red_scale.get())
-            g = int(self.green_scale.get())
-            b = int(self.blue_scale.get())
-
-            rgb = f'{r},{g},{b}'
-            
-            code = "#%02x%02x%02x" % (r, g, b)
-            
-            self.apply_btn = ct.CTkButton(self.color_choose, text='Apply', fg_color=code, text_color='black' ,command=self.apply_btn_e)
+            self.apply_btn = ct.CTkButton(self.color_choose, text='Apply', fg_color='black', text_color='black' ,command=apply_btn_callback)
+            self.get_clr_from_item(self.apply_btn)
             self.apply_btn.grid(row=4, column=1, pady=5)
         else:
             self.color_choose.grid_forget()
             self.color_choose = None
     
     def display_color_e(self, value):
-        self.get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.apply_btn)
+        self.get_clr_from_item(self.apply_btn)
     
-    def apply_btn_e(self):
-        self.get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.watermark_color)
-        r = int(self.red_scale.get())
-        g = int(self.green_scale.get())
-        b = int(self.blue_scale.get())
+    def watermark_color_e(self):
+        self.display_clr_frame(self.watermark_color, self.watermark_color_apply_e)
         
-        item_clr.watermark[0] = r
-        item_clr.watermark[1] = g
-        item_clr.watermark[2] = b
+    def watermark_color_apply_e(self):
+        self.get_clr_from_item(self.watermark_color)
+        self.set_gui_comm_clr(item_clr.watermark)
         
         self.color_choose.grid_forget()
         self.color_choose = None
-    
-    def watermark_color_e(self):
-        self.display_clr_frame(self.watermark_color)
-        
+
+    # BOX
     def player_box_esp_name_e(self):
         if self.player_box_esp_name.get() == 1:
             state.players_box_enabled = 1
         else:
             state.players_box_enabled = 0
             
+    def player_box_esp_color_e(self):
+        self.display_clr_frame(self.player_box_esp_color, self.player_box_esp_color_apply_e)
+
+    def player_box_esp_color_apply_e(self):
+        self.get_clr_from_item(self.player_box_esp_color)
+        self.set_gui_comm_clr(item_clr.box_esp)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None
+
+    # HEAD ESP       
     def player_head_esp_name_e(self):
         if self.player_head_esp_name.get() == 1:
             state.players_head_enabled = 1
         else:
             state.players_head_enabled = 0
+    
+    def player_head_esp_color_e(self):
+        self.display_clr_frame(self.player_head_esp_color, self.player_head_esp_color_apply_e)
+    
+    def player_head_esp_color_apply_e(self):
+        self.get_clr_from_item(self.player_head_esp_color)
+        self.set_gui_comm_clr(item_clr.head_esp)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None
             
+            
+    # Health ESP
     def player_health_esp_name_e(self):
         if self.player_health_esp_name.get() == 1:
             state.players_health_enabled = 1
         else:
             state.players_health_enabled = 0
+
+    def player_health_esp_color_e(self):
+        self.display_clr_frame(self.player_health_esp_color, self.player_health_esp_color_apply_e)
+    
+    def player_health_esp_color_apply_e(self):
+        self.get_clr_from_item(self.player_health_esp_color)
+        self.set_gui_comm_clr(item_clr.health_esp)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None
             
+    
+    # name ESP
     def player_name_esp_name_e(self):
         if self.player_name_esp_name.get() == 1:
             state.players_names_enabled = 1
         else:
             state.players_names_enabled = 0
-            
+    
+    def player_name_esp_color_e(self):
+        self.display_clr_frame(self.player_name_esp_color, self.player_name_esp_color_apply_e)
+    
+    def player_name_esp_color_apply_e(self):
+        self.get_clr_from_item(self.player_name_esp_color)
+        self.set_gui_comm_clr(item_clr.name_esp)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None
+    
+    # Weapon ESP
     def player_weapon_esp_name_e(self):
         if self.player_weapon_esp_name.get() == 1:
             state.players_weapon = 1
         else:
             state.players_weapon = 0
             
+    def player_weapon_esp_color_e(self):
+        self.display_clr_frame(self.player_weapon_esp_color, self.player_weapon_esp_color_apply_e)
+    
+    def player_weapon_esp_color_apply_e(self):
+        self.get_clr_from_item(self.player_weapon_esp_color)
+        self.set_gui_comm_clr(item_clr.weapon_esp)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None
+    
+    
+    
     def local_crosshair_name_e(self):
         if self.local_crosshair_name.get() == 1:
             state.sniper_crosshair_enabled = 1
@@ -835,12 +971,27 @@ class App(ct.CTk):
         self.config['VISUALS GLOBAL']['enabled'] = f'{self.visuals_tab.global_master.get()}'
         self.config['VISUALS GLOBAL']['watermark'] = f'{self.visuals_tab.global_watermark.get()}'
         self.config['VISUALS GLOBAL']['watermark clr'] = f'{item_clr.watermark}'
-        print(f'{item_clr.watermark}')
-        self.config['VISUALS']['box'] = f'{self.visuals_tab.player_box_esp_name.get()}'
-        self.config['VISUALS']['head esp'] = f'{self.visuals_tab.player_head_esp_name.get()}'
-        self.config['VISUALS']['health'] = f'{self.visuals_tab.player_health_esp_name.get()}'
-        self.config['VISUALS']['name'] = f'{self.visuals_tab.player_name_esp_name.get()}'
-        self.config['VISUALS']['weapon'] = f'{self.visuals_tab.player_weapon_esp_name.get()}'
+        
+        self.config['VISUALS PLAYER']['box'] = f'{self.visuals_tab.player_box_esp_name.get()}'
+        self.config['VISUALS PLAYER']['box clr'] = f'{item_clr.box_esp}'
+        self.config['VISUALS PLAYER']['box type'] = f'{self.visuals_tab.player_box_esp.get()}'
+        
+        self.config['VISUALS PLAYER']['head esp'] = f'{self.visuals_tab.player_head_esp_name.get()}'
+        self.config['VISUALS PLAYER']['head esp clr'] = f'{item_clr.head_esp}'
+        self.config['VISUALS PLAYER']['head esp type'] = f'{self.visuals_tab.player_head_esp.get()}'
+        
+        
+        self.config['VISUALS PLAYER']['health'] = f'{self.visuals_tab.player_health_esp_name.get()}'
+        # clr
+        # type
+        
+        self.config['VISUALS PLAYER']['name'] = f'{self.visuals_tab.player_name_esp_name.get()}'
+        self.config['VISUALS PLAYER']['name clr'] = f'{item_clr.name_esp}'
+        
+        self.config['VISUALS PLAYER']['weapon'] = f'{self.visuals_tab.player_weapon_esp_name.get()}'
+        self.config['VISUALS PLAYER']['weapon clr'] = f'{item_clr.weapon_esp}'
+        self.config['VISUALS PLAYER']['weapon type'] = f'{self.visuals_tab.player_weapon_esp.get()}'
+        
         self.config['VISUALS']['sniper crosshair'] = f'{self.visuals_tab.local_crosshair_name.get()}'
         self.config['VISUALS']['recoil crosshair'] = f'{self.visuals_tab.local_recoil_name.get()}'
         self.config['VISUALS']['spectator list'] = f'{self.visuals_tab.local_spectator_name.get()}'

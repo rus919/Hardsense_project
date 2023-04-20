@@ -18,6 +18,9 @@ def resource_path(relative_path):
         os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
+def clr(item_clr):
+    return meow.new_color(item_clr[0],item_clr[1],item_clr[2],255)
+
 def esp():
     scoped_weapons = [9, 11, 38, 40]
     knife_weapons = [42, 59, 500, 503, 505, 506, 507, 508, 509, 512, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 525]
@@ -66,7 +69,7 @@ def esp():
             if GetWindowText( Windll.u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
                 if Engine.get_client_state() == 6:
                     if state.watermark == 1:
-                        meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.new_color(item_clr.watermark[0],item_clr.watermark[1],item_clr.watermark[2],255))
+                        meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = clr(item_clr.watermark))
                         
                     meow.draw_fps(15, 15)
                     
@@ -162,23 +165,31 @@ def esp():
                                 center = width / 2
                                 
                                 if state.players_box_enabled == 1:
-                                    if state.players_box_type == 'Normal':
+                                    if state.players_box_type == 'normal':
                                         meow.draw_rectangle_lines(
                                             posX=head_pos['x'] - center,
                                             posY=head_pos['y'] - center / 2,
                                             width=width * 1.0,
                                             height=head + center / 2,
-                                            color=Colors.black,
-                                            lineThick=1.0,
+                                            color=clr(item_clr.box_esp),
+                                            lineThick=1.1,
+                                        )
+                                    elif state.players_box_type == 'filled':
+                                        meow.draw_rectangle(
+                                            posX=head_pos["x"] - center,
+                                            posY=head_pos["y"] - center / 2,
+                                            width=width,
+                                            height=head + center / 2,
+                                            color=clr(item_clr.box_esp),
                                         )
                                         
                                 if state.players_head_enabled == 1:
-                                    if state.players_head_type == 'Circle':
+                                    if state.players_head_type == 'circle':
                                         meow.draw_circle(
                                             centerX = head_pos['x'],
                                             centerY = head_pos['y'],
                                             radius = 3,
-                                            color = meow.get_color("red"),
+                                            color = clr(item_clr.head_esp),
                                         )
                                 
                                 if state.players_health_enabled == 1:
@@ -200,19 +211,20 @@ def esp():
                                         posX=head_pos["x"] - center - 10,
                                         posY=head_pos["y"] - center - 5,
                                         fontSize=5,
-                                        color=Colors.white,
+                                        color=clr(item_clr.name_esp),
                                     )
                                 
                                 if state.players_weapon == 1:
                                     get_entity_weapon = entity.getWeapon()
 
                                     if get_entity_weapon in knife_weapons:
-                                        meow.draw_texture(texture = resource_path("assets/images/knife.png"), posX = head_pos["x"] - center / 1.1, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('red'))
+                                        meow.draw_texture(texture = meow.load_texture(resource_path("assets/images/knife.png")), posX = head_pos["x"] - center / 1.1, posY = entity_w2s["y"] * 1.02, rotation = 0, scale = 0.3,tint = clr(item_clr.weapon_esp))
                                     
                                     for i in range(1,64):
                                         if get_entity_weapon == i:
-                                            meow.draw_texture(texture = resource_path(f"assets/images/{i}.png"), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = meow.get_color('purple'))
-                                
+                                            meow.draw_texture(texture = meow.load_texture(resource_path(f"assets/images/{i}.png")), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 1.3,tint = meow.get_color('purple'))
+                                            # meow.draw_texture(texture = meow.load_texture(f"assets/images/{i}.png"), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.02, rotation = 0, scale = 0.3, tint = clr(item_clr.weapon_esp))
+                                        
                         except Exception as err:
                             if not "out of" in repr(err):
                                 print(err)
