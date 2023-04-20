@@ -3,7 +3,7 @@ from engine.process import Process, Windll
 from engine.gamedata import Colors, GetWindowText
 from utils.entity import Entity, LocalPlayer, Engine
 from tools.entity_parse import EntityList, bombAddr, playersInfo
-from engine.gui_communication import state, colors
+from engine.gui_communication import *
 
 from GUI import *
 import keyboard
@@ -66,7 +66,7 @@ def esp():
             if GetWindowText( Windll.u32.GetForegroundWindow() ).decode( 'cp1252' ) == "Counter-Strike: Global Offensive - Direct3D 9":
                 if Engine.get_client_state() == 6:
                     if state.watermark == 1:
-                        meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = colors.watermark)
+                        meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = meow.new_color(item_clr.watermark[0],item_clr.watermark[1],item_clr.watermark[2],255))
                         
                     meow.draw_fps(15, 15)
                     

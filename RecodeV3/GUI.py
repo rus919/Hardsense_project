@@ -83,9 +83,12 @@ if not os.path.exists(CONFIG_FILE):
     # If the configuration file doesn't exist, create it with default values
     config = cp.ConfigParser()
     
-    config["VISUALS"] = {
+    config["VISUALS GLOBAL"] = {
         'enabled': 1,
         'watermark': 1,
+        'watermark clr': [255,255,255,255],
+    }
+    config["VISUALS"] = {
         'box': 1, 
         'head esp': 1,
         'health': 1,
@@ -296,19 +299,20 @@ class create_visuals(ct.CTkFrame):
         comboBox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
     
     def color_picker(self, container, row, column, callback):
-        button = ct.CTkButton(container, text='', corner_radius=5, width=25, height=25, command=callback, fg_color='white')
+        button = ct.CTkButton(container, text='', corner_radius=5, width=25, height=25, command=callback, fg_color='#242424')
         button.grid(row=row, column=column, pady=10, padx=10)
+        return button
             
     def update_from_config(self):
         self.config.read(CONFIG_FILE)
-        if self.config['VISUALS']['enabled'] == '1':
+        if self.config['VISUALS GLOBAL']['enabled'] == '1':
             self.global_master.select()
             self.global_master_e()
         else:
             self.global_master.deselect()
             self.global_master_e()
             
-        if self.config['VISUALS']['watermark'] == '1':
+        if self.config['VISUALS GLOBAL']['watermark'] == '1':
             self.global_watermark.select()
             self.global_watermark_e()
         else:
@@ -377,7 +381,17 @@ class create_visuals(ct.CTkFrame):
         else:
             self.other_bomb_info_name.deselect()
             self.other_bomb_info_name_e()
-    
+
+        clr = self.config['VISUALS GLOBAL']['watermark clr'].replace('[', '').replace(']', '').replace(',', '').split()
+        r = int(clr[0])
+        g = int(clr[1])
+        b = int(clr[2])
+        item_clr.watermark[0] = r
+        item_clr.watermark[1] = g
+        item_clr.watermark[2] = b
+        code = "#%02x%02x%02x" % (r, g, b)
+        self.watermark_color.configure(fg_color=code)
+        
     def global_master_e(self):
         if self.global_master.get() == 1:
             state.master_switch = 1
@@ -389,6 +403,9 @@ class create_visuals(ct.CTkFrame):
             state.watermark = 1
         else:
             state.watermark = 0
+            
+    def hex_to_rgb(self, hex):
+        return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
     
     def display_color_e(self, value):
         r = int(self.red_scale.get())
@@ -402,25 +419,57 @@ class create_visuals(ct.CTkFrame):
     
     def watermark_color_e(self):
         if self.color_choose is None:
+            btn_clr = self.watermark_color.cget('fg_color')
+            btn_clr_hex = btn_clr.replace('#', '')
+            btn_clr_rbg = self.hex_to_rgb(btn_clr_hex)
+            
             self.color_choose = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
             self.color_choose.grid(row = 1, column=2, padx=5, pady=10, sticky='n')
             self.color_choose.columnconfigure(1, weight=1)
             
             self.red_scale = ct.CTkSlider(self.color_choose, from_=0, to=255, number_of_steps=255, command=self.display_color_e, border_width=3, button_color='#ff1100', button_hover_color='#9c0d03')
             self.red_scale.grid(row = 1, column=1, padx=5, pady=10)
+            self.red_scale.set(btn_clr_rbg[0])
             
             self.green_scale = ct.CTkSlider(self.color_choose, from_=0, to=255, number_of_steps=255, command=self.display_color_e, border_width=3, button_color='#03fc2c', button_hover_color='#018f19')
             self.green_scale.grid(row = 2, column=1, padx=5, pady=10)
+            self.green_scale.set(btn_clr_rbg[1])
             
             self.blue_scale = ct.CTkSlider(self.color_choose, from_=0, to=255, number_of_steps=255, command=self.display_color_e, border_width=3, button_color='#0213fa', button_hover_color='#00098a')
             self.blue_scale.grid(row = 3, column=1, padx=5, pady=10)
+            self.blue_scale.set(btn_clr_rbg[2])
             
-            self.apply_btn = ct.CTkButton(self.color_choose, text='Apply', fg_color='black')
+            r = int(self.red_scale.get())
+            g = int(self.green_scale.get())
+            b = int(self.blue_scale.get())
+
+            rgb = f'{r},{g},{b}'
+            
+            code = "#%02x%02x%02x" % (r, g, b)
+            
+            self.apply_btn = ct.CTkButton(self.color_choose, text='Apply', fg_color=code, text_color='black' ,command=self.apply_btn_e)
             self.apply_btn.grid(row=4, column=1, pady=5)
         else:
             self.color_choose.grid_forget()
             self.color_choose = None
-            
+    
+    def apply_btn_e(self):
+        r = int(self.red_scale.get())
+        g = int(self.green_scale.get())
+        b = int(self.blue_scale.get())
+
+        rgb = f'{r},{g},{b}'
+        
+        code = "#%02x%02x%02x" % (r, g, b)
+        self.watermark_color.configure(fg_color=code)
+        
+        item_clr.watermark[0] = r
+        item_clr.watermark[1] = g
+        item_clr.watermark[2] = b
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None
+    
     def player_box_esp_name_e(self):
         if self.player_box_esp_name.get() == 1:
             state.players_box_enabled = 1
@@ -766,21 +815,10 @@ class App(ct.CTk):
 
     # Make our function to save config. This is done here because the App can communicate with other classes
     def save_config_btn_e(self):
-        config["VISUALS"] = {
-        'enabled': 1,
-        'watermark': 1,
-        'box': 1, 
-        'head esp': 1,
-        'health': 1,
-        'name': 1,
-        'weapon': 1,
-        'sniper crosshair': 1,
-        'recoil crosshair': 1,
-        'spectator list': 1,
-        'bomb info': 1,
-    }
-        self.config['VISUALS']['enabled'] = f'{self.visuals_tab.global_master.get()}'
-        self.config['VISUALS']['watermark'] = f'{self.visuals_tab.global_watermark.get()}'
+        self.config['VISUALS GLOBAL']['enabled'] = f'{self.visuals_tab.global_master.get()}'
+        self.config['VISUALS GLOBAL']['watermark'] = f'{self.visuals_tab.global_watermark.get()}'
+        self.config['VISUALS GLOBAL']['watermark clr'] = f'{item_clr.watermark}'
+        print(f'{item_clr.watermark}')
         self.config['VISUALS']['box'] = f'{self.visuals_tab.player_box_esp_name.get()}'
         self.config['VISUALS']['head esp'] = f'{self.visuals_tab.player_head_esp_name.get()}'
         self.config['VISUALS']['health'] = f'{self.visuals_tab.player_health_esp_name.get()}'

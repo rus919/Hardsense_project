@@ -15,5 +15,8 @@ class state:
     sniper_crosshair_enabled = 0
     recoil_crosshair_enabled = 0
     
-class colors:
-    watermark = meow.new_color(255, 255, 255, 255)
+class item_clr:
+    watermark = [255,255,255,255]
+    
+class menu_clr:
+    None
