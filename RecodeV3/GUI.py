@@ -136,18 +136,6 @@ def header_btn(self, row, column, values, callback):
     
     self.header_btn.grid(row = row, column = column, pady = 5, padx = 10, sticky = 'news')
 
-def hex_to_rgb(hex):
-    return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
-
-def get_clr_from_item(red, green, blue, btn):
-    r = int(red.get())
-    g = int(green.get())
-    b = int(blue.get())
-
-    rgb = f'{r},{g},{b}'
-    code = "#%02x%02x%02x" % (r, g, b)
-    btn.configure(fg_color=code)
-
 def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players_callback, misc_callback, panel_callback, settings_callback):
     frame = ct.CTkFrame(master = parent, corner_radius=0)
         
@@ -286,18 +274,31 @@ class create_visuals(ct.CTkFrame):
             self.global_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
             self.global_container.grid_forget()
+            # Make sure to close color picker when tab is changed
+            if self.color_choose is not None:
+                self.color_choose.grid_forget()
+            self.color_choose = None
         if e == 'Player':
             self.player_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
             self.player_container.grid_forget()
+            if self.color_choose is not None:
+                self.color_choose.grid_forget()
+            self.color_choose = None
         if e == 'Local':
             self.local_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
             self.local_container.grid_forget()
+            if self.color_choose is not None:
+                self.color_choose.grid_forget()
+            self.color_choose = None
         if e == 'Other':
             self.other_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
             self.other_container.grid_forget()
+            if self.color_choose is not None:
+                self.color_choose.grid_forget()
+            self.color_choose = None
 
     def item_checkbox(self, container, row, column, text, callback):
         checkbox = ct.CTkCheckBox(container, text=text, checkbox_width=25, checkbox_height=25, corner_radius=5, border_width=1, border_color='#4a4a4a', hover_color='#30293D', checkmark_color='white', fg_color='#39314A', font=ct.CTkFont(size=13), command=callback)
@@ -393,16 +394,8 @@ class create_visuals(ct.CTkFrame):
         else:
             self.other_bomb_info_name.deselect()
             self.other_bomb_info_name_e()
-
-        clr = self.config['VISUALS GLOBAL']['watermark clr'].replace('[', '').replace(']', '').replace(',', '').split()
-        r = int(clr[0])
-        g = int(clr[1])
-        b = int(clr[2])
-        item_clr.watermark[0] = r
-        item_clr.watermark[1] = g
-        item_clr.watermark[2] = b
-        code = "#%02x%02x%02x" % (r, g, b)
-        self.watermark_color.configure(fg_color=code)
+        
+        self.get_clr_from_config(self.config['VISUALS GLOBAL']['watermark clr'], item_clr.watermark, self.watermark_color)
         
     def global_master_e(self):
         if self.global_master.get() == 1:
@@ -416,11 +409,34 @@ class create_visuals(ct.CTkFrame):
         else:
             state.watermark = 0
     
-    def watermark_color_e(self):
+    def hex_to_rgb(self, hex):
+        return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+
+    def get_clr_from_item(self, red, green, blue, btn):
+        r = int(red.get())
+        g = int(green.get())
+        b = int(blue.get())
+
+        rgb = f'{r},{g},{b}'
+        code = "#%02x%02x%02x" % (r, g, b)
+        btn.configure(fg_color=code)
+
+    def get_clr_from_config(self, config_clr, gui_comm_clr, btn):
+        clr = config_clr.replace('[', '').replace(']', '').replace(',', '').split()
+        r = int(clr[0])
+        g = int(clr[1])
+        b = int(clr[2])
+        gui_comm_clr[0] = r
+        gui_comm_clr[1] = g
+        gui_comm_clr[2] = b
+        code = "#%02x%02x%02x" % (r, g, b)
+        btn.configure(fg_color=code)
+    
+    def display_clr_frame(self, get_btn_clr):
         if self.color_choose is None:
-            btn_clr = self.watermark_color.cget('fg_color')
+            btn_clr = get_btn_clr.cget('fg_color')
             btn_clr_hex = btn_clr.replace('#', '')
-            btn_clr_rbg = hex_to_rgb(btn_clr_hex)
+            btn_clr_rbg = self.hex_to_rgb(btn_clr_hex)
             
             self.color_choose = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
             self.color_choose.grid(row = 1, column=2, padx=5, pady=10, sticky='n')
@@ -453,10 +469,10 @@ class create_visuals(ct.CTkFrame):
             self.color_choose = None
     
     def display_color_e(self, value):
-        get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.apply_btn)
+        self.get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.apply_btn)
     
     def apply_btn_e(self):
-        get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.watermark_color)
+        self.get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.watermark_color)
         r = int(self.red_scale.get())
         g = int(self.green_scale.get())
         b = int(self.blue_scale.get())
@@ -468,6 +484,9 @@ class create_visuals(ct.CTkFrame):
         self.color_choose.grid_forget()
         self.color_choose = None
     
+    def watermark_color_e(self):
+        self.display_clr_frame(self.watermark_color)
+        
     def player_box_esp_name_e(self):
         if self.player_box_esp_name.get() == 1:
             state.players_box_enabled = 1
