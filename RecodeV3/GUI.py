@@ -136,6 +136,18 @@ def header_btn(self, row, column, values, callback):
     
     self.header_btn.grid(row = row, column = column, pady = 5, padx = 10, sticky = 'news')
 
+def hex_to_rgb(hex):
+    return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+
+def get_clr_from_item(red, green, blue, btn):
+    r = int(red.get())
+    g = int(green.get())
+    b = int(blue.get())
+
+    rgb = f'{r},{g},{b}'
+    code = "#%02x%02x%02x" % (r, g, b)
+    btn.configure(fg_color=code)
+
 def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players_callback, misc_callback, panel_callback, settings_callback):
     frame = ct.CTkFrame(master = parent, corner_radius=0)
         
@@ -403,25 +415,12 @@ class create_visuals(ct.CTkFrame):
             state.watermark = 1
         else:
             state.watermark = 0
-            
-    def hex_to_rgb(self, hex):
-        return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
-    
-    def display_color_e(self, value):
-        r = int(self.red_scale.get())
-        g = int(self.green_scale.get())
-        b = int(self.blue_scale.get())
-
-        rgb = f'{r},{g},{b}'
-        
-        code = "#%02x%02x%02x" % (r, g, b)
-        self.apply_btn.configure(fg_color=code)
     
     def watermark_color_e(self):
         if self.color_choose is None:
             btn_clr = self.watermark_color.cget('fg_color')
             btn_clr_hex = btn_clr.replace('#', '')
-            btn_clr_rbg = self.hex_to_rgb(btn_clr_hex)
+            btn_clr_rbg = hex_to_rgb(btn_clr_hex)
             
             self.color_choose = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
             self.color_choose.grid(row = 1, column=2, padx=5, pady=10, sticky='n')
@@ -453,15 +452,14 @@ class create_visuals(ct.CTkFrame):
             self.color_choose.grid_forget()
             self.color_choose = None
     
+    def display_color_e(self, value):
+        get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.apply_btn)
+    
     def apply_btn_e(self):
+        get_clr_from_item(self.red_scale, self.green_scale, self.blue_scale, self.watermark_color)
         r = int(self.red_scale.get())
         g = int(self.green_scale.get())
         b = int(self.blue_scale.get())
-
-        rgb = f'{r},{g},{b}'
-        
-        code = "#%02x%02x%02x" % (r, g, b)
-        self.watermark_color.configure(fg_color=code)
         
         item_clr.watermark[0] = r
         item_clr.watermark[1] = g
