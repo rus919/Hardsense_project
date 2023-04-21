@@ -33,18 +33,13 @@ def esp():
         print(err)
         exit(0)
 
-    # # Menu
     app = App()
-    # app.resizable(False, False)
-    # app.iconbitmap(resource_path("assets/icon.ico"))
-    # app.overrideredirect(True) # Disables top menu
-    # app.iconify() 
-    # app.update()
+    app.iconbitmap(resource_path("assets/icon.ico"))
     active = 0
     while meow.overlay_loop():
     
         app.update() # Update menu, but brakes the menu when moving mouse
-        # app.update_idletasks() # Update menu, but brakes the menu when moving mouse
+        app.update_idletasks() # Update menu, but brakes the menu when moving mouse
         
         menu_key = app_state.menu_key
         
@@ -97,7 +92,7 @@ def esp():
                                                 startPosY =get_screen_center_y, 
                                                 endPosX =get_screen_center_x + 5, 
                                                 endPosY =get_screen_center_y, 
-                                                color = Colors.crosshair, 
+                                                color = clr(item_clr.sniper_crosshair), 
                                                 thick = 1.0
                                             )
                                             meow.draw_line(
@@ -105,7 +100,7 @@ def esp():
                                                 startPosY =get_screen_center_y - 5, 
                                                 endPosX =get_screen_center_x, 
                                                 endPosY =get_screen_center_y + 5, 
-                                                color = Colors.crosshair, 
+                                                color = clr(item_clr.sniper_crosshair), 
                                                 thick = 1.0
                                             )
                             except Exception as err:
@@ -124,7 +119,7 @@ def esp():
                                     startPosY =crosshair_y, 
                                     endPosX =crosshair_x + 5, 
                                     endPosY =crosshair_y, 
-                                    color = Colors.recoil, 
+                                    color = clr(item_clr.recoil_crosshair), 
                                     thick = 1.0
                                 )
                                 meow.draw_line(
@@ -132,7 +127,7 @@ def esp():
                                     startPosY =crosshair_y - 5, 
                                     endPosX =crosshair_x, 
                                     endPosY =crosshair_y + 5, 
-                                    color = Colors.recoil, 
+                                    color = clr(item_clr.recoil_crosshair), 
                                     thick = 1.0
                                 )
                     
@@ -157,7 +152,7 @@ def esp():
                                             posY=get_screen_width_y / 1.8,
                                             fontSize=25,
                                             spacing = 2.0,
-                                            tint = Colors.white,
+                                            tint = clr(item_clr.spectator_list),
                                         )         
                                     
                             if not entity.get_dormant() and entity.get_health() > 0 and local_player.get_team() != entity.get_team() and ents != local_player:
@@ -226,7 +221,7 @@ def esp():
                                     
                                     for i in range(1,64):
                                         if get_entity_weapon == i:
-                                            meow.draw_texture(texture = meow.load_texture(resource_path(f"assets/images/{i}.png")), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 1.3,tint = meow.get_color('purple'))
+                                            meow.draw_texture(texture = meow.load_texture(resource_path(f"assets/images/{i}.png")), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = clr(item_clr.weapon_esp))
                                             # meow.draw_texture(texture = meow.load_texture(f"assets/images/{i}.png"), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.02, rotation = 0, scale = 0.3, tint = clr(item_clr.weapon_esp))
                                         
                         except Exception as err:

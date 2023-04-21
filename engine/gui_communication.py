@@ -1,7 +1,5 @@
-import pyMeow as meow
-
 class app_state:
-    menu_key = 'insert'
+    menu_key = 'f1'
 
 class state:
     master_switch = 0
