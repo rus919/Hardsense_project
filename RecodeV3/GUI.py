@@ -104,15 +104,17 @@ if not os.path.exists(CONFIG_FILE):
         'weapon': 1,
         'weapon type': 'icon',
         'weapon clr': [255,255,255,255],
-    }
-    
-    config["VISUALS"] = {
         'sniper crosshair': 1,
+        'sniper crosshair type': 'cross',
+        'sniper crosshair clr': [255,255,255,255],
         'recoil crosshair': 1,
+        'recoil crosshair type': 'cross',
+        'recoil crosshair clr': [255,255,255,255],
         'spectator list': 1,
+        'spectator list clr': [255,255,255,255],
         'bomb info': 1,
     }
-    
+
     with open(CONFIG_FILE, 'w') as f:
         config.write(f)
 else:
@@ -195,19 +197,23 @@ def create_aimbot(parent):
     test.grid(row=0, column=0, pady=10, padx = 10)
     
     return frame
-
-def create_triggerbot(parent):
-    frame = ct.CTkFrame(master = parent, corner_radius=0, fg_color='transparent')
         
-    test = ct.CTkLabel(frame, text="Triggerbot", anchor="w")
-    test.grid(row=0, column=0, pady=10, padx = 10)
-    
-    return frame
-
-class create_visuals(ct.CTkFrame):
+class create_triggerbot(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'])
         
+        self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
+        self.grid_rowconfigure(1, weight=1) # Make the first column width 100%
+        
+        self.header_btn = header_btn(self, 0, 0, ["Global", "-",], self.header_btn_e)
+    
+    def header_btn_e(self, e):
+        if e == 'Global':
+            print('hello')
+            
+class create_visuals(ct.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'])
         # Colors
         self.frame_fg_color = theme_cfg["APP"]['bg_clr_accent']
         self.frame_border_color = theme_cfg["APP"]['border_clr']
@@ -268,12 +274,18 @@ class create_visuals(ct.CTkFrame):
         self.local_container.grid_columnconfigure(2, pad=25)
         
         self.local_crosshair_name = self.item_checkbox(self.local_container, 1, 0, 'Sniper Crosshair', self.local_crosshair_name_e)
-        self.local_crosshair = self.item_comboBox(self.local_container, 1, 1, ['cross'], self.player_box_esp_e)
+        self.local_crosshair = self.item_comboBox(self.local_container, 1, 1, ['cross'], self.local_crosshair_e)
+        self.local_crosshair_color = self.color_picker(self.local_container, 1, 2, self.local_crosshair_color_e)
+        
         
         self.local_recoil_name = self.item_checkbox(self.local_container, 2, 0, 'Recoil Crosshair', self.local_recoil_name_e)
-        self.local_recoil = self.item_comboBox(self.local_container, 2, 1, ['cross'], self.player_box_esp_e)
+        self.local_recoil = self.item_comboBox(self.local_container, 2, 1, ['cross'], self.local_recoil_e)
+        self.local_recoil_color = self.color_picker(self.local_container, 2, 2, self.local_recoil_color_e)
+        
         
         self.local_spectator_name = self.item_checkbox(self.local_container, 3, 0, 'Spectator List', self.local_spectator_name_e)
+        self.local_spectator_color = self.color_picker(self.local_container, 3, 2, self.local_spectator_color_e)
+        
         
         self.other_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.other_container.grid_columnconfigure(1, pad=25)
@@ -355,16 +367,28 @@ class create_visuals(ct.CTkFrame):
     def player_weapon_esp_e(self, e):
         if e == 'icon':
             state.players_weapon_type = 'icon'
+            
+    def local_crosshair_e(self, e):
+        if e == 'cross':
+            state.sniper_crosshair_type = 'cross'
+            
+    def local_recoil_e(self, e):
+        if e == 'cross':
+            state.recoil_crosshair_type = 'cross'
 
     def update_from_config(self):
         self.config.read(CONFIG_FILE)
+        
+        # Enable
         if self.config['VISUALS GLOBAL']['enabled'] == '1':
             self.global_master.select()
             self.global_master_e()
         else:
             self.global_master.deselect()
             self.global_master_e()
-            
+        
+        
+        # Watermark
         if self.config['VISUALS GLOBAL']['watermark'] == '1':
             self.global_watermark.select()
             self.global_watermark_e()
@@ -372,6 +396,8 @@ class create_visuals(ct.CTkFrame):
             self.global_watermark.deselect()
             self.global_watermark_e()
 
+        self.get_clr_from_config(self.config['VISUALS GLOBAL']['watermark clr'], item_clr.watermark, self.watermark_color)
+        
 
         # BOX 
         if self.config['VISUALS PLAYER']['box'] == '1':
@@ -391,7 +417,7 @@ class create_visuals(ct.CTkFrame):
         self.get_clr_from_config(self.config['VISUALS PLAYER']['box clr'], item_clr.box_esp, self.player_box_esp_color)
         
         
-        # head esp 
+        # Head esp 
         if self.config['VISUALS PLAYER']['head esp'] == '1':
             self.player_head_esp_name.select()
             self.player_head_esp_name_e()
@@ -447,37 +473,54 @@ class create_visuals(ct.CTkFrame):
         self.get_clr_from_config(self.config['VISUALS PLAYER']['weapon clr'], item_clr.weapon_esp, self.player_weapon_esp_color)
         
         
-        
-        if self.config['VISUALS']['sniper crosshair'] == '1':
+        # Sniper Crosshair
+        if self.config['VISUALS PLAYER']['sniper crosshair'] == '1':
             self.local_crosshair_name.select()
             self.local_crosshair_name_e()
         else:
             self.local_crosshair_name.deselect()
             self.local_crosshair_name_e()
+             
+        if self.config['VISUALS PLAYER']['sniper crosshair type'] == 'cross':
+            state.sniper_crosshair_type = 'cross'
+            self.local_crosshair.set('cross')
             
-        if self.config['VISUALS']['recoil crosshair'] == '1':
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['sniper crosshair clr'], item_clr.sniper_crosshair, self.local_crosshair_color)
+        
+        # Recoil crosshair
+        if self.config['VISUALS PLAYER']['recoil crosshair'] == '1':
             self.local_recoil_name.select()
             self.local_recoil_name_e()
         else:
             self.local_recoil_name.deselect()
             self.local_recoil_name_e()
             
-        if self.config['VISUALS']['spectator list'] == '1':
+        if self.config['VISUALS PLAYER']['recoil crosshair type'] == 'cross':
+            state.recoil_crosshair_type = 'cross'
+            self.local_recoil.set('cross')
+            
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['recoil crosshair clr'], item_clr.recoil_crosshair, self.local_recoil_color)
+        
+        
+        # Spectator list
+        if self.config['VISUALS PLAYER']['spectator list'] == '1':
             self.local_spectator_name.select()
             self.local_spectator_name_e()
         else:
             self.local_spectator_name.deselect()
             self.local_spectator_name_e()
             
-        if self.config['VISUALS']['bomb info'] == '1':
+        self.get_clr_from_config(self.config['VISUALS PLAYER']['spectator list clr'], item_clr.spectator_list, self.local_spectator_color)
+        
+            
+        # Bomb Info
+        if self.config['VISUALS PLAYER']['bomb info'] == '1':
             self.other_bomb_info_name.select()
             self.other_bomb_info_name_e()
         else:
             self.other_bomb_info_name.deselect()
             self.other_bomb_info_name_e()
-        
-        self.get_clr_from_config(self.config['VISUALS GLOBAL']['watermark clr'], item_clr.watermark, self.watermark_color)
-                
+                        
     def global_master_e(self):
         if self.global_master.get() == 1:
             state.master_switch = 1
@@ -564,6 +607,7 @@ class create_visuals(ct.CTkFrame):
         self.color_choose.grid_forget()
         self.color_choose = None
 
+
     # BOX
     def player_box_esp_name_e(self):
         if self.player_box_esp_name.get() == 1:
@@ -580,6 +624,7 @@ class create_visuals(ct.CTkFrame):
         
         self.color_choose.grid_forget()
         self.color_choose = None
+
 
     # HEAD ESP       
     def player_head_esp_name_e(self):
@@ -617,7 +662,7 @@ class create_visuals(ct.CTkFrame):
         self.color_choose = None
             
     
-    # name ESP
+    # Name ESP
     def player_name_esp_name_e(self):
         if self.player_name_esp_name.get() == 1:
             state.players_names_enabled = 1
@@ -652,25 +697,59 @@ class create_visuals(ct.CTkFrame):
         self.color_choose = None
     
     
-    
+    # Sniper crosshair
     def local_crosshair_name_e(self):
         if self.local_crosshair_name.get() == 1:
             state.sniper_crosshair_enabled = 1
         else:
             state.sniper_crosshair_enabled = 0
             
+    def local_crosshair_color_e(self):
+        self.display_clr_frame(self.local_crosshair_color, self.local_crosshair_color_apply_e)
+    
+    def local_crosshair_color_apply_e(self):
+        self.get_clr_from_item(self.local_crosshair_color)
+        self.set_gui_comm_clr(item_clr.sniper_crosshair)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None
+
+    # Recoil crosshair
     def local_recoil_name_e(self):
         if self.local_recoil_name.get() == 1:
             state.recoil_crosshair_enabled = 1
         else:
             state.recoil_crosshair_enabled = 0
+    
+    def local_recoil_color_e(self):
+        self.display_clr_frame(self.local_recoil_color, self.local_recoil_color_apply_e)
+    
+    def local_recoil_color_apply_e(self):
+        self.get_clr_from_item(self.local_recoil_color)
+        self.set_gui_comm_clr(item_clr.recoil_crosshair)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None        
             
+            
+    # Spectator list
     def local_spectator_name_e(self):
         if self.local_spectator_name.get() == 1:
             state.spectator_enabled = 1
         else:
             state.spectator_enabled = 0
             
+    def local_spectator_color_e(self):
+        self.display_clr_frame(self.local_spectator_color, self.local_spectator_color_apply_e)
+    
+    def local_spectator_color_apply_e(self):
+        self.get_clr_from_item(self.local_spectator_color)
+        self.set_gui_comm_clr(item_clr.spectator_list)
+        
+        self.color_choose.grid_forget()
+        self.color_choose = None 
+    
+    # Bomb info
     def other_bomb_info_name_e(self):
         if self.other_bomb_info_name.get() == 1:
             state.bomb_info_enabled = 1
@@ -980,7 +1059,6 @@ class App(ct.CTk):
         self.config['VISUALS PLAYER']['head esp clr'] = f'{item_clr.head_esp}'
         self.config['VISUALS PLAYER']['head esp type'] = f'{self.visuals_tab.player_head_esp.get()}'
         
-        
         self.config['VISUALS PLAYER']['health'] = f'{self.visuals_tab.player_health_esp_name.get()}'
         # clr
         # type
@@ -992,15 +1070,22 @@ class App(ct.CTk):
         self.config['VISUALS PLAYER']['weapon clr'] = f'{item_clr.weapon_esp}'
         self.config['VISUALS PLAYER']['weapon type'] = f'{self.visuals_tab.player_weapon_esp.get()}'
         
-        self.config['VISUALS']['sniper crosshair'] = f'{self.visuals_tab.local_crosshair_name.get()}'
-        self.config['VISUALS']['recoil crosshair'] = f'{self.visuals_tab.local_recoil_name.get()}'
-        self.config['VISUALS']['spectator list'] = f'{self.visuals_tab.local_spectator_name.get()}'
-        self.config['VISUALS']['bomb info'] = f'{self.visuals_tab.other_bomb_info_name.get()}'
+        self.config['VISUALS PLAYER']['sniper crosshair'] = f'{self.visuals_tab.local_crosshair_name.get()}'
+        self.config['VISUALS PLAYER']['sniper crosshair clr'] = f'{item_clr.sniper_crosshair}'
+        self.config['VISUALS PLAYER']['sniper crosshair type'] = f'{self.visuals_tab.local_crosshair.get()}'
+        
+        self.config['VISUALS PLAYER']['recoil crosshair'] = f'{self.visuals_tab.local_recoil_name.get()}'
+        self.config['VISUALS PLAYER']['recoil crosshair clr'] = f'{item_clr.recoil_crosshair}'
+        self.config['VISUALS PLAYER']['recoil crosshair type'] = f'{self.visuals_tab.local_recoil.get()}'
+        
+        self.config['VISUALS PLAYER']['spectator list'] = f'{self.visuals_tab.local_spectator_name.get()}'
+        self.config['VISUALS PLAYER']['spectator clr'] = f'{item_clr.spectator_list}'
+        
+        self.config['VISUALS PLAYER']['bomb info'] = f'{self.visuals_tab.other_bomb_info_name.get()}'
         
         with open(CONFIG_FILE, 'w') as f:
             self.config.write(f)
         
 if __name__ == "__main__":
     app = App()
-    # app.iconbitmap("assets/GUI/icon.ico")
     app.mainloop()

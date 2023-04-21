@@ -1,7 +1,7 @@
 from requests import get
 
 class Offset():
-    url = 'https://raw.githubusercontent.com/Akandesh/blazedumper/master/csgo.json'
+    url = 'https://raw.githubusercontent.com/rus919/CSGO_Offsets/main/csgo.json'
     response = get(url).json()
 
     anim_overlays = int(response["signatures"]["anim_overlays"])

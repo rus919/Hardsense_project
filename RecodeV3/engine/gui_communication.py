@@ -12,10 +12,12 @@ class state:
     players_names_enabled = 0
     players_weapon = 0
     players_weapon_type = ''
+    sniper_crosshair_enabled = 0
+    sniper_crosshair_type = ''
+    recoil_crosshair_enabled = 0
+    recoil_crosshair_type = ''
     spectator_enabled = 0
     bomb_info_enabled = 0
-    sniper_crosshair_enabled = 0
-    recoil_crosshair_enabled = 0
     
 class item_clr:
     watermark = [255,255,255,255]
@@ -24,6 +26,9 @@ class item_clr:
     health_esp = [255,255,255,255]
     name_esp = [255,255,255,255]
     weapon_esp = [255,255,255,255]
+    sniper_crosshair = [255,255,255,255]
+    recoil_crosshair = [255,255,255,255]
+    spectator_list = [255,255,255,255]
     
 class menu_clr:
     None
