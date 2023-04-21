@@ -1,4 +1,4 @@
-import os, requests
+import os, sys, requests
 import customtkinter as ct
 import configparser as cp
 import webbrowser as web
@@ -6,17 +6,19 @@ from PIL import Image
 from engine.gui_communication import *
 from tools.entity_parse import getPlayerInfo, playersInfo
 
+
+
 ct.set_appearance_mode("Dark")
 ct.set_default_color_theme("dark-blue")
 
 # sticky = N = north E = East W = west S = south
 
-def resource_path(relative_path):
-    base_path = getattr(
-        sys,
-        '_MEIPASS',
-        os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
+# def resource_path(relative_path):
+#     base_path = getattr(
+#         sys,
+#         '_MEIPASS',
+#         os.path.dirname(os.path.abspath(__file__)))
+#     return os.path.join(base_path, relative_path)
 
 app_colors = {
     'app': {
@@ -55,6 +57,9 @@ app_colors = {
         }
     },
 }
+
+if not os.path.exists('config'):
+    os.makedirs('config')
 
 THEME_CFG = 'config/theme.ini'
 if not os.path.exists(THEME_CFG):
@@ -828,7 +833,7 @@ class create_players(ct.CTkFrame):
                 self.add_player_ranks(self.player_main_container, sorted_players_info[i][3], sorted_players_info[i][5])
                 self.add_player_wins(sorted_players_info[i][4])
                 self.add_player_faceit(self.player_main_container, sorted_players_info[i][5])
-                self.player_main_container.update()
+                self.player_main_container.update_idletasks()
             
             self.player_main_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
@@ -968,7 +973,9 @@ class App(ct.CTk):
         # set the dimensions of the screen and where it is placed
         self.geometry('%dx%d+%d+%d' % (w, h, x, y))
         
-        self.minsize(width = 1000, height = 600) # Minimum size of the window
+        self.overrideredirect(True)
+        self.attributes("-alpha",0.99)
+        # self.minsize(width = 1000, height = 600) # Minimum size of the window
         
         # set grid layout 1x2 -> nav on left main content on the right
         self.grid_rowconfigure(0, weight=1)
@@ -1044,6 +1051,7 @@ class App(ct.CTk):
     def load_config_btn_e(self):
         self.config.read(CONFIG_FILE)
         self.visuals_tab.update_from_config()
+        print(state.players_box_enabled)
 
     # Make our function to save config. This is done here because the App can communicate with other classes
     def save_config_btn_e(self):
@@ -1086,6 +1094,6 @@ class App(ct.CTk):
         with open(CONFIG_FILE, 'w') as f:
             self.config.write(f)
         
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+# if __name__ == "__main__":
+#     app = App()
+#     app.mainloop()

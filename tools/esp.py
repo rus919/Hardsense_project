@@ -33,28 +33,32 @@ def esp():
         print(err)
         exit(0)
 
-    # Menu
+    # # Menu
     app = App()
-    app.iconbitmap(resource_path("assets/icon.ico"))
-    app.overrideredirect(True) # Disables top menu
-    app.attributes("-alpha",1.0)
+    # app.resizable(False, False)
+    # app.iconbitmap(resource_path("assets/icon.ico"))
+    # app.overrideredirect(True) # Disables top menu
+    # app.iconify() 
+    # app.update()
     active = 0
     while meow.overlay_loop():
     
         app.update() # Update menu, but brakes the menu when moving mouse
+        # app.update_idletasks() # Update menu, but brakes the menu when moving mouse
         
-        menu_key = 'home'
+        menu_key = app_state.menu_key
         
         if keyboard.is_pressed(menu_key) and active == 0:
             active = 1
-            app.update()
-            app.withdraw()
+            app.update_idletasks()
+            app.state('withdrawn')
             time.sleep(0.5)
         
         if keyboard.is_pressed(menu_key) and active == 1:
             active = 0
-            app.update()
-            app.deiconify()
+            app.update_idletasks()
+            app.state('normal')
+            app.focus()
             time.sleep(0.5)
 
         meow.begin_drawing()
@@ -283,3 +287,4 @@ def esp():
                                     print(err)
                                 continue
         meow.end_drawing()  
+        # app.mainloop()        

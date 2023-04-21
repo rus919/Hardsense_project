@@ -11,7 +11,7 @@ def trigger():
                 except Exception as err:
                     print(err)
                     continue
-                if Windll.u32.GetAsyncKeyState(6):
+                if Windll.u32.GetAsyncKeyState(18):
                     try:
                         entity_id = LocalPlayer.get_crosshair_id()
                         if entity_id != 0 and entity_id < 64:

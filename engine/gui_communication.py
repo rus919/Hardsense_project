@@ -1,5 +1,8 @@
 import pyMeow as meow
 
+class app_state:
+    menu_key = 'insert'
+
 class state:
     master_switch = 0
     watermark = 0

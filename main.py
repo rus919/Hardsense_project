@@ -10,6 +10,9 @@ from tools.trigger import trigger
 from tools.esp import esp
 from tools.entity_parse import entity_parse, EntityList
 
+from GUI import *
+import os, sys
+
 # class Math:
     
 #     def sin_cos(radians):
@@ -210,8 +213,8 @@ from tools.entity_parse import entity_parse, EntityList
                 
 #             except Exception as err:
 #                 print(err)
-#                 continue 
-        
+# #                 continue 
+
 if __name__ == "__main__":
     try:
         csgo = Process('csgo.exe')
@@ -220,8 +223,7 @@ if __name__ == "__main__":
     except Exception as err:
         print(err)
         exit(0)
-        
-    # meow.overlay_init("Counter-Strike: Global Offensive - Direct3D 9", fps=144, title='test')
+                            
     meow.overlay_init(fps=144, title='test')
     
     try:
@@ -232,6 +234,7 @@ if __name__ == "__main__":
         exit(0)
 
     esp()
+    
     
 #Make a debug file where all values will be displayed and enable only if its imported so in release the file will be excluded, and also make DEBUG_MODE easier
 # print('[*]VirtualTables')
