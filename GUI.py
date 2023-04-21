@@ -3,7 +3,7 @@ import customtkinter as ct
 import configparser as cp
 import webbrowser as web
 from PIL import Image
-from engine.gui_communication import *
+from engine.gui_communication import app_state, state, item_clr
 from tools.entity_parse import getPlayerInfo, playersInfo
 
 

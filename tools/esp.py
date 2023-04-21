@@ -3,7 +3,7 @@ from engine.process import Process, Windll
 from engine.gamedata import Colors, GetWindowText
 from utils.entity import Entity, LocalPlayer, Engine
 from tools.entity_parse import EntityList, bombAddr, playersInfo
-from engine.gui_communication import *
+from engine.gui_communication import app_state, state, item_clr
 
 from GUI import *
 import keyboard
