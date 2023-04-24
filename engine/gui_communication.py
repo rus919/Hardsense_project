@@ -33,3 +33,7 @@ class item_clr:
     
 class menu_clr:
     None
+    
+class trigger_state:
+    trigger_key = 6
+    

@@ -1,6 +1,7 @@
 from engine.process import Process, Windll
 from engine.gamedata import GetWindowText
 from utils.entity import Entity, LocalPlayer, Engine
+from engine.gui_communication import trigger_state
 
 def trigger():
     while True:
@@ -11,9 +12,11 @@ def trigger():
                 except Exception as err:
                     print(err)
                     continue
-                if Windll.u32.GetAsyncKeyState(6):
+                if Windll.u32.GetAsyncKeyState(trigger_state.trigger_key):
                     try:
                         entity_id = LocalPlayer.get_crosshair_id()
+                        if entity_id == 0:
+                            continue
                         # if entity_id != 0 and entity_id < 64:
                         entity = Entity(Engine.get_entity(entity_id - 1))
                         if local_player.get_team() != entity.get_team() and entity.get_health() > 0:
@@ -25,3 +28,4 @@ def trigger():
                     except Exception as err:
                         print(err)
                         continue
+        Windll.k32.Sleep(1)
