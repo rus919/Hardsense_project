@@ -10,9 +10,6 @@ from tools.trigger import trigger
 from tools.esp import esp
 from tools.entity_parse import entity_parse, EntityList
 
-from GUI import *
-import os, sys
-
 # class Math:
     
 #     def sin_cos(radians):
@@ -223,9 +220,7 @@ if __name__ == "__main__":
     except Exception as err:
         print(err)
         exit(0)
-                            
-    meow.overlay_init(fps=144, title='test')
-    
+                                
     try:
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()

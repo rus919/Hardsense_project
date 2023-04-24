@@ -21,6 +21,7 @@ def resource_path(relative_path):
 def clr(item_clr):
     return meow.new_color(item_clr[0],item_clr[1],item_clr[2],255)
 
+meow.overlay_init(fps=155, title='test')
 def esp():
     scoped_weapons = [9, 11, 38, 40]
     knife_weapons = [42, 59, 500, 503, 505, 506, 507, 508, 509, 512, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 525]
@@ -36,6 +37,7 @@ def esp():
     app = App()
     app.iconbitmap(resource_path("assets/icon.ico"))
     active = 0
+    
     while meow.overlay_loop():
     
         app.update() # Update menu, but brakes the menu when moving mouse
@@ -221,7 +223,7 @@ def esp():
                                     
                                     for i in range(1,64):
                                         if get_entity_weapon == i:
-                                            meow.draw_texture(texture = meow.load_texture(resource_path(f"assets/images/{i}.png")), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.01, rotation = 0, scale = 0.3,tint = clr(item_clr.weapon_esp))
+                                            meow.draw_texture(texture = meow.load_texture(resource_path(f"assets/images/{i}.png")), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.02, rotation = 0, scale = 0.3,tint = clr(item_clr.weapon_esp))
                                             # meow.draw_texture(texture = meow.load_texture(f"assets/images/{i}.png"), posX = head_pos["x"] / 1.005, posY = entity_w2s["y"] * 1.02, rotation = 0, scale = 0.3, tint = clr(item_clr.weapon_esp))
                                         
                         except Exception as err:
