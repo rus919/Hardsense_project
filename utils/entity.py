@@ -144,3 +144,5 @@ class Engine():
     def get_player_resources():
         return csgo.read_i32(csgo_client + Offset.dwPlayerResource)
     
+    def get_max_players():
+        return csgo.read_i32(Engine.get_state() + Offset.dwClientState_MaxPlayer)

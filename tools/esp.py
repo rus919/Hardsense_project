@@ -73,7 +73,6 @@ def esp():
                         meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = clr(item_clr.watermark))
                         
                     meow.draw_fps(15, 15)
-                    
                     try:
                         local_player = Entity(LocalPlayer.get_local_player())
                         view_matrix = Engine.get_view_matrix()                    

@@ -50,7 +50,7 @@ def getPlayerInfo(): # Not returning properly, missing player data when in entit
     playersInfo.clear()
     if Engine.get_client_state() == 6:
         try:
-            for i in range(1, 64):     
+            for i in range(1, Engine.get_max_players()):     
                 entity = Engine.get_entity(i)
                 if entity != 0:
                     playerSteamID = Entity.get_player_steam_id(i).decode('utf-8') # Getting steamID32
