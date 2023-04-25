@@ -95,7 +95,7 @@ if not os.path.exists(CONFIG_FILE):
     }
     
     config["VISUALS PLAYER"] = {
-        'box': 1,
+        'box': 0,
         'box type': 'normal',
         'box clr': [255,255,255,255],
         'head esp': 1,

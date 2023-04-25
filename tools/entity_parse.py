@@ -19,7 +19,6 @@ def entity_parse():
         if Engine.get_client_state() == 6:
             try:
                 EntityList.clear()
-                
                 for i in range(1, 512):
                     entity = Engine.get_entity(i)
                     if entity != 0:
@@ -32,7 +31,7 @@ def entity_parse():
                         if class_id == 40:
                             if not EntityList.__contains__(entity):
                                 EntityList.append(entity)
-                        
+                                
                         if Engine.get_bomb_planted() == 1:
                             if class_id == 129:
                                 if not bombAddr.__contains__(entity):
@@ -43,7 +42,6 @@ def entity_parse():
             except Exception as err:
                 print('entity_parse: ', err)
                 pass
-        # print(bombAddr)
         Windll.k32.Sleep(2000)       
         
 def getPlayerInfo(): # Not returning properly, missing player data when in entity he is there

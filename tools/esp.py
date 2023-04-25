@@ -21,7 +21,8 @@ def resource_path(relative_path):
 def clr(item_clr):
     return meow.new_color(item_clr[0],item_clr[1],item_clr[2],255)
 
-meow.overlay_init(fps=155, title='test')
+meow.overlay_init(fps=app_state.overlay_fps, title='test')
+
 def esp():
     scoped_weapons = [9, 11, 38, 40]
     knife_weapons = [42, 59, 500, 503, 505, 506, 507, 508, 509, 512, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 525]
@@ -29,20 +30,17 @@ def esp():
     try:
         meow.load_font("assets/fonts/ff.ttf", 0)
         meow.load_font("assets/fonts/ff2.ttf", 1)
-        C4 = meow.load_texture("assets/images/c4.png")
     except Exception as err:
         print(err)
         exit(0)
 
     app = App()
     app.iconbitmap(resource_path("assets/icon.ico"))
-    active = 0
+    active = 1
     
     while meow.overlay_loop():
-    
-        app.update() # Update menu, but brakes the menu when moving mouse
-        app.update_idletasks() # Update menu, but brakes the menu when moving mouse
         
+        app.update() # Update menu, but brakes the menu when moving mouse
         menu_key = app_state.menu_key
         
         if keyboard.is_pressed(menu_key) and active == 0:
@@ -71,8 +69,10 @@ def esp():
                 if Engine.get_client_state() == 6:
                     if state.watermark == 1:
                         meow.draw_text(text = "HARDSENSE", posX = 5, posY = 5, fontSize = 10, color = clr(item_clr.watermark))
-                        
-                    meow.draw_fps(15, 15)
+                    
+                    if state.show_fps == 1:
+                        meow.draw_fps(15, 15)
+                    
                     try:
                         local_player = Entity(LocalPlayer.get_local_player())
                         view_matrix = Engine.get_view_matrix()                    
@@ -276,11 +276,10 @@ def esp():
                                         )
                                         
                                     bomb_w2s_pos = meow.world_to_screen(view_matrix, bomb_entity.get_position(), 1)
-                                    meow.draw_texture(texture = C4, posX = bomb_w2s_pos["x"], posY = bomb_w2s_pos["y"], rotation = 0, scale = 0.6,tint = Colors.white)
+                                    meow.draw_texture(texture = meow.load_texture(resource_path(f"assets/images/C4.png")), posX = bomb_w2s_pos["x"], posY = bomb_w2s_pos["y"], rotation = 0, scale = 0.6,tint = Colors.white)
                                     
                             except Exception as err:
                                 if not "out of" in repr(err):
                                     print(err)
                                 continue
         meow.end_drawing()  
-        # app.mainloop()        

@@ -1,9 +1,14 @@
 class app_state:
     menu_key = 'f1'
+    overlay_fps = 155
+    
+class trigger_state:
+    trigger_key = 6
 
 class state:
     master_switch = 0
     watermark = 0
+    show_fps = 1
     players_box_enabled = 0
     players_box_type = ''
     players_head_enabled = 0
@@ -34,6 +39,4 @@ class item_clr:
 class menu_clr:
     None
     
-class trigger_state:
-    trigger_key = 6
     
