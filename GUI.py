@@ -3,10 +3,8 @@ import customtkinter as ct
 import configparser as cp
 import webbrowser as web
 from PIL import Image
-from engine.gui_communication import app_state, state, item_clr
+from engine.gui_communication import app_state, state, item_clr, trigger_state
 from tools.entity_parse import getPlayerInfo, playersInfo
-
-
 
 ct.set_appearance_mode("Dark")
 ct.set_default_color_theme("dark-blue")
@@ -64,7 +62,7 @@ if not os.path.exists('config'):
 THEME_CFG = 'config/theme.ini'
 if not os.path.exists(THEME_CFG):
     theme_cfg = cp.ConfigParser()
-    
+
     theme_cfg["APP"] = {
         'bg_clr': '#1a1a1a',
         'bg_clr_accent': '#212121',
@@ -75,6 +73,19 @@ if not os.path.exists(THEME_CFG):
         'header_btn_selected_clr': '#39314A',
         'header_btn_unselected_clr': '#202020',
         'header_btn_hover_clr': '#282828',
+        'checkbox_border': '#4a4a4a',
+        'checkbox_hover': '#30293D',
+        'checkbox_checkmark_clr': '#fff',
+        'checkbox_fg_clr': '#39314A',
+        'checkbox_font_sz': '13',
+        'combobox_fg_clr': '#202020',
+        'combobox_border_clr': '#4a4a4a',
+        'combobox_button_clr': '#39314A',
+        'combobox_button_hover_clr': '#30293D',
+        'combobox_dropdown_fg_clr': '#202020',
+        'combobox_dropdown_hover_clr': '#1C1C1C',
+        'combobox_font_sz': '13',
+        
     }
     
     with open(THEME_CFG, 'w') as f:
@@ -119,6 +130,12 @@ if not os.path.exists(CONFIG_FILE):
         'spectator list clr': [255,255,255,255],
         'bomb info': 1,
     }
+    
+    config['TRIGGERBOT'] = {
+        'enabled': 1,
+        'key': 5,
+        'advanced': 1,
+    }
 
     with open(CONFIG_FILE, 'w') as f:
         config.write(f)
@@ -126,6 +143,19 @@ else:
     # If the configuration file exists, read the values from it
     config = cp.ConfigParser()
     config.read(CONFIG_FILE)
+
+keys_list = {
+    'Mouse 1': 0x01,
+    'Mouse 2': 0x02,
+    'Mouse 3': 0x04,
+    'Mouse 4': 0x05,
+    'Mouse 5': 0x06,
+}
+
+print(keys_list.get('Mouse 1'))
+
+def key_handler(key: str) -> int:
+    return keys_list.get(key)
 
 class app_config:
     fg_color = theme_cfg["APP"]['bg_clr_accent']
@@ -205,17 +235,95 @@ def create_aimbot(parent):
         
 class create_triggerbot(ct.CTkFrame):
     def __init__(self, parent):
-        super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'])
+        super().__init__(master = parent, fg_color=theme_cfg['APP']['bg_clr'])
+        
+        self.frame_fg_color = theme_cfg['APP']['bg_clr_accent']
+        self.frame_border_color = theme_cfg['APP']['border_clr']
+        self.frame_corner_radius = 5
+        self.frame_border_width = 1
+        self.frame_pady = 10
+        self.frame_padx = 10
+        self.frame_sticky = 'n'
         
         self.grid_columnconfigure(0, weight=1) # Make the first column width 100%
         self.grid_rowconfigure(1, weight=1) # Make the first column width 100%
         
-        self.header_btn = header_btn(self, 0, 0, ["Global", "-",], self.header_btn_e)
+        # Header btns
+        self.header_btn = header_btn(self, 0, 0, ["Global", "Configure",], self.header_btn_e)
+        
+        # Create global frame to add items to
+        self.global_frame = ct.CTkFrame(self, corner_radius=0, fg_color=app_colors['app']['bg_clr'])
+        self.global_frame.grid(row=1, column=0, sticky='news')
+        
+        self.global_container = self.create_frame()
+        
+        self.global_enabled = self.item_checkbox(self.global_container, 1, 1, 'Enabled', self.global_enabled_e)
+        
+        self.trigger_key = self.item_comboBox(self.global_container, 150, 2, 1, tuple(keys_list.keys()), self.trigger_key_e)
+        
+        self.config = cp.ConfigParser()
+        self.update_from_config()
     
     def header_btn_e(self, e):
         if e == 'Global':
-            print('hello')
+            self.global_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
+        else:
+            self.global_container.grid_forget()
             
+    def update_from_config(self):
+        self.config.read(CONFIG_FILE)
+        
+        # Global Enable
+        if self.config['TRIGGERBOT']['enabled'] == '1':
+            self.global_enabled.select()
+            self.global_enabled_e()
+        else:
+            self.global_enabled.deselect()
+            self.global_enabled_e()
+            
+        # trigger key
+        # update_trigger_key = self.config['TRIGGERBOT']['key']
+        # self.trigger_key.set(update_trigger_key)
+            
+    def create_frame(self):
+        self.frame = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
+        # self.frame.grid_columnconfigure(1, pad=25)
+        # self.frame.grid_columnconfigure(2, pad=25)
+        return self.frame
+            
+    def item_checkbox(self, container, row, column, text, callback):
+        self.checkbox_fg_color = theme_cfg['APP']['checkbox_fg_clr']
+        self.checkbox_border_color = theme_cfg['APP']['checkbox_border']
+        self.checkbox_hover_color = theme_cfg['APP']['checkbox_hover']
+        self.checkbox_checkmark_color = theme_cfg['APP']['checkbox_checkmark_clr']
+        self.checkbox_font_size = theme_cfg['APP']['checkbox_font_sz']
+        
+        checkbox = ct.CTkCheckBox(container, text=text, checkbox_width=25, checkbox_height=25, corner_radius=5, border_width=1, border_color=self.checkbox_border_color, hover_color=self.checkbox_hover_color, checkmark_color=self.checkbox_checkmark_color, fg_color=self.checkbox_fg_color, font=ct.CTkFont(size=int(self.checkbox_font_size)), command=callback)
+        checkbox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
+        return checkbox
+
+    def item_comboBox(self, container, width, row, column, text, callback):
+        self.combobox_fg_color = theme_cfg['APP']['combobox_fg_clr']
+        self.combobox_border_color = theme_cfg['APP']['combobox_border_clr']
+        self.combobox_button_color = theme_cfg['APP']['combobox_button_clr']
+        self.combobox_button_hover_color = theme_cfg['APP']['combobox_button_hover_clr']
+        self.combobox_dropdown_fg_color = theme_cfg['APP']['combobox_dropdown_fg_clr']
+        self.combobox_dropdown_hover_color = theme_cfg['APP']['combobox_dropdown_hover_clr']
+        self.combobox_font_size = theme_cfg['APP']['combobox_font_sz']
+        
+        comboBox = ct.CTkComboBox(container, values=text, border_width=1, border_color=self.combobox_border_color ,corner_radius=5, fg_color=self.combobox_fg_color, width=width, height=25, button_color=self.combobox_button_color, button_hover_color=self.combobox_button_hover_color, dropdown_fg_color=self.combobox_dropdown_fg_color, dropdown_hover_color=self.combobox_dropdown_hover_color, dropdown_font=ct.CTkFont(size=int(self.combobox_font_size)), command=callback)
+        comboBox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
+        return comboBox
+
+    def global_enabled_e(self):
+        if self.global_enabled.get() == 1:
+            trigger_state.enabled = 1
+        else:
+            trigger_state.enabled = 0
+    
+    def trigger_key_e(self, e):
+        trigger_state.trigger_key = key_handler(e)
+    
 class create_visuals(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'])
@@ -902,7 +1010,6 @@ class create_players(ct.CTkFrame):
         self.faceit_list.append(faceit)
             
     def player_faceit_e(self, steam_ID, faceit_lvl):
-        print(type(faceit_lvl))
         if steam_ID == 'BOT' or faceit_lvl == 0:
             pass
         else:
@@ -973,14 +1080,14 @@ class App(ct.CTk):
         # set the dimensions of the screen and where it is placed
         self.geometry('%dx%d+%d+%d' % (w, h, x, y))
         
-        self.overrideredirect(True)
+        # self.overrideredirect(True)
         self.attributes("-alpha",0.99)
-        # self.minsize(width = 1000, height = 600) # Minimum size of the window
+        self.minsize(width = 1000, height = 600) # Minimum size of the window
         
         # set grid layout 1x2 -> nav on left main content on the right
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-              
+        
         # Create navigation menu
         create_nav(self, self.nav_aimbot_callback, self.nav_triggerbot_callback, self.nav_visuals_callback, self.nav_players_callback, self.nav_misc_callhack, self.nav_panel_callback, self.nav_settings_callback)
                 
@@ -1050,11 +1157,16 @@ class App(ct.CTk):
 
     def load_config_btn_e(self):
         self.config.read(CONFIG_FILE)
+        self.triggerbot_tab.update_from_config()
         self.visuals_tab.update_from_config()
-        print(state.players_box_enabled)
 
     # Make our function to save config. This is done here because the App can communicate with other classes
+    def save_trigger(self):
+        self.config['TRIGGERBOT']['enabled'] = f'{self.triggerbot_tab.global_enabled.get()}'
+    
     def save_config_btn_e(self):
+        self.save_trigger()
+        
         self.config['VISUALS GLOBAL']['enabled'] = f'{self.visuals_tab.global_master.get()}'
         self.config['VISUALS GLOBAL']['watermark'] = f'{self.visuals_tab.global_watermark.get()}'
         self.config['VISUALS GLOBAL']['watermark clr'] = f'{item_clr.watermark}'
@@ -1094,6 +1206,6 @@ class App(ct.CTk):
         with open(CONFIG_FILE, 'w') as f:
             self.config.write(f)
         
-# if __name__ == "__main__":
-#     app = App()
-#     app.mainloop()
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()

@@ -36,13 +36,13 @@ def esp():
 
     app = App()
     app.iconbitmap(resource_path("assets/icon.ico"))
-    active = 1
+    active = 0
     
     while meow.overlay_loop():
-        
+                
         app.update() # Update menu, but brakes the menu when moving mouse
         menu_key = app_state.menu_key
-        
+
         if keyboard.is_pressed(menu_key) and active == 0:
             active = 1
             app.update_idletasks()

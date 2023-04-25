@@ -3,12 +3,13 @@ class app_state:
     overlay_fps = 155
     
 class trigger_state:
-    trigger_key = 6
+    enabled = 0
+    trigger_key = 0
 
 class state:
     master_switch = 0
     watermark = 0
-    show_fps = 1
+    show_fps = 0
     players_box_enabled = 0
     players_box_type = ''
     players_head_enabled = 0

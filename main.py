@@ -212,7 +212,7 @@ from tools.entity_parse import entity_parse, EntityList
 #                 print(err)
 # #                 continue 
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     try:
         csgo = Process('csgo.exe')
         csgo_client = csgo.get_module("client.dll")
@@ -220,7 +220,7 @@ if __name__ == "__main__":
     except Exception as err:
         print(err)
         exit(0)
-                                
+                       
     try:
         threading.Thread(target=entity_parse, name='entity_parse', daemon=True).start()
         threading.Thread(target=trigger, name='trigger', daemon=True).start()
@@ -228,7 +228,7 @@ if __name__ == "__main__":
         print(err)
         exit(0)
 
-    esp()
+    esp()    
     
     
 #Make a debug file where all values will be displayed and enable only if its imported so in release the file will be excluded, and also make DEBUG_MODE easier
