@@ -152,8 +152,6 @@ keys_list = {
     'Mouse 5': 0x06,
 }
 
-print(keys_list.get('Mouse 1'))
-
 def key_handler(key: str) -> int:
     return keys_list.get(key)
 
@@ -282,8 +280,8 @@ class create_triggerbot(ct.CTkFrame):
             self.global_enabled_e()
             
         # trigger key
-        # update_trigger_key = self.config['TRIGGERBOT']['key']
-        # self.trigger_key.set(update_trigger_key)
+        self.trigger_key.set(list(keys_list.keys())[list(keys_list.values()).index(int(self.config['TRIGGERBOT']['key']))]) # Get the value from dict and find the key it's attached to
+        trigger_state.trigger_key = int(self.config['TRIGGERBOT']['key']) # Update our trigger key when loaded
             
     def create_frame(self):
         self.frame = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
@@ -1163,6 +1161,8 @@ class App(ct.CTk):
     # Make our function to save config. This is done here because the App can communicate with other classes
     def save_trigger(self):
         self.config['TRIGGERBOT']['enabled'] = f'{self.triggerbot_tab.global_enabled.get()}'
+        
+        self.config['TRIGGERBOT']['key'] = f'{key_handler(self.triggerbot_tab.trigger_key.get())}' # Get our key 'Mouse 5' and convert to its value eg. 6
     
     def save_config_btn_e(self):
         self.save_trigger()
