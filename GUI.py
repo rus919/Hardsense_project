@@ -145,11 +145,17 @@ else:
     config.read(CONFIG_FILE)
 
 keys_list = {
-    'Mouse 1': 0x01,
-    'Mouse 2': 0x02,
     'Mouse 3': 0x04,
     'Mouse 4': 0x05,
     'Mouse 5': 0x06,
+    'SHIFT': 0x10,
+    'CTRL': 0x11,
+    'ALT': 0x12,
+    'C': 0x43, 
+    'T': 0x54, 
+    'V': 0x56, 
+    'X': 0x58, 
+    'Z': 0x5A, 
 }
 
 def key_handler(key: str) -> int:
@@ -183,6 +189,7 @@ def header_btn(self, row, column, values, callback):
     )
     
     self.header_btn.grid(row = row, column = column, pady = 5, padx = 10, sticky = 'news')
+    return header_btn
 
 def create_nav(parent, aim_callback, trigger_callback, visuals_callback, players_callback, misc_callback, panel_callback, settings_callback):
     frame = ct.CTkFrame(master = parent, corner_radius=0)
@@ -230,7 +237,7 @@ def create_aimbot(parent):
     test.grid(row=0, column=0, pady=10, padx = 10)
     
     return frame
-        
+
 class create_triggerbot(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=theme_cfg['APP']['bg_clr'])
@@ -252,13 +259,42 @@ class create_triggerbot(ct.CTkFrame):
         # Create global frame to add items to
         self.global_frame = ct.CTkFrame(self, corner_radius=0, fg_color=app_colors['app']['bg_clr'])
         self.global_frame.grid(row=1, column=0, sticky='news')
+        self.global_frame.columnconfigure(10, weight=1)
         
         self.global_container = self.create_frame()
+        self.configure_container = self.create_frame()
         
         self.global_enabled = self.item_checkbox(self.global_container, 1, 1, 'Enabled', self.global_enabled_e)
         
-        self.trigger_key = self.item_comboBox(self.global_container, 150, 2, 1, tuple(keys_list.keys()), self.trigger_key_e)
+        self.trigger_label = self.item_label(self.global_container, 2, 1, 'Trigger key')
+        self.trigger_key = self.item_comboBox(self.global_container, 150, 2, 2, tuple(keys_list.keys()), self.trigger_key_e)
         
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/GUI")
+        pistols_img = ct.CTkImage(Image.open(os.path.join(image_path, "pistols.png")), size=(20, 15))
+        smg_img = ct.CTkImage(Image.open(os.path.join(image_path, "smg.png")), size=(35, 15))
+        heavy_img = ct.CTkImage(Image.open(os.path.join(image_path, "heavy.png")), size=(40, 15))
+        rifles_img = ct.CTkImage(Image.open(os.path.join(image_path, "rifles.png")), size=(40, 12))
+        snipers_img = ct.CTkImage(Image.open(os.path.join(image_path, "snipers.png")), size=(40, 11))
+        zeus_img = ct.CTkImage(Image.open(os.path.join(image_path, "zeus.png")), size=(20, 15))
+        
+        pistols_trigger = ct.CTkButton(self.configure_container, text="Pistols", image = pistols_img, fg_color='transparent', height=36, border_color=theme_cfg['APP']['border_clr'], border_width=1)
+        pistols_trigger.grid(row=1, column=0)
+        
+        smg_trigger = ct.CTkButton(self.configure_container, text="SMG", image = smg_img, fg_color='transparent', height=36)
+        smg_trigger.grid(row=1, column=1)
+        
+        heavy_trigger = ct.CTkButton(self.configure_container, text="Heavy", image = heavy_img, fg_color='transparent', height=36)
+        heavy_trigger.grid(row=1, column=2)
+        
+        rifles_trigger = ct.CTkButton(self.configure_container, text="Rifles", image = rifles_img, fg_color='transparent', height=36)
+        rifles_trigger.grid(row=1, column=3)
+        
+        snipers_trigger = ct.CTkButton(self.configure_container, text="Snipers", image = snipers_img, fg_color='transparent', height=36)
+        snipers_trigger.grid(row=1, column=4)
+        
+        zeus_trigger = ct.CTkButton(self.configure_container, text="Extra", image = zeus_img, fg_color='transparent', height=36)
+        zeus_trigger.grid(row=1, column=5)
+                
         self.config = cp.ConfigParser()
         self.update_from_config()
     
@@ -267,6 +303,11 @@ class create_triggerbot(ct.CTkFrame):
             self.global_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky=self.frame_sticky)
         else:
             self.global_container.grid_forget()
+            
+        if e == 'Configure':
+            self.configure_container.grid(row=1, column=10, pady=self.frame_pady, padx=self.frame_padx, sticky='we')
+        else:
+            self.configure_container.grid_forget()
             
     def update_from_config(self):
         self.config.read(CONFIG_FILE)
@@ -309,9 +350,14 @@ class create_triggerbot(ct.CTkFrame):
         self.combobox_dropdown_hover_color = theme_cfg['APP']['combobox_dropdown_hover_clr']
         self.combobox_font_size = theme_cfg['APP']['combobox_font_sz']
         
-        comboBox = ct.CTkComboBox(container, values=text, border_width=1, border_color=self.combobox_border_color ,corner_radius=5, fg_color=self.combobox_fg_color, width=width, height=25, button_color=self.combobox_button_color, button_hover_color=self.combobox_button_hover_color, dropdown_fg_color=self.combobox_dropdown_fg_color, dropdown_hover_color=self.combobox_dropdown_hover_color, dropdown_font=ct.CTkFont(size=int(self.combobox_font_size)), command=callback)
+        comboBox = ct.CTkComboBox(container, values=text, border_width=1, border_color=self.combobox_border_color, corner_radius=5, fg_color=self.combobox_fg_color, width=width, height=25, button_color=self.combobox_button_color, button_hover_color=self.combobox_button_hover_color, dropdown_fg_color=self.combobox_dropdown_fg_color, dropdown_hover_color=self.combobox_dropdown_hover_color, dropdown_font=ct.CTkFont(size=int(self.combobox_font_size)), command=callback)
         comboBox.grid(row=row, column=column, pady=10, padx=10, sticky='w')
         return comboBox
+
+    def item_label(self, container, row, column, text):
+        label = ct.CTkLabel(container, text=text, font=ct.CTkFont(size=13))
+        label.grid(row=row, column=column, pady=10, padx=40, sticky='w')
+        return label
 
     def global_enabled_e(self):
         if self.global_enabled.get() == 1:
@@ -320,8 +366,9 @@ class create_triggerbot(ct.CTkFrame):
             trigger_state.enabled = 0
     
     def trigger_key_e(self, e):
+        print(e)
         trigger_state.trigger_key = key_handler(e)
-    
+        
 class create_visuals(ct.CTkFrame):
     def __init__(self, parent):
         super().__init__(master = parent, fg_color=app_colors['app']['bg_clr'])
@@ -353,7 +400,7 @@ class create_visuals(ct.CTkFrame):
         
         self.global_watermark = self.item_checkbox(self.global_container, 1, 1, 'Watermark', self.global_watermark_e)
         self.watermark_color = self.color_picker(self.global_container, 1, 3, self.watermark_color_e)
-        
+                
         self.player_container = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
         self.player_container.grid_columnconfigure(1, pad=25)
         
