@@ -158,6 +158,49 @@ keys_list = {
     'Z': 0x5A, 
 }
 
+# load guns images which i will use in different classes
+image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/images")
+pistols_img = ct.CTkImage(Image.open(os.path.join(image_path, "4.png")), size=(20, 15))
+smg_img = ct.CTkImage(Image.open(os.path.join(image_path, "19.png")), size=(35, 15))
+heavy_img = ct.CTkImage(Image.open(os.path.join(image_path, "28.png")), size=(40, 15))
+rifles_img = ct.CTkImage(Image.open(os.path.join(image_path, "7.png")), size=(40, 12))
+snipers_img = ct.CTkImage(Image.open(os.path.join(image_path, "9.png")), size=(40, 11))
+zeus_img = ct.CTkImage(Image.open(os.path.join(image_path, "31.png")), size=(20, 15))
+
+glock_img = ct.CTkImage(Image.open(os.path.join(image_path, "4.png")), size=(20, 15))
+usp_s_img = ct.CTkImage(Image.open(os.path.join(image_path, "61.png")), size=(30, 15))
+p2000_img = ct.CTkImage(Image.open(os.path.join(image_path, "32.png")), size=(20, 15))
+dual_berettas_img = ct.CTkImage(Image.open(os.path.join(image_path, "2.png")), size=(30, 15))
+p250_img = ct.CTkImage(Image.open(os.path.join(image_path, "36.png")), size=(20, 15))
+five_seven_img = ct.CTkImage(Image.open(os.path.join(image_path, "3.png")), size=(20, 15))
+tec_9_img = ct.CTkImage(Image.open(os.path.join(image_path, "30.png")), size=(20, 15))
+cz75_img = ct.CTkImage(Image.open(os.path.join(image_path, "63.png")), size=(20, 15))
+deagle_img = ct.CTkImage(Image.open(os.path.join(image_path, "1.png")), size=(20, 15))
+nova_img = ct.CTkImage(Image.open(os.path.join(image_path, "35.png")), size=(30, 13))
+xm1014_img = ct.CTkImage(Image.open(os.path.join(image_path, "25.png")), size=(30, 13))
+mag_7_img = ct.CTkImage(Image.open(os.path.join(image_path, "27.png")), size=(25, 15))
+sawed_off_img = ct.CTkImage(Image.open(os.path.join(image_path, "29.png")), size=(30, 13))
+m249_img = ct.CTkImage(Image.open(os.path.join(image_path, "14.png")), size=(30, 15))
+negev_img = ct.CTkImage(Image.open(os.path.join(image_path, "28.png")), size=(30, 15))
+mp9_img = ct.CTkImage(Image.open(os.path.join(image_path, "34.png")), size=(30, 15))
+mac_10_img = ct.CTkImage(Image.open(os.path.join(image_path, "17.png")), size=(20, 15))
+mp5_img = ct.CTkImage(Image.open(os.path.join(image_path, "23.png")), size=(30, 15))
+mp7_img = ct.CTkImage(Image.open(os.path.join(image_path, "33.png")), size=(20, 15))
+ump_img = ct.CTkImage(Image.open(os.path.join(image_path, "24.png")), size=(30, 15))
+p90_img = ct.CTkImage(Image.open(os.path.join(image_path, "19.png")), size=(30, 15))
+bizon_img = ct.CTkImage(Image.open(os.path.join(image_path, "26.png")), size=(30, 15))
+famas_img = ct.CTkImage(Image.open(os.path.join(image_path, "10.png")), size=(20, 15))
+galil_img = ct.CTkImage(Image.open(os.path.join(image_path, "13.png")), size=(20, 15))
+m4a4_img = ct.CTkImage(Image.open(os.path.join(image_path, "16.png")), size=(20, 15))
+m4a1_s_img = ct.CTkImage(Image.open(os.path.join(image_path, "60.png")), size=(20, 15))
+ak_47_img = ct.CTkImage(Image.open(os.path.join(image_path, "7.png")), size=(20, 15))
+ssg_img = ct.CTkImage(Image.open(os.path.join(image_path, "40.png")), size=(20, 15))
+sg553_img = ct.CTkImage(Image.open(os.path.join(image_path, "39.png")), size=(20, 15))
+aug_img = ct.CTkImage(Image.open(os.path.join(image_path, "8.png")), size=(20, 15))
+awp_img = ct.CTkImage(Image.open(os.path.join(image_path, "9.png")), size=(20, 15))
+scar_img = ct.CTkImage(Image.open(os.path.join(image_path, "38.png")), size=(20, 15))
+g3sg1_img = ct.CTkImage(Image.open(os.path.join(image_path, "11.png")), size=(20, 15))
+
 def key_handler(key: str) -> int:
     return keys_list.get(key)
 
@@ -259,41 +302,28 @@ class create_triggerbot(ct.CTkFrame):
         # Create global frame to add items to
         self.global_frame = ct.CTkFrame(self, corner_radius=0, fg_color=app_colors['app']['bg_clr'])
         self.global_frame.grid(row=1, column=0, sticky='news')
-        self.global_frame.columnconfigure(10, weight=1)
         
         self.global_container = self.create_frame()
-        self.configure_container = self.create_frame()
+        self.configure_select_group_container = self.create_frame()
+        
+        self.configure_each_weapon_container_pistols = self.create_frame()
+        self.configure_each_weapon_container_smg = self.create_frame()
+        self.configure_each_weapon_container_heavy = self.create_frame()
+        self.configure_each_weapon_container_rifles = self.create_frame()
+        self.configure_each_weapon_container_snipers = self.create_frame()
+        self.configure_each_weapon_container_other = self.create_frame()
         
         self.global_enabled = self.item_checkbox(self.global_container, 1, 1, 'Enabled', self.global_enabled_e)
         
         self.trigger_label = self.item_label(self.global_container, 2, 1, 'Trigger key')
         self.trigger_key = self.item_comboBox(self.global_container, 150, 2, 2, tuple(keys_list.keys()), self.trigger_key_e)
         
-        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "assets/GUI")
-        pistols_img = ct.CTkImage(Image.open(os.path.join(image_path, "pistols.png")), size=(20, 15))
-        smg_img = ct.CTkImage(Image.open(os.path.join(image_path, "smg.png")), size=(35, 15))
-        heavy_img = ct.CTkImage(Image.open(os.path.join(image_path, "heavy.png")), size=(40, 15))
-        rifles_img = ct.CTkImage(Image.open(os.path.join(image_path, "rifles.png")), size=(40, 12))
-        snipers_img = ct.CTkImage(Image.open(os.path.join(image_path, "snipers.png")), size=(40, 11))
-        zeus_img = ct.CTkImage(Image.open(os.path.join(image_path, "zeus.png")), size=(20, 15))
-        
-        pistols_trigger = ct.CTkButton(self.configure_container, text="Pistols", image = pistols_img, fg_color='transparent', height=36, border_color=theme_cfg['APP']['border_clr'], border_width=1)
-        pistols_trigger.grid(row=1, column=0)
-        
-        smg_trigger = ct.CTkButton(self.configure_container, text="SMG", image = smg_img, fg_color='transparent', height=36)
-        smg_trigger.grid(row=1, column=1)
-        
-        heavy_trigger = ct.CTkButton(self.configure_container, text="Heavy", image = heavy_img, fg_color='transparent', height=36)
-        heavy_trigger.grid(row=1, column=2)
-        
-        rifles_trigger = ct.CTkButton(self.configure_container, text="Rifles", image = rifles_img, fg_color='transparent', height=36)
-        rifles_trigger.grid(row=1, column=3)
-        
-        snipers_trigger = ct.CTkButton(self.configure_container, text="Snipers", image = snipers_img, fg_color='transparent', height=36)
-        snipers_trigger.grid(row=1, column=4)
-        
-        zeus_trigger = ct.CTkButton(self.configure_container, text="Extra", image = zeus_img, fg_color='transparent', height=36)
-        zeus_trigger.grid(row=1, column=5)
+        self.pistols_trigger = self.weapon_btn(self.configure_select_group_container, 1, 0, 'Pistols', pistols_img, self.pistols_trigger_e)
+        self.smg_trigger = self.weapon_btn(self.configure_select_group_container, 1, 1, 'SMG', smg_img, self.smg_trigger_e)
+        self.heavy_trigger = self.weapon_btn(self.configure_select_group_container, 1, 2, 'Heavy', heavy_img, self.heavy_trigger_e)
+        self.rifles_trigger = self.weapon_btn(self.configure_select_group_container, 1, 3, 'Rifles', rifles_img, self.rifles_trigger_e)
+        self.snipers_trigger = self.weapon_btn(self.configure_select_group_container, 1, 4, 'Snipers', snipers_img, self.snipers_trigger_e)
+        self.other_trigger = self.weapon_btn(self.configure_select_group_container, 1, 5, 'Other', zeus_img, self.other_trigger_e)
                 
         self.config = cp.ConfigParser()
         self.update_from_config()
@@ -305,9 +335,16 @@ class create_triggerbot(ct.CTkFrame):
             self.global_container.grid_forget()
             
         if e == 'Configure':
-            self.configure_container.grid(row=1, column=10, pady=self.frame_pady, padx=self.frame_padx, sticky='we')
+            self.configure_select_group_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky='ew')
         else:
-            self.configure_container.grid_forget()
+            self.configure_select_group_container.grid_forget()
+            
+            self.configure_each_weapon_container_pistols.grid_forget()
+            self.configure_each_weapon_container_smg.grid_forget()
+            self.configure_each_weapon_container_heavy.grid_forget()
+            self.configure_each_weapon_container_rifles.grid_forget()
+            self.configure_each_weapon_container_snipers.grid_forget()
+            self.configure_each_weapon_container_other.grid_forget()
             
     def update_from_config(self):
         self.config.read(CONFIG_FILE)
@@ -359,6 +396,11 @@ class create_triggerbot(ct.CTkFrame):
         label.grid(row=row, column=column, pady=10, padx=40, sticky='w')
         return label
 
+    def weapon_btn(self, container, row, column, text, image, callback, width=140, f_size=13):
+        weapon_btn = ct.CTkButton(container, text=text, image=image, fg_color='transparent', height=36, border_color=theme_cfg['APP']['border_clr'], border_width=1, command=callback, width=width, font=ct.CTkFont(size=f_size))
+        weapon_btn.grid(row=row, column=column, sticky='ew')
+        return weapon_btn
+
     def global_enabled_e(self):
         if self.global_enabled.get() == 1:
             trigger_state.enabled = 1
@@ -368,6 +410,101 @@ class create_triggerbot(ct.CTkFrame):
     def trigger_key_e(self, e):
         print(e)
         trigger_state.trigger_key = key_handler(e)
+        
+    # Configure tab
+    def test(self):
+        print('hello')
+        
+    def pistols_trigger_e(self):
+        self.configure_each_weapon_container_smg.grid_forget()
+        self.configure_each_weapon_container_heavy.grid_forget()
+        self.configure_each_weapon_container_rifles.grid_forget()
+        self.configure_each_weapon_container_snipers.grid_forget()
+        self.configure_each_weapon_container_other.grid_forget()
+        
+        self.configure_each_weapon_container_pistols.grid(row=2, column=0, pady=self.frame_pady, padx=self.frame_padx)
+
+        self.glock = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 0, 'Glock', glock_img, self.test, 92, 12)
+        self.usp_s = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 1, 'Usp', usp_s_img, self.test, 92, 12)
+        self.p2000 = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 2, 'P2000', p2000_img, self.test, 92, 12)
+        self.dual_berettas = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 3, 'DB', dual_berettas_img, self.test, 92, 12)
+        self.p250 = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 4, 'P250', p250_img, self.test, 92, 12)
+        self.five_seven = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 5, 'FS', five_seven_img, self.test, 92, 12)
+        self.tec_9 = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 6, 'Tec', tec_9_img, self.test, 92, 12)
+        self.cz75 = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 7, 'Cz75', cz75_img, self.test, 92, 12)
+        self.deagle = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 8, 'Deagle', deagle_img, self.test, 92, 12)
+        
+    def smg_trigger_e(self):
+        self.configure_each_weapon_container_pistols.grid_forget()
+        self.configure_each_weapon_container_heavy.grid_forget()
+        self.configure_each_weapon_container_rifles.grid_forget()
+        self.configure_each_weapon_container_snipers.grid_forget()
+        self.configure_each_weapon_container_other.grid_forget()
+        
+        self.configure_each_weapon_container_smg.grid(row=2, column=0, pady=self.frame_pady, padx=self.frame_padx,)
+        
+        self.mp9 = self.weapon_btn(self.configure_each_weapon_container_smg, 1, 0, 'Mp9', mp9_img, self.test, 118, 12)
+        self.mac_10 = self.weapon_btn(self.configure_each_weapon_container_smg, 1, 1, 'Mac', mac_10_img, self.test, 118, 12)
+        self.mp5 = self.weapon_btn(self.configure_each_weapon_container_smg, 1, 2, 'Mp5', mp5_img, self.test, 118, 12)
+        self.mp7 = self.weapon_btn(self.configure_each_weapon_container_smg, 1, 3, 'Mp7', mp7_img, self.test, 118, 12)
+        self.ump = self.weapon_btn(self.configure_each_weapon_container_smg, 1, 4, 'Ump', ump_img, self.test, 118, 12)
+        self.p90 = self.weapon_btn(self.configure_each_weapon_container_smg, 1, 5, 'P90', p90_img, self.test, 118, 12)
+        self.bizon = self.weapon_btn(self.configure_each_weapon_container_smg, 1, 6, 'Bizon', bizon_img, self.test, 118, 12)
+        
+    def heavy_trigger_e(self):
+        self.configure_each_weapon_container_pistols.grid_forget()
+        self.configure_each_weapon_container_smg.grid_forget()
+        self.configure_each_weapon_container_rifles.grid_forget()
+        self.configure_each_weapon_container_snipers.grid_forget()
+        self.configure_each_weapon_container_other.grid_forget()
+        
+        self.configure_each_weapon_container_heavy.grid(row=2, column=0, pady=self.frame_pady, padx=self.frame_padx,)
+        
+        self.nova = self.weapon_btn(self.configure_each_weapon_container_heavy, 1, 0, 'Nova', nova_img, self.test, 137.5, 12)
+        self.xm1014 = self.weapon_btn(self.configure_each_weapon_container_heavy, 1, 1, 'Xm1014', xm1014_img, self.test, 137.5, 12)
+        self.mag_7 = self.weapon_btn(self.configure_each_weapon_container_heavy, 1, 2, 'Mag 7', mag_7_img, self.test, 137.5, 12)
+        self.sawed_off = self.weapon_btn(self.configure_each_weapon_container_heavy, 1, 3, 'Sawed Off', sawed_off_img, self.test, 137.5, 12)
+        self.m249 = self.weapon_btn(self.configure_each_weapon_container_heavy, 1, 4, 'M249', m249_img, self.test, 137.5, 12)
+        self.negev = self.weapon_btn(self.configure_each_weapon_container_heavy, 1, 5, 'Negev', negev_img, self.test, 137.5, 12)
+        
+    def rifles_trigger_e(self):
+        self.configure_each_weapon_container_pistols.grid_forget()
+        self.configure_each_weapon_container_heavy.grid_forget()
+        self.configure_each_weapon_container_smg.grid_forget()
+        self.configure_each_weapon_container_snipers.grid_forget()
+        self.configure_each_weapon_container_other.grid_forget()
+        
+        self.configure_each_weapon_container_rifles.grid(row=2, column=0, pady=self.frame_pady, padx=self.frame_padx,)
+        
+        self.famas = self.weapon_btn(self.configure_each_weapon_container_rifles, 1, 0, 'Famas', famas_img, self.test, 118, 12)
+        self.galil = self.weapon_btn(self.configure_each_weapon_container_rifles, 1, 1, 'Galil', galil_img, self.test, 118, 12)
+        self.ak_47 = self.weapon_btn(self.configure_each_weapon_container_rifles, 1, 2, 'Ak47', ak_47_img, self.test, 118, 12)
+        self.m4a4 = self.weapon_btn(self.configure_each_weapon_container_rifles, 1, 3, 'M4a4', m4a4_img, self.test, 118, 12)
+        self.m4a1_s = self.weapon_btn(self.configure_each_weapon_container_rifles, 1, 4, 'M4a1', m4a1_s_img, self.test, 118, 12)
+        self.sg553 = self.weapon_btn(self.configure_each_weapon_container_rifles, 1, 5, 'Sg553', sg553_img, self.test, 118, 12)
+        self.aug = self.weapon_btn(self.configure_each_weapon_container_rifles, 1, 6, 'AUG', aug_img, self.test, 118, 12)
+        
+    def snipers_trigger_e(self):
+        self.configure_each_weapon_container_pistols.grid_forget()
+        self.configure_each_weapon_container_heavy.grid_forget()
+        self.configure_each_weapon_container_rifles.grid_forget()
+        self.configure_each_weapon_container_smg.grid_forget()
+        self.configure_each_weapon_container_other.grid_forget()
+        
+        self.configure_each_weapon_container_snipers.grid(row=2, column=0, pady=self.frame_pady, padx=self.frame_padx,)
+        
+        self.ssg = self.weapon_btn(self.configure_each_weapon_container_snipers, 1, 0, 'SSG', ssg_img, self.test, 140, 12)
+        self.awp = self.weapon_btn(self.configure_each_weapon_container_snipers, 1, 1, 'AWP', awp_img, self.test, 140, 12)
+        self.scar = self.weapon_btn(self.configure_each_weapon_container_snipers, 1, 2, 'SCAR', scar_img, self.test, 140, 12)
+        self.g3sg1 = self.weapon_btn(self.configure_each_weapon_container_snipers, 1, 3, 'G3SG1', g3sg1_img, self.test, 140, 12)
+            
+    def other_trigger_e(self):
+        self.configure_each_weapon_container_pistols.grid_forget()
+        self.configure_each_weapon_container_heavy.grid_forget()
+        self.configure_each_weapon_container_rifles.grid_forget()
+        self.configure_each_weapon_container_smg.grid_forget()
+        self.configure_each_weapon_container_snipers.grid_forget()
+        print('hello')
         
 class create_visuals(ct.CTkFrame):
     def __init__(self, parent):

@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 class app_state:
     menu_key = 'f1'
     overlay_fps = 155
@@ -40,168 +42,76 @@ class item_clr:
     
 class menu_clr:
     None
-    
-class glock:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class usp_s:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class p2000:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class dual_berettas:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class p250:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class five_seven:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class tec_9:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class cz75:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class deagle:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class nova:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class xm1014:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class mag_7:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class sawed_off:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class mp9:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
 
-class mac_10:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
+@dataclass
+class Weapon:
+    trigger_delay_before_shot: int = 5
+    trigger_delay_between_shot: int = 25
+    trigger_delay_after_shot: int = 150
 
-class mp5:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class mp7:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class ump:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class p90:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class bizon:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class famas:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class galil:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class m4a4:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class m4a1_s:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class sg553:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class aug:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class ak_47:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-    
-class ssg:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class awp:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class scar:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class g3sg1:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class m249:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
-
-class negev:
-    trigger_delay_before_shot = 5
-    trigger_delay_between_shot = 25
-    trigger_delay_after_shot = 150
+class glock(Weapon):
+    pass
+class usp_s(Weapon):
+    pass
+class p2000(Weapon):
+    pass
+class dual_berettas(Weapon):
+    pass
+class p250(Weapon):
+    pass
+class five_seven(Weapon):
+    pass
+class tec_9(Weapon):
+    pass
+class cz75(Weapon):
+    pass
+class deagle(Weapon):
+    pass
+class nova(Weapon):
+    pass
+class xm1014(Weapon):
+    pass
+class mag_7(Weapon):
+    pass
+class sawed_off(Weapon):
+    pass
+class mp9(Weapon):
+    pass
+class mac_10(Weapon):
+    pass
+class mp5(Weapon):
+    pass
+class mp7(Weapon):
+    pass
+class ump(Weapon):
+    pass
+class p90(Weapon):
+    pass
+class bizon(Weapon):
+    pass
+class m249(Weapon):
+    pass
+class negev(Weapon):
+    pass
+class famas(Weapon):
+    pass
+class galil(Weapon):
+    pass
+class m4a4(Weapon):
+    pass
+class m4a1_s(Weapon):
+    pass
+class ak_47(Weapon):
+    pass
+class ssg(Weapon):
+    pass
+class sg553(Weapon):
+    pass
+class aug(Weapon):
+    pass
+class awp(Weapon):
+    pass
+class scar(Weapon):
+    pass
+class g3sg1(Weapon):
+    pass
