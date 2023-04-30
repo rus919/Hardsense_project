@@ -1,0 +1,73 @@
+https://python-minifier.com/
+
+auto-py-to-exe
+
+pyarmor-webui
+
+
+todo: 
+
+Glow by hp: https://github.com/ALittlePatate/Rainbow-v2/blob/main/utils/glow.py - DONE
+Auto update offsets: https://github.com/XanOpiat/Python-CSGO-Cheat - DONE
+make everything from config which is in pastebin - DONE
+Glow by hp - DONE
+change glowHp color, custom from pastebin - custom yellow and red glow hp - DONE
+trigger delay (before shot, aftershot) - toggle key - DONE
+
+
+rank revealer: https://github.com/XanOpiat/Python-CSGO-Cheat
+chams? : https://github.com/ALittlePatate/Rainbow-v2/blob/main/utils/chams.py
+skinchanger with pastebin instead of config: https://github.com/V1ad0sik/Maze-V3/blob/main/maze.py
+hwid lock?
+rcs? : https://github.com/ALittlePatate/Rainbow-v2/blob/main/utils/rcs.py
+menu? : https://github.com/Soofiaaa/Atomic
+better trigger: https://github.com/Snaacky/Sapphire/blob/master/sapphire.py | https://github.com/ALittlePatate/Rainbow-v2/blob/main/utils/triggerbot.py
+knifechanger: https://github.com/ALittlePatate/Rainbow-v2/blob/main/utils/knifechanger.py
+aimbot? : https://github.com/ALittlePatate/Rainbow-v2/blob/main/utils/aimbot.py
+
+a lot of functionality : https://github.com/ALittlePatate/Rainbow-v2
+
+clear prefetch when running .exe
+clear temp
+
+nightmode?
+
+bhop toggle key
+
+сделать одну версию, через request в pastebin будут айдишники серийного номера диска с именем чтобы компилировать только одну версию
+
+hp base chams
+
+add python certificate to compile to exe without verify=false
+
+todo: 
+
+change sounds 
+
+external clantag changer
+
+delete recent files:
+
+del /s /f /q %USERPROFILE%\AppData\Roaming\Microsoft\Windows\Recent\*.*
+rd /s /q %USERPROFILE%\AppData\Roaming\Microsoft\Windows\Recent
+md %USERPROFILE%\AppData\Roaming\Microsoft\Windows\Recent
+
+синие чамсы на тимейтах - баг
+Сделать свук когда софт выключается - если крашится
+
+
+aimbot
+
+noflash
+magnettrigger
+rcs with trigger
+custom weapon delay on trigger with magnet trigger settings?
+
+mouse events использоваться вместо записи в игру
+
+
+custom sounds wh on wh off (locate to appdata)
+
+trigger aftershot delay
+
+продумать как можно делать дни с подпиской

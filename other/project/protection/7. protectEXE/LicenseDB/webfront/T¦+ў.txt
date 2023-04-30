@@ -1,0 +1,41 @@
+WEB授权管理系统
+
+系统需求
+========
+
+   PHP5.3以上
+   MYSQL5.0以上
+
+安装步骤
+========
+
+   1.建立一个空的MYSQL数据库并设置相关用户。
+   2.修改web\settings.php中的数据库、文件路径，保存为UTF8无BOM编码。
+   3.IIS服务器需增加IUSER_<计算机名>用户cmd.exe、sekeygen_wrapper.exe执行权限。
+   4.将SEKeygenSDK.dll复制到sekeygen_wrapper目录
+   5.首次打开时填写数据库信息，设置网站管理账号，将自动建立数据库表。
+   6.如需开启url rewrite，请参考rewrite目录中的设置，并修改web\settings.php中的$urlrewrite为true。
+
+
+客户端接口
+==========
+   注：check前面可以加语言标识： zh-cn, zh-tw, en-us 用于返回特定语言的消息，不加则按系统默认设置。
+      例如：　 index.php?p=/en-us/check/get-key/product/username/password-md5/hardware-id-base64/
+ 
+   get-key: index.php?p=/check/get-key/product/username/password-md5/hardware-id-base64/
+            返回KEY的内容,hardware_id 是可选的。
+
+   query:   index.php?p=/check/query/product/username/password-md5/
+            返回帐户相关信息的内容
+   
+   version: index.php?p=/check/version/product/
+            返回版本号
+
+   charge:  index.php?p=/check/charge/product/username/card-number/card-password-md5/
+            先充值，再用帐户余额添加订单或续费
+
+   renew:   index.php?p=/check/renew/product/username/
+            用账户余额添加订单或续费
+
+   正确返回消息格式　"(success) ..."
+   错误返回消息格式 "(fail) ..."

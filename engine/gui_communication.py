@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 class app_state:
     menu_key = 'f1'
-    overlay_fps = 155
+    overlay_fps = 156
     
 class trigger_state:
     enabled = 0
@@ -12,7 +12,7 @@ class trigger_state:
 class state:
     master_switch = 0
     watermark = 0
-    show_fps = 0
+    show_fps = 1
     players_box_enabled = 0
     players_box_type = ''
     players_head_enabled = 0
@@ -75,6 +75,10 @@ class mag_7(Weapon):
     pass
 class sawed_off(Weapon):
     pass
+class m249(Weapon):
+    pass
+class negev(Weapon):
+    pass
 class mp9(Weapon):
     pass
 class mac_10(Weapon):
@@ -89,10 +93,6 @@ class p90(Weapon):
     pass
 class bizon(Weapon):
     pass
-class m249(Weapon):
-    pass
-class negev(Weapon):
-    pass
 class famas(Weapon):
     pass
 class galil(Weapon):
@@ -103,11 +103,11 @@ class m4a1_s(Weapon):
     pass
 class ak_47(Weapon):
     pass
-class ssg(Weapon):
-    pass
 class sg553(Weapon):
     pass
 class aug(Weapon):
+    pass
+class ssg(Weapon):
     pass
 class awp(Weapon):
     pass

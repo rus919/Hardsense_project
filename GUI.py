@@ -313,6 +313,8 @@ class create_triggerbot(ct.CTkFrame):
         self.configure_each_weapon_container_snipers = self.create_frame()
         self.configure_each_weapon_container_other = self.create_frame()
         
+        self.configure_each_weapon_container = self.create_frame()
+        
         self.global_enabled = self.item_checkbox(self.global_container, 1, 1, 'Enabled', self.global_enabled_e)
         
         self.trigger_label = self.item_label(self.global_container, 2, 1, 'Trigger key')
@@ -336,15 +338,17 @@ class create_triggerbot(ct.CTkFrame):
             
         if e == 'Configure':
             self.configure_select_group_container.grid(row=1, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky='ew')
+            self.global_frame.rowconfigure(3, weight=1)
         else:
             self.configure_select_group_container.grid_forget()
-            
             self.configure_each_weapon_container_pistols.grid_forget()
             self.configure_each_weapon_container_smg.grid_forget()
             self.configure_each_weapon_container_heavy.grid_forget()
             self.configure_each_weapon_container_rifles.grid_forget()
             self.configure_each_weapon_container_snipers.grid_forget()
             self.configure_each_weapon_container_other.grid_forget()
+            
+            self.configure_each_weapon_container.grid_forget()
             
     def update_from_config(self):
         self.config.read(CONFIG_FILE)
@@ -363,8 +367,6 @@ class create_triggerbot(ct.CTkFrame):
             
     def create_frame(self):
         self.frame = ct.CTkFrame(self.global_frame, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
-        # self.frame.grid_columnconfigure(1, pad=25)
-        # self.frame.grid_columnconfigure(2, pad=25)
         return self.frame
             
     def item_checkbox(self, container, row, column, text, callback):
@@ -424,7 +426,7 @@ class create_triggerbot(ct.CTkFrame):
         
         self.configure_each_weapon_container_pistols.grid(row=2, column=0, pady=self.frame_pady, padx=self.frame_padx)
 
-        self.glock = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 0, 'Glock', glock_img, self.test, 92, 12)
+        self.glock = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 0, 'Glock', glock_img, self.glock_e, 92, 12)
         self.usp_s = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 1, 'Usp', usp_s_img, self.test, 92, 12)
         self.p2000 = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 2, 'P2000', p2000_img, self.test, 92, 12)
         self.dual_berettas = self.weapon_btn(self.configure_each_weapon_container_pistols, 1, 3, 'DB', dual_berettas_img, self.test, 92, 12)
@@ -505,6 +507,15 @@ class create_triggerbot(ct.CTkFrame):
         self.configure_each_weapon_container_smg.grid_forget()
         self.configure_each_weapon_container_snipers.grid_forget()
         print('hello')
+    
+    def create_weapon_frame(self):
+        self.frame = ct.CTkFrame(self.configure_select_group_container, corner_radius=self.frame_corner_radius, fg_color=self.frame_fg_color, border_color=self.frame_border_color, border_width=self.frame_border_width)
+        return self.frame
+    
+    def glock_e(self):
+        self.configure_each_weapon_container.grid(row=3, column=0, pady=self.frame_pady, padx=self.frame_padx, sticky='news')
+        self.label = ct.CTkLabel(self.configure_each_weapon_container, text='Glock')
+        self.label.grid(row=0, column=0)
         
 class create_visuals(ct.CTkFrame):
     def __init__(self, parent):
@@ -1262,7 +1273,7 @@ class App(ct.CTk):
         # set the dimensions of the screen and where it is placed
         self.geometry('%dx%d+%d+%d' % (w, h, x, y))
         
-        # self.overrideredirect(True)
+        self.overrideredirect(True)
         self.attributes("-alpha",0.99)
         self.minsize(width = 1000, height = 600) # Minimum size of the window
         
@@ -1291,6 +1302,8 @@ class App(ct.CTk):
         
         self.save_config_btn = ct.CTkButton(self.settinsg_tab.config_container, text='save', command=self.save_config_btn_e)
         self.save_config_btn.grid(row=1, column=1, pady=10, padx=10)
+        
+        # self.after(100, self.mainloop())
     
     def nav_aimbot_callback(self):
         self.select_frame_by_name("Aimbot")
@@ -1390,6 +1403,6 @@ class App(ct.CTk):
         with open(CONFIG_FILE, 'w') as f:
             self.config.write(f)
         
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+# if __name__ == "__main__":
+#     app = App()
+#     app.mainloop()

@@ -1,0 +1,2 @@
+!IDEA if key is pressed -> autoconfig refresh and new settings come into play without restart
+compile with https://github.com/Nuitka/Nuitka

@@ -1,0 +1,7 @@
+授权数据库说明
+
+Safengine独立算号器可自动将生成的授权增加至指定MySQL数据库，建库脚本请参考createdb.sql。
+
+此数据库用于配合基于WEB的授权管理系统，及无缝升级至网络授权验证系统（Safengine NetLicensor），如果不需要此功能，请在加壳时将验证数据库设置清空。
+
+WEB授权管理系统请参考webfront目录下说明

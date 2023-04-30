@@ -20,7 +20,7 @@ def trigger():
                                 continue
                             entity = Entity(Engine.get_entity(entity_id - 1))
                             if local_player.get_team() != entity.get_team() and entity.get_health() > 0:
-                                Windll.k32.Sleep(10)
+                                Windll.k32.Sleep(1)
                                 Windll.u32.mouse_event(0x0002, 0, 0, 0, 0)
                                 Windll.k32.Sleep(25)
                                 Windll.u32.mouse_event(0x0004, 0, 0, 0, 0)
